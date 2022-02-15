@@ -58,7 +58,7 @@ The site should be available in your browser for testing at `https://localhost:8
     pip install virtualenv
     python3 -m venv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    poetry install --no-dev
 
 Note: activate the virtual env before installing the requirements.
 
@@ -174,7 +174,7 @@ The steps are mostly the same, except that on a developer machine, Apache won't 
 
 `cd` to the directory where you want to deploy the project files (as specified in the apache conf file), and clone the repository:
 
-    git clone https://jmgeffroy@bitbucket.org/mantano/virtual_library_card.git
+    git clone git@github.com:ThePalaceProject/virtual-library-card.git
     python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
 
 ### 2. Create and initialize a Python virtual env
@@ -183,7 +183,7 @@ The steps are mostly the same, except that on a developer machine, Apache won't 
     pip install virtualenv
     python3 -m venv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    poetry install
 
 Note: activate the virtual env before installing the requirements
 
@@ -254,10 +254,9 @@ Then, the server can be started thanks to the "Run dropdown":
 
 ### 8. What to do before pushing code modifications
 
-1. Freeze the requirements
+1. Make sure poetry lock file us up to date
 
-    pip freeze --local | grep -v virtual_library_card > requirements.txt
-    (See [pip freeze tutorial](https://websauna.org/docs/tutorials/deployment/freeze.html))
+    poetry lock
 
 2. Update and compile the translations
 

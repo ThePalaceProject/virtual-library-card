@@ -1,6 +1,6 @@
-FROM python:3
+FROM python:3.8-slim
 
-ENV APP_DIR=/virtual_library_card \
+ENV APP_DIR=/virtual_library_card/ \
     DJANGO_SETTINGS_MODULE=virtual_library_card.settings.prod
 
 ENV UWSGI_MASTER=1 \
@@ -16,13 +16,33 @@ ENV UWSGI_MASTER=1 \
     UWSGI_UID=999 \
     UWSGI_GID=999
 
-COPY . $APP_DIR
-WORKDIR $APP_DIR
+# Install system
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
-    vim gettext \
-    && rm -rf /var/lib/apt/lists/*
-RUN pip install -r requirements.txt
+    curl mime-support && \
+    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.1.12" && \
+    ln -s /opt/poetry/bin/poetry /bin/poetry && \
+    apt-get remove curl -y && \
+    apt-get autoremove -y && \
+    rm -Rf /var/lib/apt/lists/* && \
+    rm -Rf /root/.cache && \
+    find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
+
+# Install Python dependencies
+COPY pyproject.toml poetry.lock $APP_DIR
+WORKDIR $APP_DIR
+RUN apt-get update -y && \
+    apt-get install --no-install-recommends -y build-essential default-libmysqlclient-dev libpcre3-dev && \
+    POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev --no-interaction && \
+    apt-get remove build-essential -y && \
+    apt-get autoremove -y && \
+    rm -Rf /var/lib/apt/lists/* && \
+    poetry cache clear -n --all pypi && \
+    rm -Rf /root/.cache && \
+    find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
+
+# Install code
+COPY . $APP_DIR
 
 EXPOSE 8000
 
