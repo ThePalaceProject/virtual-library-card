@@ -51,3 +51,8 @@ uwsgi = ">=2.0,<2.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "~2.17"
+pytest = "^7.1.1"
+pytest-django = "^4.5.2"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "virtual_library_card.settings.dev"
