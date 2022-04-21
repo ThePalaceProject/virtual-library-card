@@ -17,6 +17,7 @@ from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
 
 class CustomUserAdmin(UserAdmin):
+    add_form_template = "admin/user_add_form.html"
     add_form = CustomUserCreationForm
     form = CustomAdminUserChangeForm
     model = CustomUser
@@ -67,7 +68,10 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
     add_fieldsets = (
-        (None, {"fields": ("first_name", "email", "password1", "password2")}),
+        (
+            None,
+            {"fields": ("first_name", "last_name", "email", "password1", "password2")},
+        ),
     )
     actions = ["export_as_csv"]
 

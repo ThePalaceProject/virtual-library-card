@@ -150,7 +150,6 @@ class CustomAdminUserChangeForm(UserChangeForm):
                     "first_name"
                 ].widget.value_from_datadict = lambda *args: self.instance.first_name
                 self.fields["email"].widget.attrs["disabled"] = True
-                self.fields["first_name"].widget.attrs["disabled"] = True
 
         except KeyError as e:
             print("Error disabling email and first name", e)
