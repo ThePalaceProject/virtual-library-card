@@ -33,7 +33,7 @@ class Library(models.Model):
             name=settings.DEFAULT_SUPERUSER_LIBRARY_NAME,
             identifier=settings.DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER,
             prefix=settings.DEFAULT_SUPERUSER_LIBRARY_PREFIX,
-            us_state=settings.DEFAULT_SUPERUSER_LIBRARY_STATE,
+            us_states=[settings.DEFAULT_SUPERUSER_LIBRARY_STATE],
         )
         library.save()
         return library
@@ -47,7 +47,16 @@ class Library(models.Model):
 
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)
+
+    ## Deprecated - do not use this field, use only the LibraryState association
     us_state = USStateField(_("State"), blank=False)
+    us_state.system_check_deprecated_details = dict(
+        msg="Library.us_state is a deprecated field",
+        hint="Use LibraryState associations only",
+        id="fields.us_state_001",
+    )
+    ######
+
     logo = models.ImageField(
         storage=OverwriteStorage(), upload_to=generate_filename, null=True, blank=False
     )
@@ -66,6 +75,12 @@ class Library(models.Model):
     sequence_down = models.BooleanField(
         choices=BOOL_CHOICES, blank=False, null=False, default=False
     )
+
+    def get_us_states(self):
+        return [ls.us_state for ls in self.library_states.order_by("id").all()]
+
+    def get_first_us_state(self):
+        return self.get_us_states()[0]
 
     def get_logo_img(self, root_url, logo_filename, header):
         img_html = (
@@ -140,6 +155,19 @@ class Library(models.Model):
         super().save(force_insert, force_update, using, update_fields)
 
 
+class LibraryStates(models.Model):
+    """Library to state relations"""
+
+    library = models.ForeignKey(
+        Library,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name="library_states",
+    )
+    us_state = USStateField(_("State"), blank=False)
+
+
 class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifier
@@ -194,7 +222,7 @@ class CustomUserManager(BaseUserManager):
             email,
             password,
             default_library,
-            default_library.us_state,
+            default_library.get_first_us_state(),
             first_name,
             **extra_fields,
         )
@@ -259,8 +287,8 @@ class CustomUser(AbstractUser):
             smart_name += " " + self.last_name
         return smart_name.strip()
 
-    def library_state(self):
-        return self.library.us_state
+    def library_states(self):
+        return self.library.get_us_states()
 
     def library_state_name(self):
         return LocationUtils.get_library_state_name(self.library)

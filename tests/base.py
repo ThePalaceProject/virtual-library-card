@@ -5,7 +5,7 @@ import pytest
 from django.db import transaction
 from django.test import Client
 
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
 
 
 class TestData:
@@ -31,11 +31,10 @@ class TestData:
             self._default_user, self._default_library
         )
 
-    def create_library(self, name=None, identifier=None, us_state=None, **kwargs):
+    def create_library(self, name=None, identifier=None, us_states=None, **kwargs):
         obj = Library(
             name=name or self._random_name(),
             identifier=identifier or self._random_name(),
-            us_state=us_state or "NY",
             logo=kwargs.get("logo", "http://example.logo/"),
             phone=kwargs.get("phone", "999999999"),
             email=kwargs.get("email", "default@example.com"),
@@ -46,6 +45,15 @@ class TestData:
             **kwargs,
         )
         obj.save()
+
+        library_states = [
+            LibraryStates(us_state=s, library=obj) for s in (us_states or ["NY"])
+        ]
+        for ls in library_states:
+            ls.save()
+        obj.library_states.set(library_states)
+        obj.save()
+
         return obj
 
     def create_user(
@@ -100,7 +108,7 @@ class BaseUnitTest(TestData):
                         "locations": [
                             {
                                 "adminArea1": "US",
-                                "adminArea3": self._default_library.us_state,
+                                "adminArea3": self._default_library.get_first_us_state(),
                                 "adminArea5": "city",
                                 "postalCode": "998867",
                             }

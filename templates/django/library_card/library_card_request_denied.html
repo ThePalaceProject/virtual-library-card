@@ -19,8 +19,8 @@
         <div class="form-message-area">
             <h4>{% blocktrans %}Library Card not allowed{% endblocktrans %}</h4>
 
-            {% if state_name %}
-                {% blocktrans with state_name=state_name %}You must be in <strong>{{ state_name }} </strong> to request
+            {% if state_names %}
+                {% blocktrans with state_names=state_names %}You must be in <strong>{{ state_names }} </strong> to request
                     this library card{% endblocktrans %}
             {% endif %}
         </div>

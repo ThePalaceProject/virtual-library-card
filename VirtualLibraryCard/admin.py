@@ -13,7 +13,7 @@ from VirtualLibraryCard.forms.forms import (
     LibraryChangeForm,
     LibraryCreationForm,
 )
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
 
 
 class CustomUserAdmin(UserAdmin):
@@ -79,7 +79,7 @@ class CustomUserAdmin(UserAdmin):
         if not obj.pk:
             if not request.user.is_superuser:
                 obj.library = request.user.library
-                obj.us_state = obj.library.us_state
+                obj.us_state = obj.library.get_first_us_state()
 
         super().save_model(request, obj, form, change)
 
@@ -107,6 +107,12 @@ class CustomUserAdmin(UserAdmin):
         return qs.filter(library=request.user.library.id)
 
 
+class LibraryStatesInline(admin.StackedInline):
+    model = LibraryStates
+    extra = 0
+    verbose_name_plural = "Library States"
+
+
 class LibraryAdmin(admin.ModelAdmin):
     add_form = LibraryCreationForm
     form = LibraryChangeForm
@@ -116,7 +122,7 @@ class LibraryAdmin(admin.ModelAdmin):
         "logo_thumbnail",
         "name",
         "identifier",
-        "us_state",
+        "get_us_states",
         "phone",
         "email",
         "terms_conditions_link",
@@ -126,8 +132,10 @@ class LibraryAdmin(admin.ModelAdmin):
     ]
     list_filter = ("card_validity_months", "sequence_start_number")
 
+    inlines = [LibraryStatesInline]
+
     fieldsets = (
-        (_("Identity"), {"fields": ("identifier", "name", "us_state", "logo")}),
+        (_("Identity"), {"fields": ("identifier", "name", "logo")}),
         (_("Contact"), {"fields": ("phone", "email")}),
         (
             _("Links"),
@@ -156,6 +164,11 @@ class LibraryAdmin(admin.ModelAdmin):
     readonly_fields = ["logo_thumbnail"]
 
     actions = ["export_as_csv"]
+
+    def get_us_states(self, obj):
+        return obj.get_us_states()
+
+    get_us_states.short_description = "US States"
 
     def get_queryset(self, request):
         qs = super(LibraryAdmin, self).get_queryset(request)

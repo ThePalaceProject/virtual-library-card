@@ -31,7 +31,7 @@ class TestCardRequest(BaseUnitTest):
                 street_address_line1="Some street",
                 street_address_line2="",
                 city="city",
-                us_state=self._default_library.us_state,
+                us_state=self._default_library.get_first_us_state(),
                 zip="99887",
                 over13="on",
                 password1="xx123456789",
@@ -72,7 +72,7 @@ class TestCardRequest(BaseUnitTest):
                 # street_address_line1="Some street", # No street address
                 street_address_line2="",
                 city="city",
-                us_state=self._default_library.us_state,
+                us_state=self._default_library.get_first_us_state(),
                 # zip="99887",
                 over13="on",
                 password1="xx123456789",

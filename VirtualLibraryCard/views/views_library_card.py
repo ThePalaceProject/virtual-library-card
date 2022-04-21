@@ -198,7 +198,7 @@ class CardSignupView(FormView):
                 {
                     "identifier": library.identifier,
                     "library": library,
-                    "state_name": library.us_state,
+                    "state_names": ", ".join(library.get_us_states()),
                 }
             )
 
@@ -209,7 +209,7 @@ class CardSignupView(FormView):
                     context,
                 )
 
-            if state != library.us_state:
+            if state not in library.get_us_states():
                 return render(
                     self.request,
                     "library_card/library_card_request_denied.html",
