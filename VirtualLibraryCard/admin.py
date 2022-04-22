@@ -75,6 +75,11 @@ class CustomUserAdmin(UserAdmin):
     )
     actions = ["export_as_csv"]
 
+    # used by other admin forms that have search-fields on users
+    # Eg. LibraryCard admin form
+    search_fields = ["email"]
+    ordering = ["email"]
+
     def save_model(self, request, obj, form, change):
         if not obj.pk:
             if not request.user.is_superuser:
@@ -190,7 +195,7 @@ class LibraryAdmin(admin.ModelAdmin):
 
 class LibraryCardAdmin(admin.ModelAdmin):
     model = LibraryCard
-    add_form = LibraryCardCreationForm
+    form = LibraryCardCreationForm
     list_display = [
         "number",
         "user",
@@ -210,6 +215,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
         "library",
         "created",
     )
+    autocomplete_fields = ["user"]
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # This is the case when obj is already created i.e. it's an edit

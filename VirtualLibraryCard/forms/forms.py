@@ -20,12 +20,7 @@ class LibraryCardCreationForm(forms.ModelForm):
     class Meta:
         model = LibraryCard
         exclude = []
-
-    def validate_unique(self):
-        print("validate_unique")
-        libraryCard = self.instance
-
-        super().validate_unique()
+        labels = {"user": _("User Email")}
 
 
 class LibraryChangeForm(forms.ModelForm):
