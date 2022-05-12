@@ -41,6 +41,14 @@ class RequestLibraryCardForm(UserCreationForm):
         self.fields["us_state"].widget.attrs["disabled"] = True
         self.fields["over13"].required = True
         self.fields["first_name"].required = True
+
+        user = kwargs["instance"]
+        library: Library = user.library
+        if library.patron_address_mandatory == False:
+            self.fields["street_address_line1"].required = False
+            self.fields["city"].required = False
+            self.fields["zip"].required = False
+
         # Focus on form field whenever error occurred
         error_list = list(self.errors)
         print("------------ ERRORS: ", error_list)
@@ -71,15 +79,20 @@ class RequestLibraryCardForm(UserCreationForm):
                 city = self.cleaned_data.get("city")
                 us_state = self.cleaned_data.get("us_state")
                 zip = self.cleaned_data.get("zip")
-                is_valid_address = AddressChecker.is_valid_postal_address(
-                    first_name,
-                    last_name,
-                    street_address_line1,
-                    street_address_line2,
-                    city,
-                    us_state,
-                    zip,
-                )
+
+                library: Library = self.cleaned_data.get("library")
+                if library.patron_address_mandatory:
+                    is_valid_address = AddressChecker.is_valid_postal_address(
+                        first_name,
+                        last_name,
+                        street_address_line1,
+                        street_address_line2,
+                        city,
+                        us_state,
+                        zip,
+                    )
+                else:
+                    is_valid_address = True
                 # is_valid_address = True
                 # FOR DEV PURPOSE ONLY
                 if is_valid_address:

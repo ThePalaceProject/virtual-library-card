@@ -31,10 +31,13 @@ class TestData:
             self._default_user, self._default_library
         )
 
-    def create_library(self, name=None, identifier=None, us_states=None, **kwargs):
+    def create_library(
+        self, name=None, identifier=None, us_states=None, prefix=None, **kwargs
+    ):
         obj = Library(
             name=name or self._random_name(),
             identifier=identifier or self._random_name(),
+            prefix=prefix or self._random_name(),
             logo=kwargs.get("logo", "http://example.logo/"),
             phone=kwargs.get("phone", "999999999"),
             email=kwargs.get("email", "default@example.com"),
@@ -97,8 +100,12 @@ class BaseUnitTest(TestData):
         transaction.set_rollback(True)
         self._transaction.__exit__(None, None, None)
 
-    def do_library_card_signup_flow(self, client: Client):
+    def do_library_card_signup_flow(self, client: Client, library: Library = None):
         """A common flow which is needed multiple times"""
+
+        if not library:
+            library = self._default_library
+
         with mock.patch(
             "VirtualLibraryCard.views.views_library_card.Geolocalize"
         ) as mock_geolocalize:
@@ -117,8 +124,8 @@ class BaseUnitTest(TestData):
                 ]
             }
             resp = client.post(
-                f"/account/library_card_signup/{self._default_library.identifier}/",
-                dict(lat=10, long=10, identifier=self._default_library.identifier),
+                f"/account/library_card_signup/{library.identifier}/",
+                dict(lat=10, long=10, identifier=library.identifier),
             )
             assert resp.status_code == 302
 

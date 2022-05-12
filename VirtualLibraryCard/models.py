@@ -75,6 +75,12 @@ class Library(models.Model):
     sequence_down = models.BooleanField(
         choices=BOOL_CHOICES, blank=False, null=False, default=False
     )
+    patron_address_mandatory = models.BooleanField(
+        choices=((True, _("Yes")), (False, _("No"))),
+        blank=False,
+        default=True,
+        verbose_name="Require Patron Address",
+    )
 
     def get_us_states(self):
         return [ls.us_state for ls in self.library_states.order_by("id").all()]

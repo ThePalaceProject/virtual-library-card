@@ -140,7 +140,17 @@ class LibraryAdmin(admin.ModelAdmin):
     inlines = [LibraryStatesInline]
 
     fieldsets = (
-        (_("Identity"), {"fields": ("identifier", "name", "logo")}),
+        (
+            _("Identity"),
+            {
+                "fields": (
+                    "identifier",
+                    "name",
+                    "patron_address_mandatory",
+                    "logo",
+                )
+            },
+        ),
         (_("Contact"), {"fields": ("phone", "email")}),
         (
             _("Links"),
