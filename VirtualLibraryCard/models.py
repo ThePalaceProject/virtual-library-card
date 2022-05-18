@@ -33,9 +33,14 @@ class Library(models.Model):
             name=settings.DEFAULT_SUPERUSER_LIBRARY_NAME,
             identifier=settings.DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER,
             prefix=settings.DEFAULT_SUPERUSER_LIBRARY_PREFIX,
-            us_states=[settings.DEFAULT_SUPERUSER_LIBRARY_STATE],
         )
         library.save()
+
+        ls = LibraryStates(
+            library=library, us_state=settings.DEFAULT_SUPERUSER_LIBRARY_STATE
+        )
+        ls.save()
+
         return library
 
     def generate_filename(self, filename):

@@ -2,8 +2,11 @@ from random import choice
 from unittest import mock
 
 import pytest
+from django.contrib.admin import ModelAdmin
+from django.contrib.admin.sites import AdminSite
 from django.db import transaction
-from django.test import Client
+from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse
 
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
 
@@ -38,13 +41,13 @@ class TestData:
             name=name or self._random_name(),
             identifier=identifier or self._random_name(),
             prefix=prefix or self._random_name(),
-            logo=kwargs.get("logo", "http://example.logo/"),
-            phone=kwargs.get("phone", "999999999"),
-            email=kwargs.get("email", "default@example.com"),
-            terms_conditions_url=kwargs.get(
+            logo=kwargs.pop("logo", "http://example.logo/"),
+            phone=kwargs.pop("phone", "999999999"),
+            email=kwargs.pop("email", "default@example.com"),
+            terms_conditions_url=kwargs.pop(
                 "terms_condition_url", "http://example.terms/"
             ),
-            privacy_url=kwargs.get("privacy_url", "http://example.privacy/"),
+            privacy_url=kwargs.pop("privacy_url", "http://example.privacy/"),
             **kwargs,
         )
         obj.save()
@@ -79,14 +82,14 @@ class TestData:
         user.save()
         return user
 
-    def create_library_card(self, user, library):
-        card = LibraryCard(user=user, library=library)
+    def create_library_card(self, user, library, **kwargs):
+        card = LibraryCard(user=user, library=library, **kwargs)
         card.save()
         return card
 
 
 @pytest.mark.django_db
-class BaseUnitTest(TestData):
+class BaseUnitTest(TestData, TestCase):
     def setup_method(self, request):
         # Fake a transaction block
         self._transaction = transaction.atomic()
@@ -95,10 +98,12 @@ class BaseUnitTest(TestData):
         # seed the data
         self.seed_data()
 
-    def teardown_method(self, request):
+    def tearDown(self):
+        # Needs to be the django tearDown and not pytest teardown_method
         # Rollback any DB changes made this test
         transaction.set_rollback(True)
         self._transaction.__exit__(None, None, None)
+        super().tearDown()
 
     def do_library_card_signup_flow(self, client: Client, library: Library = None):
         """A common flow which is needed multiple times"""
@@ -130,3 +135,38 @@ class BaseUnitTest(TestData):
             assert resp.status_code == 302
 
         return resp
+
+
+class BaseAdminUnitTest(BaseUnitTest):
+    MODEL = NotImplemented
+    MODEL_ADMIN = NotImplemented
+
+    def setup_method(self, request):
+        ret = super().setup_method(request)
+        # Use self.admin when testing single functions
+        # With the mock request
+        self.site = AdminSite()
+        self.admin: ModelAdmin = self.MODEL_ADMIN(self.MODEL, self.site)
+        self.mock_request = RequestFactory().get("/admin")
+        self.super_user = CustomUser.objects.create_superuser(
+            "test@admin.com", "password"
+        )
+
+        # Super user based client
+        self.test_client = Client()
+        self.test_client.force_login(self.super_user)
+
+        return ret
+
+    def get_change_url(self, obj):
+        return reverse(
+            f"admin:VirtualLibraryCard_{self.MODEL.__name__.lower()}_change",
+            kwargs={"object_id": obj.id},
+        )
+
+    def get_add_url(self):
+        return reverse(f"admin:VirtualLibraryCard_{self.MODEL.__name__.lower()}_add")
+
+    def _response_errors(self, response):
+        """Helper function for debuging form submits"""
+        return response.context[0]["adminform"].errors

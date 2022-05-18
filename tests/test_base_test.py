@@ -1,4 +1,4 @@
-from base import BaseUnitTest
+from tests.base import BaseUnitTest
 
 
 class TestSeedData(BaseUnitTest):
