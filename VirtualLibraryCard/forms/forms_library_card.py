@@ -79,20 +79,15 @@ class RequestLibraryCardForm(UserCreationForm):
                 city = self.cleaned_data.get("city")
                 us_state = self.cleaned_data.get("us_state")
                 zip = self.cleaned_data.get("zip")
-
                 library: Library = self.cleaned_data.get("library")
+
                 if library.patron_address_mandatory:
-                    is_valid_address = AddressChecker.is_valid_postal_address(
-                        first_name,
-                        last_name,
-                        street_address_line1,
-                        street_address_line2,
-                        city,
-                        us_state,
-                        zip,
+                    is_valid_address = AddressChecker.is_valid_zipcode(
+                        city, us_state, zip
                     )
                 else:
                     is_valid_address = True
+
                 # is_valid_address = True
                 # FOR DEV PURPOSE ONLY
                 if is_valid_address:

@@ -150,3 +150,93 @@ class TestAddressChecker(BaseUnitTest):
         # False response
         mock_run.return_value = None
         assert AddressChecker.is_valid_postal_address(*args) == False
+
+    @mock.patch("virtual_library_card.smarty_streets.Lookup")
+    @mock.patch("virtual_library_card.smarty_streets.AddressChecker._set_client")
+    def test_is_valid_zipcode(
+        self, mock_client: mock.MagicMock, mock_lookup: mock.MagicMock
+    ):
+
+        mock_result = mock.MagicMock()
+        mock_result.result.zipcodes.__len__.return_value = 1
+        mock_result.result.cities.__len__.return_value = 1
+        mock_result.result.zipcodes.__getitem__.return_value.zipcode = "zip"
+        mock_result.result.cities.__getitem__.return_value.city = "city"
+        mock_result.result.cities.__getitem__.return_value.state_abbreviation = "state"
+        mock_lookup.return_value = mock_result
+
+        args = ("city", "state", "zip")
+        result = AddressChecker.is_valid_zipcode(*args)
+
+        assert mock_lookup.call_count == 1
+        assert mock_lookup.call_args_list[0].kwargs == dict(
+            city="city", state="state", zipcode="zip"
+        )
+
+        assert mock_client.call_count == 1
+        assert mock_client.call_args_list[0].kwargs == dict(
+            api_type=AddressChecker.ZIP_CODE_API
+        )
+
+        assert mock_client().send_lookup.call_count == 1
+        assert mock_client().send_lookup.call_args[0] == (mock_lookup(),)
+
+        assert result == True
+
+    @mock.patch("virtual_library_card.smarty_streets.Lookup")
+    @mock.patch("virtual_library_card.smarty_streets.AddressChecker._set_client")
+    def test_is_valid_zipcode_exc(
+        self, mock_client: mock.MagicMock, mock_lookup: mock.MagicMock
+    ):
+        mock_client.return_value.send_lookup.side_effect = SmartyException()
+        args = ("city", "state", "zip")
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+        # len(lookup.result.zipcodes) was not called
+        assert mock_lookup.return_value.result.zipcodes.__len__.call_count == 0
+
+    @mock.patch("virtual_library_card.smarty_streets.Lookup")
+    @mock.patch("virtual_library_card.smarty_streets.AddressChecker._set_client")
+    def test_is_valid_zipcode_no_match(
+        self, mock_client: mock.MagicMock, mock_lookup: mock.MagicMock
+    ):
+        mock_result = mock.MagicMock()
+        mock_result.result.zipcodes.__len__.return_value = 1
+        mock_result.result.cities.__len__.return_value = 1
+        mock_result.result.zipcodes.__getitem__.return_value.zipcode = "zip"
+        mock_result.result.cities.__getitem__.return_value.city = "city"
+        mock_result.result.cities.__getitem__.return_value.state_abbreviation = "state"
+        mock_lookup.return_value = mock_result
+
+        args = ("city", "state", "zip")
+
+        mock_result.result.zipcodes.__getitem__.return_value.zipcode = "notzip"
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+
+        mock_result.result.zipcodes.__getitem__.return_value.zipcode = "zip"
+        mock_result.result.cities.__getitem__.return_value.city = "notcity"
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+
+        mock_result.result.cities.__getitem__.return_value.city = "city"
+        mock_result.result.cities.__getitem__.return_value.state_abbreviation = (
+            "notstate"
+        )
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+
+        mock_result.result.zipcodes.__len__.return_value = 0
+        mock_result.result.cities.__getitem__.return_value.state_abbreviation = "state"
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+
+        mock_result.result.zipcodes.__len__.return_value = 1
+        mock_result.result.cities.__len__.return_value = 0
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == False
+
+        # Everything back to normal still works
+        mock_result.result.cities.__len__.return_value = 1
+        result = AddressChecker.is_valid_zipcode(*args)
+        assert result == True

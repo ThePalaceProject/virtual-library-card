@@ -7,6 +7,9 @@ from smartystreets_python_sdk.us_street import Lookup
 
 
 class AddressChecker:
+    POSTAL_ADDRESS_API = 1
+    ZIP_CODE_API = 2
+
     @staticmethod
     def is_valid_postal_address(
         first_name,
@@ -32,6 +35,26 @@ class AddressChecker:
         return False
 
     @staticmethod
+    def is_valid_zipcode(city, state, zip):
+        lookup: Lookup = Lookup(city=city, state=state, zipcode=zip)
+        client = AddressChecker._set_client(api_type=AddressChecker.ZIP_CODE_API)
+        try:
+            client.send_lookup(lookup)
+        except exceptions.SmartyException as err:
+            print(err)
+            return False
+
+        zipcodes = lookup.result.zipcodes
+        cities = lookup.result.cities
+        return (
+            len(zipcodes) > 0
+            and zipcodes[0].zipcode == zip
+            and len(cities) > 0
+            and cities[0].city == city
+            and cities[0].state_abbreviation == state
+        )
+
+    @staticmethod
     def get_user_location(latitude, longitude):
         print("get_user_location")
         try:
@@ -43,11 +66,18 @@ class AddressChecker:
         return None
 
     @staticmethod
-    def _set_client():
+    def _set_client(api_type=POSTAL_ADDRESS_API):
         auth_id = settings.SMARTY_AUTH_ID
         auth_token = settings.SMARTY_AUTH_TOKEN
+
         credentials = StaticCredentials(auth_id, auth_token)
-        client = ClientBuilder(credentials).build_us_street_api_client()
+        if api_type == AddressChecker.POSTAL_ADDRESS_API:
+            client = ClientBuilder(credentials).build_us_street_api_client()
+        elif api_type == AddressChecker.ZIP_CODE_API:
+            client = ClientBuilder(credentials).build_us_zipcode_api_client()
+        else:
+            raise Exception("Unknown API type referenced")
+
         # client = ClientBuilder(credentials).with_custom_header({'User-Agent': 'smartystreets (python@0.0.0)', 'Content-Type': 'application/json'}).build_us_street_api_client()
         # client = ClientBuilder(credentials).with_proxy('localhost:8080', 'user','password').build_us_street_api_client()
         # Uncomment the line above to try it with a proxy instead

@@ -139,7 +139,7 @@ class TestCardRequest(BaseUnitTest):
         self.do_library_card_signup_flow(c)
 
         # Mock the address check
-        mock_checker.is_valid_postal_address.return_value = True
+        mock_checker.is_valid_zipcode.return_value = True
 
         identifier = self._default_library.identifier
         resp = c.post(
@@ -173,7 +173,7 @@ class TestCardRequest(BaseUnitTest):
         self.do_library_card_signup_flow(c)
 
         # Mock the address check
-        mock_checker.is_valid_postal_address.return_value = True
+        mock_checker.is_valid_zipcode.return_value = True
 
         identifier = self._default_library.identifier
         resp = c.post(
@@ -213,7 +213,7 @@ class TestCardRequest(BaseUnitTest):
         self.do_library_card_signup_flow(c, library=library)
 
         # Mock the address checker as Nonetype, but it shouldn't matter
-        mock_checker.is_valid_postal_address = None
+        mock_checker.is_valid_zipcode = None
 
         identifier = library.identifier
         resp = c.post(
