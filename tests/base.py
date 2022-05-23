@@ -1,3 +1,5 @@
+import sys
+from logging import StreamHandler
 from random import choice
 from unittest import mock
 
@@ -8,7 +10,10 @@ from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
+from virtual_library_card.logging import log
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
+
+log._logger.addHandler(StreamHandler(stream=sys.stdout))
 
 
 class TestData:

@@ -16,7 +16,7 @@ class TestOverwriteStorage(BaseUnitTest):
         storage.exists = mock.MagicMock(return_value=True)
         result = storage.get_available_name("anyname")
 
-        assert storage.exists.call_count == 2
+        assert storage.exists.call_count == 1
         assert storage.exists.call_args[0] == (media_path,)
         assert mock_remove.call_count == 1
         assert mock_remove.call_args[0] == (media_path,)
@@ -29,7 +29,7 @@ class TestOverwriteStorage(BaseUnitTest):
 
         result = storage.get_available_name("anyname")
 
-        assert storage.exists.call_count == 2
+        assert storage.exists.call_count == 1
         assert storage.exists.call_args[0] == (media_path,)
         assert mock_remove.call_count == 0
         assert result == "anyname"

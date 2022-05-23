@@ -26,9 +26,6 @@ class OverwriteStorage(FileSystemStorage):
 
         # If the filename already exists, remove it as if it was a true file system
         path = os.path.join(settings.MEDIA_ROOT, name)
-        print(path, "storage path")
-        print(self.exists(path), "exists")
         if self.exists(path):
             os.remove(path)
-        print("ok")
         return name

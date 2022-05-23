@@ -14,6 +14,7 @@ from localflavor.us.models import USStateField, USZipCodeField
 
 from virtual_library_card.card_number import CardNumber
 from virtual_library_card.location_utils import LocationUtils
+from virtual_library_card.logging import log
 from virtual_library_card.storage import OverwriteStorage
 
 
@@ -122,10 +123,8 @@ class Library(models.Model):
         return self.get_logo_img(self.get_logo_root_url(), self.logo_filename(), True)
 
     def get_logo_root_url(self):
-        print("get_logo_root_url ", self.logo)
         if self.logo:
             return settings.MEDIA_URL
-        print("----get_logo_root_url logo null", self.logo)
         return os.path.join(settings.STATIC_URL, "images/")
 
     def state_name(self):
@@ -150,7 +149,6 @@ class Library(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
-        print("------ saving library")
         try:
             db_library: Library = Library.objects.get(
                 id=self.id
@@ -160,9 +158,10 @@ class Library(models.Model):
                 and self.sequence_start_number != db_library.sequence_start_number
             ):
                 CardNumber.reset_sequence(self)
-
+        except Library.DoesNotExist:
+            pass
         except Exception as e:
-            print("******** saving library exception", e)
+            log.exception("******** saving library exception")
         super().save(force_insert, force_update, using, update_fields)
 
 

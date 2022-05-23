@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView
 
 from virtual_library_card.geoloc import Geolocalize
+from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.user_session import UserSessionManager
 from VirtualLibraryCard.forms.forms_library_card import (
     LibraryCardDeleteForm,
@@ -49,7 +50,7 @@ class LibraryCardDeleteView(LoginRequiredMixin, UpdateView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class LibraryCardRequestSuccessView(TemplateView):
+class LibraryCardRequestSuccessView(LoggingMixin, TemplateView):
     template_name = "library_card/library_card_request_success.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -59,17 +60,14 @@ class LibraryCardRequestSuccessView(TemplateView):
             user = CustomUser.objects.filter(email=email).first()
             UserSessionManager.set_context_library_cards(context, user)
             context["user"] = user
-            print("LibraryCardRequestSuccessView get_context_data")
-            print(context)
 
         except Exception as e:
-            print(" exception")
-            print(e)
+            self.log.error(f"Exception getting context data {e}")
 
         return context
 
 
-class LibraryCardRequestView(CreateView):
+class LibraryCardRequestView(LoggingMixin, CreateView):
     model = CustomUser
     form_class = RequestLibraryCardForm
     template_name = "library_card/library_card_request.html"
@@ -83,9 +81,9 @@ class LibraryCardRequestView(CreateView):
             raise Http404(_("You are not allowed to access this page"))
 
         identifier_from_url_param = self.request.GET.get("identifier", None)
-        print("================== identifier_from_session: ", identifier)
-        print(
-            "================== identifier_from_url_param: ", identifier_from_url_param
+        self.log.debug(f"================== identifier_from_session: {identifier}")
+        self.log.debug(
+            f"================== identifier_from_url_param: {identifier_from_url_param}"
         )
 
         if identifier != identifier_from_url_param:
@@ -144,10 +142,7 @@ class LibraryCardRequestView(CreateView):
                 # kwargs['prefix'] = 'FR'
 
             except Exception as e:
-                print(" get_form_kwargs exception")
-                print(e)
-                # context = super().get_context_data(**kwargs)
-                # print(context)
+                self.log.error(e)
 
         return kwargs
 

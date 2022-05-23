@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from virtual_library_card.logging import log
 from VirtualLibraryCard.models import Library, LibraryCard
 
 
@@ -11,7 +12,7 @@ class UserSessionManager:
                 library = Library.objects.filter(identifier=identifier).first()
                 UserSessionManager.set_session_library(self, library)
             except Exception as e:
-                print(e)
+                log.error(f"Set session identifier error {e}")
             return identifier
         else:
             return UserSessionManager.set_session_info(self)
@@ -24,7 +25,7 @@ class UserSessionManager:
                 library = Library.objects.filter(identifier=identifier).first()
                 UserSessionManager.set_session_library(self, library)
             except Exception as e:
-                print(e)
+                log.error(f"Set session info error {e}")
         return identifier
 
     @staticmethod

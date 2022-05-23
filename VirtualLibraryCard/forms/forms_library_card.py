@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
 
+from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from virtual_library_card.smarty_streets import AddressChecker
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
@@ -51,7 +52,6 @@ class RequestLibraryCardForm(UserCreationForm):
 
         # Focus on form field whenever error occurred
         error_list = list(self.errors)
-        print("------------ ERRORS: ", error_list)
         if error_list:
             for item in error_list:
                 self.fields[item].widget.attrs.update({"autofocus": ""})
@@ -109,18 +109,14 @@ class RequestLibraryCardForm(UserCreationForm):
     def save(self, commit=True):
         form_email = self.cleaned_data.get("email")
         library = self.cleaned_data.get("library")
-        print(form_email, "form_email")
         existing_user: CustomUser = CustomUser.objects.filter(email=form_email).first()
 
-        print(existing_user, "existing_user")
         try:
             if existing_user:
-                print("*******user exists")
                 existing_user.library = library
                 existing_user.save()
                 user = existing_user
             else:
-                print("user do not exists")
                 user: CustomUser = super().save(commit=False)
                 user.library = library
                 user: CustomUser = super().save(commit=True)
@@ -163,9 +159,7 @@ class RequestLibraryCardForm(UserCreationForm):
                 else:
                     library_card = CustomUser.create_card_for_library(library, user)
                     library_card.save()
-                    print("-----------saved library_card")
                     Sender.send_user_welcome(library, user, library_card.number)
-                    print("-----------email sent to user")
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))
@@ -179,7 +173,7 @@ class SignupCardForm(forms.Form):
     identifier = forms.CharField(widget=forms.TextInput())
 
 
-class LibraryCardDeleteForm(forms.ModelForm):
+class LibraryCardDeleteForm(LoggingMixin, forms.ModelForm):
     class Meta(ModelForm):
         model = LibraryCard
         fields = ["id", "number", "canceled_date", "canceled_by_user"]
@@ -198,7 +192,9 @@ class LibraryCardDeleteForm(forms.ModelForm):
             update_user_library(self, user, library, all_user_library_cards)
 
         else:
-            print("library_card with this number not exist any more", number)
+            self.log.debug(
+                f"library_card with this number does not exist any more {number}"
+            )
 
         return super().save(commit=True)
 
@@ -216,7 +212,6 @@ def update_user_library(self, user, library, all_user_library_cards):
 
 
 def reactivate_library_card(canceled_library_card):
-    print("============ reactivate_library_card")
     canceled_library_card.canceled_date = None
     canceled_library_card.canceled_by_user = None
     canceled_library_card.expiration_date = None

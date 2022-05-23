@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.utils.translation import gettext as _
 from sequences.models import Sequence
 
+from virtual_library_card.logging import LoggingMixin
 from VirtualLibraryCard.forms.forms import (
     CustomAdminUserChangeForm,
     CustomUserCreationForm,
@@ -16,7 +17,7 @@ from VirtualLibraryCard.forms.forms import (
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
 
 
-class CustomUserAdmin(UserAdmin):
+class CustomUserAdmin(LoggingMixin, UserAdmin):
     add_form_template = "admin/user_add_form.html"
     add_form = CustomUserCreationForm
     form = CustomAdminUserChangeForm
@@ -106,7 +107,7 @@ class CustomUserAdmin(UserAdmin):
 
     def get_queryset(self, request):
         qs = super(CustomUserAdmin, self).get_queryset(request)
-        print(request.user.is_superuser, "request.user.is_superuser")
+        self.log.debug(f"{request.user.is_superuser} request.user.is_superuser")
         if request.user.is_superuser:
             return qs
         return qs.filter(library=request.user.library.id)

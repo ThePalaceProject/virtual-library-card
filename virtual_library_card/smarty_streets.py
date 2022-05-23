@@ -5,6 +5,8 @@ from django.conf import settings
 from smartystreets_python_sdk import ClientBuilder, StaticCredentials, exceptions
 from smartystreets_python_sdk.us_street import Lookup
 
+from virtual_library_card.logging import log
+
 
 class AddressChecker:
     POSTAL_ADDRESS_API = 1
@@ -41,7 +43,7 @@ class AddressChecker:
         try:
             client.send_lookup(lookup)
         except exceptions.SmartyException as err:
-            print(err)
+            log.error(f"Zipcode validation error {err}")
             return False
 
         zipcodes = lookup.result.zipcodes
@@ -56,13 +58,11 @@ class AddressChecker:
 
     @staticmethod
     def get_user_location(latitude, longitude):
-        print("get_user_location")
         try:
             result = AddressChecker._lookup_position(latitude, longitude)
-            print("get_user_location result", result)
             return json.loads(result)
         except exceptions.SmartyException as err:
-            print(err)
+            log.error(f"Get user location error {err}")
         return None
 
     @staticmethod
@@ -89,21 +89,21 @@ class AddressChecker:
         try:
             client.send_lookup(lookup)
         except exceptions.SmartyException as err:
-            print(err)
+            log.error(f"_run.send_lookup error {err}")
             return
 
         result = lookup.result
 
         if not result:
-            print("No candidates. This means the address is not valid.")
+            log.debug("No candidates. This means the address is not valid.")
             return
 
         first_candidate = result[0]
-        print("Address is valid. (There is at least one candidate)\n")
-        print("ZIP Code: " + first_candidate.components.zipcode)
-        print("County: " + first_candidate.metadata.county_name)
-        print("Latitude: {}".format(first_candidate.metadata.latitude))
-        print("Longitude: {}".format(first_candidate.metadata.longitude))
+        log.debug("Address is valid. (There is at least one candidate)\n")
+        log.debug("ZIP Code: " + first_candidate.components.zipcode)
+        log.debug("County: " + first_candidate.metadata.county_name)
+        log.debug("Latitude: {}".format(first_candidate.metadata.latitude))
+        log.debug("Longitude: {}".format(first_candidate.metadata.longitude))
         return first_candidate
 
     @staticmethod
@@ -142,6 +142,6 @@ class AddressChecker:
             + "&measurement=meters&results=1"
         )
         url = root_url + params_url
-        print("url", url)
+        log.debug(f"_lookup_position url: {url}")
         contents = urllib.request.urlopen(url).read()
         return contents

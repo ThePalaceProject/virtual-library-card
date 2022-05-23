@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
+from virtual_library_card.logging import log
+
 
 class Sender:
     @staticmethod
@@ -36,8 +38,8 @@ class Sender:
     @staticmethod
     def send_user_welcome(library, user, card_number):
         to = user.email
-        print("send_user_welcome to", to)
-        print("send_user_welcome from", settings.DEFAULT_FROM_EMAIL)
+
+        log.debug(f"send_user_welcome to: {to}, from: {settings.DEFAULT_FROM_EMAIL}")
         try:
             subject = _("%(library_name)s | Welcome" % {"library_name": library.name})
             html_message = render_to_string(
@@ -56,10 +58,9 @@ class Sender:
             msg.attach_alternative(html_message, "text/html")
             msg.send()
         except Exception as e:
-            print("send email error ", e)
+            log.error(f"send email error {e}")
 
     @staticmethod
     def _get_absolute_login_url(library_identifier):
         url = settings.ROOT_URL + reverse("login") + library_identifier + "/"
-        print(url, "_get_absolute_login_url")
         return url

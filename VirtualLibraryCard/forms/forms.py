@@ -6,6 +6,7 @@ from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from localflavor.us.forms import USStateSelect
 
+from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
@@ -108,7 +109,7 @@ class CustomUserCreationForm(UserCreationForm):
         ]
 
 
-class CustomAdminUserChangeForm(UserChangeForm):
+class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         state = forms.CharField(widget=USStateSelect)
@@ -147,13 +148,13 @@ class CustomAdminUserChangeForm(UserChangeForm):
                 self.fields["email"].widget.attrs["disabled"] = True
 
         except KeyError as e:
-            print("Error disabling email and first name", e)
+            self.log.error(f"Error disabling email and first name {e}")
 
         try:
             self.fields["library"].required = True
 
         except KeyError as e:
-            print("Library field is not editable")
+            self.log.error(f"Library field is not editable {e}")
 
     def get_form(self, request, obj=None, **kwargs):
         if self.request.user.is_superuser:
@@ -163,24 +164,24 @@ class CustomAdminUserChangeForm(UserChangeForm):
         super().get_form(request, obj, **kwargs)
 
     def save(self, commit=True):
-        print("-----------before save CustomAdminUserChangeForm")
+        self.log.debug("-----------before save CustomAdminUserChangeForm")
         user: CustomUser = super().save(commit)
-        print("user ", user)
+        self.log.debug(f"user {user}")
         library = user.library
         if library:
-            print("library ", library)
+            self.log.debug(f"library {library}")
             existing_library_card: LibraryCard = LibraryCard.objects.filter(
                 user=user, library=library
             ).first()
             if existing_library_card is None:
                 try:
-                    print("-----------before creating card")
+                    self.log.debug("-----------before creating card")
                     library_card = CustomUser.create_card_for_library(library, user)
-                    print("-----------before saving")
+                    self.log.debug("-----------before saving")
                     library_card.save()
-                    print("-----------saved library_card")
+                    self.log.debug("-----------saved library_card")
                     Sender.send_user_welcome(library, user, library_card.number)
                 except Exception as e:
-                    print("Exception", e)
+                    self.log.error(f"Exception {e}")
 
         return user
