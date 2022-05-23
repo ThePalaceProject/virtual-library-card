@@ -66,7 +66,9 @@ class RequestLibraryCardForm(UserCreationForm):
 
     def validate_unique(self):
         form_email = self.cleaned_data.get("email")
-        existing_user: CustomUser = CustomUser.objects.filter(email=form_email).first()
+        existing_user: CustomUser = CustomUser.objects.filter(
+            email__iexact=form_email
+        ).first()
         if existing_user is None:
             try:
                 first_name = self.cleaned_data.get("first_name")
@@ -101,6 +103,8 @@ class RequestLibraryCardForm(UserCreationForm):
                     )
             except ValidationError as e:
                 self._update_errors(e)
+        else:
+            self.add_error("email", _("Email address already in use"))
 
     def save(self, commit=True):
         form_email = self.cleaned_data.get("email")

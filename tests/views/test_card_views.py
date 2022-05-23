@@ -237,6 +237,52 @@ class TestCardRequest(BaseUnitTest):
 
         self._assert_card_request_success(resp, "test@example.com", library)
 
+    @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
+    def test_card_request_email_no_duplicates(self, mock_checker):
+        user = self.create_user(self._default_library, "TEST@t.co")
+        c = Client()
+
+        library = self.create_library(patron_address_mandatory=False)
+        # Prime the session
+        self.do_library_card_signup_flow(c, library=library)
+
+        # Mock the address checker as Nonetype, but it shouldn't matter
+        mock_checker.is_valid_zipcode = None
+
+        error_args = ("form", "email", ["Email address already in use"])
+
+        post_dict = dict(
+            library=library.id,
+            country_code="US",
+            first_name="New",
+            last_name="User",
+            email=user.email,
+            street_address_line1="Some street",
+            street_address_line2="",
+            city="city",
+            us_state=library.get_first_us_state(),
+            zip="99887",
+            over13="on",
+            password1="xx123456789",
+            password2="xx123456789",
+        )
+
+        identifier = library.identifier
+
+        for test_email in [
+            user.email,
+            user.email.upper(),
+            user.email.lower(),
+            "TEst@T.co",
+        ]:
+            post_dict["email"] = test_email
+            print(test_email)
+            resp = c.post(
+                f"/account/library_card_request/?identifier={identifier}",
+                post_dict,
+            )
+            self.assertFormError(resp, *error_args)
+
 
 class TestLibraryCardDelete(BaseUnitTest):
     def test_delete_library_card(self):
