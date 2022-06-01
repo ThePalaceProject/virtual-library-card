@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 from django.conf import settings
+from parameterized import param, parameterized
 from sequences import get_last_value
 
 from tests.base import BaseUnitTest
@@ -10,41 +11,46 @@ from VirtualLibraryCard.models import LibraryCard
 
 
 class TestCardNumber(BaseUnitTest):
+    @parameterized.expand(
+        [
+            param(limit=100, should_alert=[False, False, False]),
+            param(limit=1, should_alert=[True, True, True]),
+            param(limit=2, should_alert=[False, True, True]),
+            param(limit=3, should_alert=[False, False, True]),
+        ]
+    )
     @mock.patch("virtual_library_card.card_number.Sender")
-    def test_generate_number_from_sequence(self, mock_sender: mock.MagicMock):
+    def test_generate_number_from_sequence(
+        self, mock_sender: mock.MagicMock, limit, should_alert
+    ):
+        def assert_alerts(alert):
+            """Assert and reset the mock sender"""
+            assert mock_sender.send_admin_card_numbers_alert.call_count == (
+                0 if not alert else 1
+            )
+            if alert:
+                mock_sender.send_admin_card_numbers_alert.call_args[0][
+                    0
+                ] == self._default_library
+            mock_sender.reset_mock()
 
-        settings.CARD_NUMBERS_LIMIT_ALERT = 100
+        settings.CARD_NUMBERS_LIMIT_ALERT = limit
+
         num = CardNumber._generate_number_from_sequence(self._default_library)
         assert num == 1
-
-        # Assert the limit was reached
-        # This seems like the code is wrong in the function
-        # why would we raise an email for every card created
-        # up to a certain limit
-        mock_sender.send_admin_card_numbers_alert.assert_called_once()
-        mock_sender.send_admin_card_numbers_alert.call_args[0][
-            0
-        ] == self._default_library
+        assert_alerts(should_alert.pop(0))
 
         # Counting down
-        mock_sender.send_admin_card_numbers_alert = mock.MagicMock()  # reset
         self._default_library.sequence_down = True
         num = CardNumber._generate_number_from_sequence(self._default_library)
         assert num == -2  # instead of 2
-        mock_sender.send_admin_card_numbers_alert.assert_called_once()
-        mock_sender.send_admin_card_numbers_alert.call_args[0][
-            0
-        ] == self._default_library
+        assert_alerts(should_alert.pop(0))
 
         # Counting down from a limit
-        mock_sender.send_admin_card_numbers_alert = mock.MagicMock()  # reset
         self._default_library.sequence_end_number = 100
         num = CardNumber._generate_number_from_sequence(self._default_library)
-        assert num == 97  # counting down from 100 now
-        mock_sender.send_admin_card_numbers_alert.assert_called_once()
-        mock_sender.send_admin_card_numbers_alert.call_args[0][
-            0
-        ] == self._default_library
+        assert num == 100 - 3  # counting down from 100 now
+        assert_alerts(should_alert.pop(0))
 
     def test_reset_sequence(self):
         CardNumber._generate_number_from_sequence(self._default_library)

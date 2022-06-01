@@ -14,12 +14,15 @@ class CardNumber:
             CardNumber._card_number_sequence_name(library),
             CardNumber._get_sequence_init_value(library, library.sequence_start_number),
         )
+
         if library.sequence_down:
             next_val = library.sequence_start_number - next_val
             if library.sequence_end_number is not None:
                 next_val += library.sequence_end_number
+
         must_send_alert = (
-            next_val - library.sequence_start_number < settings.CARD_NUMBERS_LIMIT_ALERT
+            abs(next_val - library.sequence_start_number)
+            >= settings.CARD_NUMBERS_LIMIT_ALERT
         )
         if must_send_alert:
             try:
