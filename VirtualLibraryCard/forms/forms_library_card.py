@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from captcha.fields import ReCaptchaField
 from django import forms
+from django.apps import apps
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
@@ -42,6 +44,10 @@ class RequestLibraryCardForm(UserCreationForm):
         self.fields["us_state"].widget.attrs["disabled"] = True
         self.fields["over13"].required = True
         self.fields["first_name"].required = True
+
+        # keep the captcha part dynamic, in case captcha is not supported
+        if apps.is_installed("captcha"):
+            self.fields["captcha"] = ReCaptchaField()
 
         user = kwargs["instance"]
         library: Library = user.library

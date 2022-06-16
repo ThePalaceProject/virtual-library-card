@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest import mock
 
+from django.apps import apps
 from django.core import mail
 from django.test import Client
 
@@ -133,7 +134,7 @@ class TestCardRequest(BaseUnitTest):
         assert LibraryCard.objects.filter(user=new_user, library=library).exists()
 
     @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
-    def test_card_request(self, mock_checker):
+    def test_card_request(self, mock_checker, with_captcha=True):
         c = Client()
 
         # Prime the session
@@ -143,6 +144,7 @@ class TestCardRequest(BaseUnitTest):
         mock_checker.is_valid_zipcode.return_value = True
 
         identifier = self._default_library.identifier
+        captcha = {"g-recaptcha-response": "xxxcaptcha"} if with_captcha else {}
         resp = c.post(
             f"/account/library_card_request/?identifier={identifier}",
             dict(
@@ -159,6 +161,7 @@ class TestCardRequest(BaseUnitTest):
                 over13="on",
                 password1="xx123456789",
                 password2="xx123456789",
+                **captcha,
             ),
         )
 
@@ -205,6 +208,7 @@ class TestCardRequest(BaseUnitTest):
             "email",
             "street_address_line1",
             "zip",
+            "captcha",
         ]
         for field in expected_errors_fields:
             self.assertFormError(resp, "form", field, ["This field is required."])
@@ -237,6 +241,7 @@ class TestCardRequest(BaseUnitTest):
                 over13="on",
                 password1="xx123456789",
                 password2="xx123456789",
+                **{"g-recaptcha-response": "xxxcaptcha"},
             ),
         )
 
@@ -270,6 +275,7 @@ class TestCardRequest(BaseUnitTest):
             over13="on",
             password1="xx123456789",
             password2="xx123456789",
+            **{"g-recaptcha-response": "xxxcaptcha"},
         )
 
         identifier = library.identifier
@@ -287,6 +293,17 @@ class TestCardRequest(BaseUnitTest):
                 post_dict,
             )
             self.assertFormError(resp, *error_args)
+
+    def test_card_request_no_captcha_installed(self):
+        # Remove captcha from the installed apps
+        installed_apps = [ac.name for ac in apps.get_app_configs()]
+        installed_apps.remove("captcha")
+        apps.set_installed_apps(installed_apps)
+
+        new_apps = [ac.name for ac in apps.get_app_configs()]
+        assert "captcha" not in new_apps
+        self.test_card_request(with_captcha=False)
+        apps.unset_installed_apps()
 
 
 class TestLibraryCardDelete(BaseUnitTest):

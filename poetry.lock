@@ -252,6 +252,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "django-recaptcha"
+version = "3.0.0"
+description = "Django recaptcha form field/widget app."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+django = "*"
+
+[[package]]
 name = "django-render-block"
 version = "0.8.1"
 description = "Render a particular block from a template to a string."
@@ -754,7 +765,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "8ee8c93d59b1b6f167603827ece3f2027afe56a08db143cfbff4194afc805b8c"
+content-hash = "c05a95490033df5d0b1339e1de4a56d5fc11f6739462c270b7711d71d06a53a2"
 
 [metadata.files]
 asgiref = [
@@ -842,6 +853,10 @@ django-material = [
 ]
 django-materialize-css = [
     {file = "django_materialize_css-0.0.1-py2.py3-none-any.whl", hash = "sha256:21c9e999a5354f293bdd177281d90253a94074169a2f803c691cbae2b5961550"},
+]
+django-recaptcha = [
+    {file = "django-recaptcha-3.0.0.tar.gz", hash = "sha256:253197051288923cae675d7eff91b619e3775311292a5dbaf27a8a55ffebc670"},
+    {file = "django_recaptcha-3.0.0-py3-none-any.whl", hash = "sha256:1aed69fd6ac8fd9e99e52665392ae6748f8b6339ace656fad779fe0c6c915a52"},
 ]
 django-render-block = [
     {file = "django-render-block-0.8.1.tar.gz", hash = "sha256:edbc5d444cc50f3eb3387cf17f6f1014bf19d6018f680861cdeae9e0306003fa"},

@@ -239,6 +239,13 @@ The website and API are in the same Django project and app. The `HAS_API` and `H
 what is deployed. You can adjust these values in the `settings/dev.py` file.
 Typically, on a developer machine you will set both to `True`.
 
+## Other settings
+
+The `RECAPTCHA_PUBLIC_KEY` and `RECAPTCHA_PRIVATE_KEY` must be set if the `captcha` django plugin
+is installed via the `INSTALLED_APPS` setting.
+If the `catcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
+captcha to be present on that page.
+
 ### 7. Start the web server (runserver)
 
 ### 8. Schedule clear_sessions in crontab
