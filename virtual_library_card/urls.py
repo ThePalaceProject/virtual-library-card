@@ -30,6 +30,11 @@ from VirtualLibraryCard.views import (
     views_password,
     views_profile,
 )
+from VirtualLibraryCard.views.views_verification import (
+    EmailVerificationErrorView,
+    EmailVerificationResendToken,
+    EmailVerificationTokenView,
+)
 
 urlpatterns = []
 
@@ -138,6 +143,21 @@ if settings.HAS_WEBSITE:
             "account/change-password/<first_name>/password_change_done/",
             PasswordChangeDoneView.as_view(),
             name="password_change_done",
+        ),
+        path(
+            "verify/email",
+            EmailVerificationTokenView.as_view(),
+            name="email_token_verify",
+        ),
+        path(
+            "verify/email/resend",
+            EmailVerificationResendToken.as_view(),
+            name="email_token_resend",
+        ),
+        path(
+            "verify/email/error",
+            EmailVerificationErrorView.as_view(),
+            name="email_token_error",
         ),
     ]
 

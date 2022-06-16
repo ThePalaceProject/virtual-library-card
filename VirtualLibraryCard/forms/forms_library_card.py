@@ -119,6 +119,9 @@ class RequestLibraryCardForm(UserCreationForm):
             else:
                 user: CustomUser = super().save(commit=False)
                 user.library = library
+                user.email_verified = (
+                    False  # If this is a new user, email is not verified yet
+                )
                 user: CustomUser = super().save(commit=True)
 
             if user:
@@ -159,7 +162,7 @@ class RequestLibraryCardForm(UserCreationForm):
                 else:
                     library_card = CustomUser.create_card_for_library(library, user)
                     library_card.save()
-                    Sender.send_user_welcome(library, user, library_card.number)
+                    Sender.send_email_verification(library, user)
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))

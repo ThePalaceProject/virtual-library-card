@@ -1,0 +1,19 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <p>{% blocktrans with link=link %} Please verify your email address by clicking this {{ link }} {% endblocktrans %}</p>
+    <p>{% blocktrans with library_name=library_name %} Ignore this email if you did not register for {{ library_name }}
+        {% endblocktrans %}</p>
+    <p>{% blocktrans %} This link is valid for 24 hours, 
+        thereafter you may recreate a new verification email by visiting the same link {% endblocktrans %}</p>
+</body>
+
+</html>

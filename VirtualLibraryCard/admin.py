@@ -40,7 +40,15 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     fieldsets = (
         (
             _("Personal Info"),
-            {"fields": ("first_name", "last_name", "email", "over13")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "over13",
+                    "email_verified",
+                )
+            },
         ),
         (
             _("Address"),

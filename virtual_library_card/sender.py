@@ -6,6 +6,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
 from virtual_library_card.logging import log
+from virtual_library_card.tokens import Tokens, TokenTypes
 
 
 class Sender:
@@ -59,6 +60,30 @@ class Sender:
             msg.send()
         except Exception as e:
             log.error(f"send email error {e}")
+
+    @staticmethod
+    def send_email_verification(library, user):
+        try:
+            host = settings.BASE_URL
+            subject = _(
+                "Verify your email address %(name)s" % {"name": user.first_name}
+            )
+            token = Tokens.generate(TokenTypes.EMAIL_VERIFICATION, email=user.email)
+            html_string = render_to_string(
+                "email/email_verification.html",
+                {
+                    "link": f"{host}{reverse('email_token_verify')}?token={token}",
+                    "library_name": library.name,
+                },
+            )
+            plain_message = strip_tags(html_string)
+            msg = EmailMultiAlternatives(
+                subject, plain_message, settings.DEFAULT_FROM_EMAIL, to=[user.email]
+            )
+            msg.attach_alternative(html_string, "text/html")
+            msg.send()
+        except Exception as e:
+            log.exception(f"Verification Email: Could not email {user.email}")
 
     @staticmethod
     def _get_absolute_login_url(library_identifier):

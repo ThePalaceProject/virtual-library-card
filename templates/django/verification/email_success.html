@@ -1,0 +1,24 @@
+{% extends 'minimal_layout.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ block.super }} | {% blocktrans %}Email Verification{% endblocktrans %}
+{% endblock %}
+
+
+{% block content %}
+<div class="embeded_page_top">
+    {% include "includes/header_logo.html" %}
+
+    <h1 class="embeded_page_title">| {% blocktrans %}Email Verification{% endblocktrans %} </h1>
+</div>
+<div>
+    {% blocktrans with user_name=user.first_name %}
+    <p>
+        Your email has been verified successfully {{ user_name }}!!
+    </p>
+    {% endblocktrans %}
+</div>
+{% endblock %}

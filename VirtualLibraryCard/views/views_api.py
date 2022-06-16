@@ -25,6 +25,14 @@ class PinTestViewSet(LoggingMixin, APIView):
             authenticated_user = authenticate(email=user.email, password=pin)
             self.log.debug(f"authenticated_user {authenticated_user}")
             if authenticated_user:
+                if not user.email_verified:
+                    return Response(
+                        {
+                            "RETCOD": 1,
+                            "ERRNUM": 5,
+                            "ERRMSG": _("Patron has an unverified email address"),
+                        }
+                    )
                 return Response({"RETCOD": 0})
             else:
                 return Response(

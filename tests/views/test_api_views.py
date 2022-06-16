@@ -58,6 +58,18 @@ class TestPinTestViewSet(BaseUnitTest):
         response = self.client.get(f"/PATRONAPI/{card.number}/{password}/pintest")
         assert response.content == b"<HTML>\n<BODY>\nRETCOD=0<BR>\n</BODY>\n</HTML>"
 
+    def test_unverified_user(self):
+        user = self.create_user(self._default_library, email_verified=False)
+        card = self.create_library_card(user, self._default_library)
+        password = "apassword"
+        user.set_password(password)
+        user.save()
+
+        response = self.client.get(f"/api/{card.number}/{password}/pintest")
+        content = response.content.decode()
+        assert "RETCOD=1" in content
+        assert "ERRNUM=5" in content
+
 
 class TestUserLibraryCardViewSet(BaseUnitTest):
     def _setup_view(self, card: LibraryCard) -> UserLibraryCardViewSet:

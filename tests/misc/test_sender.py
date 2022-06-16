@@ -1,6 +1,7 @@
 from unittest import mock
 
 from django.conf import settings
+from django.core import mail
 
 from tests.base import BaseUnitTest
 from virtual_library_card.sender import Sender
@@ -96,3 +97,15 @@ class TestSender(BaseUnitTest):
             url
             == f"{settings.ROOT_URL}/accounts/login/{self._default_library.identifier}/"
         )
+
+    # @mock.patch("virtual_library_card.sender.EmailMultiAlternatives")
+    def test_email_verification(self):
+        Sender.send_email_verification(self._default_library, self._default_user)
+
+        assert len(mail.outbox) == 1
+        sent = mail.outbox[0]
+        assert (
+            sent.subject == f"Verify your email address {self._default_user.first_name}"
+        )
+        assert sent.to == [self._default_user.email]
+        assert "Please verify your email" in sent.body

@@ -275,6 +275,9 @@ class CustomUser(AbstractUser):
         _("first name"), max_length=30, null=False, blank=False
     )
 
+    # Default is true so that current and admin created users are not disabled
+    email_verified = models.BooleanField(default=True)
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"

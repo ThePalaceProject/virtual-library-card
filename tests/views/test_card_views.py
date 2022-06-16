@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest import mock
 
+from django.core import mail
 from django.test import Client
 
 from tests.base import BaseUnitTest
@@ -164,6 +165,10 @@ class TestCardRequest(BaseUnitTest):
         self._assert_card_request_success(
             resp, "test@example.com", self._default_library
         )
+
+        # Verification email sent
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].subject == "Verify your email address New"
 
     @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
     def test_card_request_bad_data(self, mock_checker):
