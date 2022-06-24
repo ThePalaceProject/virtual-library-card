@@ -23,6 +23,8 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "sequence_start_number": 0,
             "sequence_down": False,
             "patron_address_mandatory": True,
+            "pin_text": "pin",
+            "barcode_text": "barcode",
         }
 
         data = {}
@@ -94,6 +96,8 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             sequence_start_number=0,
             sequence_down=False,
             patron_address_mandatory=True,
+            pin_text="pin",
+            barcode_text="barcode",
         )
         self._add_library_states_data(data)
 
@@ -135,6 +139,12 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             response, "adminform", "sequence_down", ["This field is required."]
         )
         self.assertFormError(response, "adminform", "logo", ["This field is required."])
+        self.assertFormError(
+            response, "adminform", "barcode_text", ["This field is required."]
+        )
+        self.assertFormError(
+            response, "adminform", "pin_text", ["This field is required."]
+        )
 
     def test_change_library_valid(self):
         changes = {

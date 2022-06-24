@@ -65,14 +65,14 @@ class TestSender(BaseUnitTest):
         mock_render.return_value = render_string
 
         Sender.send_user_welcome(library, user, card)
-        mock_render.call_count == 1
-        mock_render.call_args[0] == (
+        assert mock_render.call_count == 1
+        assert mock_render.call_args[0] == (
             "email/welcome_user.html",
             {
-                "library_name": library.name,
                 "identifier": library.identifier,
-                "card_number": card.number,
+                "card_number": card,
                 "login_url": Sender._get_absolute_login_url(library.identifier),
+                "library": library,
             },
         )
 
@@ -109,3 +109,25 @@ class TestSender(BaseUnitTest):
         )
         assert sent.to == [self._default_user.email]
         assert "Please verify your email" in sent.body
+
+    def test_libary_email_configurables(self):
+        library = self._default_library
+        user = self._default_user
+        card = self._default_card
+
+        library.barcode_text = "totally not a number"
+        library.pin_text = "very special secret"
+
+        Sender.send_user_welcome(library, user, card)
+        assert len(mail.outbox) == 1
+        msg = mail.outbox[0]
+
+        # New text is present
+        assert "Your library totally not a number is" in msg.body
+        assert (
+            "Use the totally not a number and the very special secret you set"
+            in msg.body
+        )
+        # Original text is not present
+        assert "card number" not in msg.body.lower()
+        assert "password" not in msg.body.lower()

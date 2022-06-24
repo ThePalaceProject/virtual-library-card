@@ -46,10 +46,10 @@ class Sender:
             html_message = render_to_string(
                 "email/welcome_user.html",
                 {
-                    "library_name": library.name,
                     "identifier": library.identifier,
                     "card_number": card_number,
                     "login_url": Sender._get_absolute_login_url(library.identifier),
+                    "library": library,
                 },
             )
             plain_message = strip_tags(html_message)

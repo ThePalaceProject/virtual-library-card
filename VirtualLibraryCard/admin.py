@@ -184,6 +184,15 @@ class LibraryAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        (
+            _("Configurations"),
+            {
+                "fields": (
+                    "barcode_text",
+                    "pin_text",
+                )
+            },
+        ),
     )
     readonly_fields = ["logo_thumbnail"]
 

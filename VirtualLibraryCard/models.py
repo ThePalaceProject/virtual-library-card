@@ -81,12 +81,18 @@ class Library(models.Model):
     sequence_down = models.BooleanField(
         choices=BOOL_CHOICES, blank=False, null=False, default=False
     )
+
+    # Configurables
     patron_address_mandatory = models.BooleanField(
         choices=((True, _("Yes")), (False, _("No"))),
         blank=False,
         default=True,
         verbose_name="Require Patron Address",
     )
+    barcode_text = models.CharField(
+        max_length=255, default="barcode", verbose_name="Barcode Text"
+    )
+    pin_text = models.CharField(max_length=255, default="pin", verbose_name="Pin Text")
 
     def get_us_states(self):
         return [ls.us_state for ls in self.library_states.order_by("id").all()]

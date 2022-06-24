@@ -2,16 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<p>{% blocktrans with library_name=library_name %}Thank you for joining the {{ library_name }}{% endblocktrans %} </p>
-<p>{% blocktrans with card_number=card_number %}Your library card number is
+<p>{% blocktrans with library_name=library.name %}Thank you for joining the {{ library_name }}{% endblocktrans %} </p>
+<p>{% blocktrans with card_number=card_number barcode_text=library.barcode_text%}Your library {{ barcode_text }} is
     <strong>{{ card_number }}</strong>{% endblocktrans %} </p>
-<p>{% blocktrans %}Please remember this card number so you may use it to access library ebooks and audiobooks from your
-    library in SimplyE.{% endblocktrans %}
-    {% blocktrans %}Use the card number and the Password you set when you applied together.{% endblocktrans %} </p>
-<p>{% blocktrans %}You can go to your personal space to manage your account, manage your information or even reset your
-    password if needed{% endblocktrans %} </p>
+<p>{% blocktrans with barcode_text=library.barcode_text%}Please remember this {{ barcode_text }} so you may use it to access library ebooks and audiobooks from your
+    library in Palace.{% endblocktrans %}
+    {% blocktrans with barcode_text=library.barcode_text pin_text=library.pin_text%}Use the {{ barcode_text }} and the {{ pin_text }} you set when you applied together.{% endblocktrans %} </p>
+<p>{% blocktrans with pin_text=library.pin_text%}You can go to your personal space to manage your account, manage your information or even reset your
+    {{ pin_text }} if needed{% endblocktrans %} </p>
 {% blocktrans %}You can login in your personal space here: {% endblocktrans %}
 <a href="{{ login_url }}">{{ login_url }}</a>
-<p>{% blocktrans with library_name=library_name %}The {{ library_name }} team{% endblocktrans %}</p>
+<p>{% blocktrans with library=library %}The {{ library.name }} team{% endblocktrans %}</p>
 </body>
 </html>
