@@ -14,7 +14,13 @@ from VirtualLibraryCard.forms.forms import (
     LibraryChangeForm,
     LibraryCreationForm,
 )
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
+from VirtualLibraryCard.models import (
+    CustomUser,
+    Library,
+    LibraryAllowedEmailDomains,
+    LibraryCard,
+    LibraryStates,
+)
 
 
 class CustomUserAdmin(LoggingMixin, UserAdmin):
@@ -127,6 +133,12 @@ class LibraryStatesInline(admin.StackedInline):
     verbose_name_plural = "Library States"
 
 
+class LibraryAllowedDomainsInline(admin.StackedInline):
+    model = LibraryAllowedEmailDomains
+    extra = 0
+    verbose_name_plural = "Allowed Email Domains"
+
+
 class LibraryAdmin(admin.ModelAdmin):
     add_form = LibraryCreationForm
     form = LibraryChangeForm
@@ -146,7 +158,7 @@ class LibraryAdmin(admin.ModelAdmin):
     ]
     list_filter = ("card_validity_months", "sequence_start_number")
 
-    inlines = [LibraryStatesInline]
+    inlines = [LibraryStatesInline, LibraryAllowedDomainsInline]
 
     fieldsets = (
         (

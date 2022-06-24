@@ -47,6 +47,18 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
 
         data.update(
             {
+                "library_email_domains-TOTAL_FORMS": 0,
+                "library_email_domains-INITIAL_FORMS": 0,
+                "library_email_domains-MIN_NUM_FORMS": 0,
+                "library_email_domains-MAX_NUM_FORMS": 1000,
+                "library_email_domains-__prefix__-library": library.id
+                if library
+                else "",
+            }
+        )
+
+        data.update(
+            {
                 "library_states-TOTAL_FORMS": total_forms,
                 "library_states-INITIAL_FORMS": total_prev_states,
                 "library_states-MIN_NUM_FORMS": 0,
@@ -184,3 +196,26 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
 
         self.mock_request.user.is_superuser = False
         assert ["identifier"] == self.admin.get_readonly_fields(self.mock_request)
+
+    def test_add_allowed_email_domain(self):
+        library = self.create_library()
+        changes = self._get_library_change_data(library)
+        changes.update(
+            {
+                "library_email_domains-TOTAL_FORMS": 1,
+                "library_email_domains-INITIAL_FORMS": 0,
+                "library_email_domains-MIN_NUM_FORMS": 0,
+                "library_email_domains-MAX_NUM_FORMS": 100,
+                "library_email_domains-0-id": "",
+                "library_email_domains-0-library": library.id,
+                "library_email_domains-0-domain": "example.org",
+            }
+        )
+        del changes["logo"]
+
+        response = self.test_client.post(self.get_change_url(library), changes)
+        assert response.status_code == 302
+
+        library.refresh_from_db()
+        assert len(library.library_email_domains.all()) == 1
+        assert library.library_email_domains.all()[0].domain == "example.org"

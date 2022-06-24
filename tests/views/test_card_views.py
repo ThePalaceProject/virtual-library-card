@@ -6,7 +6,11 @@ from django.core import mail
 from django.test import Client
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.models import CustomUser, LibraryCard
+from VirtualLibraryCard.models import (
+    CustomUser,
+    LibraryAllowedEmailDomains,
+    LibraryCard,
+)
 
 
 class TestCardSignup(BaseUnitTest):
@@ -304,6 +308,43 @@ class TestCardRequest(BaseUnitTest):
         assert "captcha" not in new_apps
         self.test_card_request(with_captcha=False)
         apps.unset_installed_apps()
+
+    @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
+    def test_card_invalid_email_domain(self, mock_checker):
+        library = self.create_library()
+        LibraryAllowedEmailDomains(library=library, domain="example.org").save()
+
+        client = Client()
+        self.do_library_card_signup_flow(client, library)
+
+        post_dict = dict(
+            library=library.id,
+            country_code="US",
+            first_name="New",
+            last_name="User",
+            email="user@notexample.com",
+            street_address_line1="Some street",
+            street_address_line2="",
+            city="city",
+            us_state=library.get_first_us_state(),
+            zip="99887",
+            over13="on",
+            password1="xx123456789",
+            password2="xx123456789",
+            **{"g-recaptcha-response": "xxxcaptcha"},
+        )
+
+        resp = client.post(
+            f"/account/library_card_request/?identifier={library.identifier}",
+            post_dict,
+        )
+
+        self.assertFormError(
+            resp,
+            "form",
+            "email",
+            errors=["User must be part of allowed domains: ['example.org']"],
+        )
 
 
 class TestLibraryCardDelete(BaseUnitTest):

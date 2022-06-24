@@ -2,16 +2,23 @@ import random
 from datetime import datetime
 from unittest.mock import MagicMock
 
+import django
 import pytest
 from datedelta import datedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from sequences import get_last_value
 
 from tests.base import BaseUnitTest
 from virtual_library_card.card_number import CardNumber
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.models import (
+    CustomUser,
+    Library,
+    LibraryAllowedEmailDomains,
+    LibraryCard,
+)
 
 
 class TestLibraryModel(BaseUnitTest):
@@ -83,6 +90,35 @@ class TestLibraryModel(BaseUnitTest):
         """library.state_name() is Not really used anywhere but still testing for it"""
         library = self.create_library(us_states=["NY"])
         assert library.state_name() == "New York"
+
+    def test_allowed_domains(self):
+        library = self.create_library()
+        related = LibraryAllowedEmailDomains(library=library, domain="Example.org")
+        related.save()
+        related.refresh_from_db()
+
+        # Domain is lowercased
+        assert related.domain == "example.org"
+
+        # Differently cased domain still trips the unique constraint
+        with pytest.raises(
+            django.db.utils.IntegrityError,
+            match="duplicate key value violates unique constraint",
+        ):
+            with django.db.transaction.atomic():
+                LibraryAllowedEmailDomains(library=library, domain="examPLE.org").save()
+
+        # CustomUser unsavable in case of unmatched domain
+        with pytest.raises(
+            ValidationError,
+            match="User must be part of allowed domains: \['example.org'\]",
+        ):
+            with django.db.transaction.atomic():
+                CustomUser(library=library, email="email@notexample.org").save()
+
+        # Same domain must work, case-insensitive
+        CustomUser(library=library, email="email@EXample.org").save()
+        assert CustomUser.objects.filter(email="email@EXample.org").count() == 1
 
     def test_save(self):
         # test the reset sequence is called

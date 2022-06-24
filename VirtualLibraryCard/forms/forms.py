@@ -185,3 +185,15 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
                     self.log.error(f"Exception {e}")
 
         return user
+
+    def is_valid(self) -> bool:
+        email = self.data.get("email", self.instance.email)
+        library_id = self.data.get("library")
+        if library_id:
+            # Fake user with the right info, unsaved
+            user = CustomUser(email=email, library=Library.objects.get(id=library_id))
+            if not user.is_valid_email_domain():
+                self.add_error("email", _("Invalid email domain"))
+                return False
+
+        return super().is_valid()

@@ -1,11 +1,14 @@
 import os
+import re
 from datetime import datetime
+from typing import List
 
 import datedelta
 import django.utils.timezone
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -22,6 +25,14 @@ def value_to_link(_value, _display_label):
     if _value is not None:
         return '<a href="' + _value + '" target="_blank" >' + _display_label + "</a>"
     return ""
+
+
+class LowerCharField(models.CharField):
+    """CharField like column, but forces values to lowercase before saving to the DB"""
+
+    def get_prep_value(self, value: str) -> str:
+        value = value.lower()
+        return super().get_prep_value(value)
 
 
 class Library(models.Model):
@@ -170,6 +181,9 @@ class Library(models.Model):
             log.exception("******** saving library exception")
         super().save(force_insert, force_update, using, update_fields)
 
+    def get_allowed_email_domains(self) -> List[str]:
+        return [e.domain for e in self.library_email_domains.all()]
+
 
 class LibraryStates(models.Model):
     """Library to state relations"""
@@ -182,6 +196,31 @@ class LibraryStates(models.Model):
         related_name="library_states",
     )
     us_state = USStateField(_("State"), blank=False)
+
+
+def validate_domain(domain: str) -> bool:
+    matched = re.match("[a-z0-9-_]+\.[a-z0-9-_]{2,}", domain, flags=re.IGNORECASE)
+    return matched is not None
+
+
+class LibraryAllowedEmailDomains(models.Model):
+    """Email domains allowed on a per library basis"""
+
+    library = models.ForeignKey(
+        Library,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name="library_email_domains",
+    )
+    domain = LowerCharField(validators=[validate_domain], max_length=100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["library", "domain"], name="%(app_label)s_library_domain_unique"
+            )
+        ]
 
 
 class CustomUserManager(BaseUserManager):
@@ -244,6 +283,11 @@ class CustomUserManager(BaseUserManager):
         )
 
 
+def default_library():
+    """The default library for a CustomUser, must use only(id) else future migrations will break"""
+    return Library.objects.order_by("id").only("id").first()
+
+
 class CustomUser(AbstractUser):
     street_address_line1 = models.CharField(
         _("Street address line 1"), max_length=255, null=True, blank=False
@@ -258,7 +302,11 @@ class CustomUser(AbstractUser):
     )
     zip = USZipCodeField(_("Zip code"), null=False, blank=False, default="0")
     library = models.ForeignKey(
-        Library, on_delete=models.PROTECT, null=False, blank=False, default=1
+        Library,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        default=default_library,  # Default to the first library found
     )
     # AUTHENTICATION
     permanent_id = models.CharField(max_length=255, null=True)
@@ -349,9 +397,34 @@ class CustomUser(AbstractUser):
     def super_users():
         return CustomUser.objects.filter(is_superuser=True)
 
+    def is_valid_email_domain(self) -> bool:
+        """Test the validity of the users email domain"""
+        email_domain = self.email.split("@")[-1]
+        allowed_domains = self.library.get_allowed_email_domains()
+        if allowed_domains:
+            return email_domain.lower() in allowed_domains
+
+        return True
+
+    def clean(self) -> None:
+        if not self.is_valid_email_domain():
+            raise ValidationError(
+                dict(
+                    email=f"User must be part of allowed domains: {self.library.get_allowed_email_domains()}"
+                )
+            )
+        return super().clean()
+
     def save(self, *args, **kwargs):
         if self.is_superuser:
             self.is_staff = True
+
+        if not self.is_valid_email_domain():
+            raise ValidationError(
+                dict(
+                    email=f"User must be part of allowed domains: {self.library.get_allowed_email_domains()}"
+                )
+            )
 
         super(CustomUser, self).save(*args, **kwargs)
 

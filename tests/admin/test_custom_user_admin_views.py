@@ -2,7 +2,11 @@ from unittest.mock import MagicMock
 
 from tests.base import BaseAdminUnitTest
 from VirtualLibraryCard.admin import CustomUserAdmin
-from VirtualLibraryCard.models import CustomUser, LibraryCard
+from VirtualLibraryCard.models import (
+    CustomUser,
+    LibraryAllowedEmailDomains,
+    LibraryCard,
+)
 
 
 class TestCustomUserAdminView(BaseAdminUnitTest):
@@ -217,3 +221,34 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             self.mock_request, obj=self._default_user
         )
         assert ["library_cards", "library", "us_state"] == ro_fields
+
+    def test_allowed_email_domains(self):
+        library = self.create_library()
+        LibraryAllowedEmailDomains(library=library, domain="example.org").save()
+        user = self.create_user(
+            self._default_library,
+            email="test@user.com",
+            street_address_line1="street",
+            city="city",
+            zip="99999",
+        )
+
+        data = self._get_user_change_data(user, library_id=library.id)
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        self.assertFormError(
+            response,
+            "adminform",
+            "email",
+            ["Invalid email domain"],
+        )
+
+        data = self._get_user_change_data(
+            user, library_id=library.id, email="user@example.org"
+        )
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.email == "user@example.org"
+        assert user.library == library
