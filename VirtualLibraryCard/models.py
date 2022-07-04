@@ -300,7 +300,7 @@ class CustomUser(AbstractUser):
     country_code = models.CharField(
         max_length=255, null=True, blank=False, default="US"
     )
-    zip = USZipCodeField(_("Zip code"), null=False, blank=False, default="0")
+    zip = USZipCodeField(_("Zip code"), null=True, blank=False)
     library = models.ForeignKey(
         Library,
         on_delete=models.PROTECT,

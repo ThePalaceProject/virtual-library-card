@@ -156,6 +156,10 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         except KeyError as e:
             self.log.error(f"Library field is not editable {e}")
 
+        self.fields["street_address_line1"].required = False
+        self.fields["city"].required = False
+        self.fields["zip"].required = False
+
     def get_form(self, request, obj=None, **kwargs):
         if self.request.user.is_superuser:
             self.exclude.append("Permissions")  # here!

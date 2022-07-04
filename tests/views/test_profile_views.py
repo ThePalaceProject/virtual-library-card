@@ -94,11 +94,6 @@ class TestProfileEditView(BaseUnitTest):
             response, "form", "first_name", ["This field is required."]
         )
         self.assertFormError(response, "form", "email", ["This field is required."])
-        self.assertFormError(
-            response, "form", "street_address_line1", ["This field is required."]
-        )
-        self.assertFormError(response, "form", "city", ["This field is required."])
-        self.assertFormError(response, "form", "zip", ["This field is required."])
 
         # not required fields
         self.assertRaises(
@@ -109,6 +104,34 @@ class TestProfileEditView(BaseUnitTest):
             "last_name",
             ["This field is required."],
         )
+
+        self.assertRaises(
+            AssertionError,
+            self.assertFormError,
+            response,
+            "form",
+            "street_address_line1",
+            ["This field is required."],
+        )
+
+        self.assertRaises(
+            AssertionError,
+            self.assertFormError,
+            response,
+            "form",
+            "city",
+            ["This field is required."],
+        )
+
+        self.assertRaises(
+            AssertionError,
+            self.assertFormError,
+            response,
+            "form",
+            "zip",
+            ["This field is required."],
+        )
+
         self.assertRaises(
             AssertionError,
             self.assertFormError,

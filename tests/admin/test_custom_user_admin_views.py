@@ -136,11 +136,6 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         self.assertFormError(
             response, "adminform", "first_name", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "street_address_line1", ["This field is required."]
-        )
-        self.assertFormError(response, "adminform", "city", ["This field is required."])
-        self.assertFormError(response, "adminform", "zip", ["This field is required."])
 
         # not required fields
         self.assertRaises(
@@ -149,6 +144,32 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             response,
             "adminform",
             "last_name",
+            ["This field is required."],
+        )
+
+        self.assertRaises(
+            AttributeError,
+            self.assertFormError,
+            response,
+            "adminform",
+            "street_address_line1",
+            ["This field is required."],
+        )
+        self.assertRaises(
+            AttributeError,
+            self.assertFormError,
+            response,
+            "adminform",
+            "city",
+            ["This field is required."],
+        )
+
+        self.assertRaises(
+            AttributeError,
+            self.assertFormError,
+            response,
+            "adminform",
+            "zip",
             ["This field is required."],
         )
 
