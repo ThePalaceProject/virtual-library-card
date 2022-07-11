@@ -226,13 +226,6 @@ Notes:
 
         DEFAULT_SUPERUSER_FIRST_NAME = "superuser"
 
-### Other Settings
-
-`JWT_SECRET` needs to be set to any string, longer the better.
-The code uses this value to sign JWT tokens, which are currently only used for user verification emails.
-`BASE_URL` should be the target hosting environments hostname address with http schema,
-eg. locally it is "http://localhost:8000", where as in the cloud it would be something like "https://vlc.example.com"
-
 ### 6. Select what (website or/and API) will be deployed
 
 The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags allow to control

@@ -64,7 +64,7 @@ class Sender:
     @staticmethod
     def send_email_verification(library, user):
         try:
-            host = settings.BASE_URL
+            host = settings.ROOT_URL
             subject = _(
                 "Verify your email address %(name)s" % {"name": user.first_name}
             )

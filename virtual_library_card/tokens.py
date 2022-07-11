@@ -16,7 +16,7 @@ class Tokens:
         exp = datetime.utcnow() + timedelta(days=expires_in_days)
         return jwt.encode(
             dict(type=typ, exp=exp.timestamp(), **data),
-            settings.JWT_SECRET,
+            settings.SECRET_KEY,
             algorithm="HS256",
         )
 
@@ -24,11 +24,11 @@ class Tokens:
     def verify(token: str) -> str:
         """Verify a token"""
         try:
-            return jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
+            return jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             data = jwt.decode(
                 token,
-                settings.JWT_SECRET,
+                settings.SECRET_KEY,
                 algorithms=["HS256"],
                 options=dict(verify_exp=False),
             )
