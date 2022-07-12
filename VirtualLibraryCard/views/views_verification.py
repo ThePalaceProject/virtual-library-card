@@ -1,6 +1,5 @@
-from typing import Any
+from typing import Any, Dict
 
-from black import Dict
 from django import forms
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
