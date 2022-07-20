@@ -101,9 +101,7 @@ class RequestLibraryCardForm(UserCreationForm):
                 if is_valid_address:
                     super().validate_unique()
                 else:
-                    self.add_error(
-                        "street_address_line1", _("Please check all address fields")
-                    )
+                    self.add_error("zip", _("Please check all address fields"))
                     raise forms.ValidationError(
                         _("The address you entered does not seem to be correct")
                     )

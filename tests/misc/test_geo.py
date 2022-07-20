@@ -185,6 +185,18 @@ class TestAddressChecker(BaseUnitTest):
 
     @mock.patch("virtual_library_card.smarty_streets.Lookup")
     @mock.patch("virtual_library_card.smarty_streets.AddressChecker._set_client")
+    def test_is_valid_zipcode_zip_re(
+        self, mock_client: mock.MagicMock, mock_lookup: mock.MagicMock
+    ):
+        args = ("city", "state", "123123-1234")
+        AddressChecker.is_valid_zipcode(*args)
+        assert mock_lookup.call_count == 1
+        assert mock_lookup.call_args == mock.call(
+            city="city", state="state", zipcode="123123"
+        )
+
+    @mock.patch("virtual_library_card.smarty_streets.Lookup")
+    @mock.patch("virtual_library_card.smarty_streets.AddressChecker._set_client")
     def test_is_valid_zipcode_exc(
         self, mock_client: mock.MagicMock, mock_lookup: mock.MagicMock
     ):

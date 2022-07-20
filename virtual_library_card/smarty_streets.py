@@ -1,4 +1,5 @@
 import json
+import re
 import urllib
 
 from django.conf import settings
@@ -38,6 +39,12 @@ class AddressChecker:
 
     @staticmethod
     def is_valid_zipcode(city, state, zip):
+        # Keep only the numerical first half of a zipcode
+        # that MAY have +'s or -'s, smarty streets does not accept such zips
+        match: re.Match = re.match(r"^([0-9]{3,}).*", zip)
+        if match is not None and len(match.groups()) > 0:
+            zip = match.groups()[0]
+
         lookup: Lookup = Lookup(city=city, state=state, zipcode=zip)
         client = AddressChecker._set_client(api_type=AddressChecker.ZIP_CODE_API)
         try:

@@ -189,6 +189,7 @@ class CardSignupView(FormView):
             country = location["adminArea1"]
             city = location["adminArea5"]
             zipcode = location["postalCode"]
+
             context.update(
                 {
                     "identifier": library.identifier,

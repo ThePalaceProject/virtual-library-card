@@ -54,7 +54,7 @@ class TestCardSignup(BaseUnitTest):
                             "adminArea1": "US",
                             "adminArea3": "NC",
                             "adminArea5": "city",
-                            "postalCode": "998867",
+                            "postalCode": "998867-55",
                         }
                     ]
                 }
@@ -70,6 +70,8 @@ class TestCardSignup(BaseUnitTest):
             resp.url
             == f"/account/library_card_request/?identifier={library.identifier}"
         )
+
+        assert c.session["zipcode"] == "998867-55"
 
     @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
     def test_signup_redirect_negative(self, mock_geolocalize: mock.MagicMock):
