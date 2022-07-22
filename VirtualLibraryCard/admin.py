@@ -168,6 +168,7 @@ class LibraryAdmin(admin.ModelAdmin):
                     "identifier",
                     "name",
                     "patron_address_mandatory",
+                    "age_verification_mandatory",
                     "logo",
                 )
             },

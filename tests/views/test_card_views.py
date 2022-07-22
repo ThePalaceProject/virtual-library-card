@@ -1,16 +1,19 @@
 from datetime import datetime
 from unittest import mock
 
+from django import forms
 from django.apps import apps
 from django.core import mail
-from django.test import Client
+from django.test import Client, RequestFactory
 
 from tests.base import BaseUnitTest
+from VirtualLibraryCard.forms.forms_library_card import RequestLibraryCardForm
 from VirtualLibraryCard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
 )
+from VirtualLibraryCard.views.views_library_card import LibraryCardRequestView
 
 
 class TestCardSignup(BaseUnitTest):
@@ -347,6 +350,24 @@ class TestCardRequest(BaseUnitTest):
             "email",
             errors=["User must be part of allowed domains: ['example.org']"],
         )
+
+    def test_age_verification(self):
+        """over13 form field should be hidden and default to false"""
+        library = self.create_library(age_verification_mandatory=False)
+        client = Client()
+        self.do_library_card_signup_flow(client, library)
+        # We want to test the form_kwargs method specifically
+        request = RequestFactory().get(
+            f"/account/library_card_request/?identifier={library.identifier}"
+        )
+        request.session = client.session
+        view = LibraryCardRequestView(request=request)
+        view.get_form_kwargs()
+        assert view.model.over13 == False
+        # And the corresponding form created with the same model
+        form = RequestLibraryCardForm(instance=view.model)
+        assert type(form.fields["over13"].widget) == forms.HiddenInput
+        assert form.instance.over13 == False
 
 
 class TestLibraryCardDelete(BaseUnitTest):

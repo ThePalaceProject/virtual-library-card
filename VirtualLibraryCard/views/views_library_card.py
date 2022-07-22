@@ -138,6 +138,11 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
                 self.model.is_superuser = False
                 self.model.is_staff = False
                 self.model.is_active = True
+
+                # Default for age verification should be false
+                if library.age_verification_mandatory is False:
+                    self.model.over13 = False
+
                 kwargs["instance"] = self.model
                 # kwargs['prefix'] = 'FR'
 

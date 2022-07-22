@@ -150,6 +150,10 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         except KeyError as e:
             self.log.error(f"Error disabling email and first name {e}")
 
+        if instance and instance.library.age_verification_mandatory == False:
+            # Don't show this in case we don't need age verification
+            self.fields["over13"].widget = forms.HiddenInput()
+
         try:
             self.fields["library"].required = True
 

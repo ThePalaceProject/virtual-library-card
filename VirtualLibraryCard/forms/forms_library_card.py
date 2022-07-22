@@ -55,6 +55,9 @@ class RequestLibraryCardForm(UserCreationForm):
             self.fields["street_address_line1"].required = False
             self.fields["city"].required = False
             self.fields["zip"].required = False
+        if library.age_verification_mandatory == False:
+            # Don't show this in case we don't need age verification
+            self.fields["over13"].widget = forms.HiddenInput()
 
         # Focus on form field whenever error occurred
         error_list = list(self.errors)

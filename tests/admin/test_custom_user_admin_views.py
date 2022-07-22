@@ -1,7 +1,10 @@
 from unittest.mock import MagicMock
 
+from django import forms
+
 from tests.base import BaseAdminUnitTest
 from VirtualLibraryCard.admin import CustomUserAdmin
+from VirtualLibraryCard.forms.forms import CustomAdminUserChangeForm
 from VirtualLibraryCard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
@@ -273,3 +276,10 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         user.refresh_from_db()
         assert user.email == "user@example.org"
         assert user.library == library
+
+    def test_age_verification_mandatory(self):
+        """over13 field should be a Hidden field now"""
+        library = self.create_library(age_verification_mandatory=False)
+        user = self.create_user(library)
+        form = CustomAdminUserChangeForm(instance=user)
+        assert type(form.fields["over13"].widget) == forms.HiddenInput

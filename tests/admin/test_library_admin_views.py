@@ -23,6 +23,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "sequence_start_number": 0,
             "sequence_down": False,
             "patron_address_mandatory": True,
+            "age_verification_mandatory": True,
             "pin_text": "pin",
             "barcode_text": "barcode",
         }
@@ -108,6 +109,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             sequence_start_number=0,
             sequence_down=False,
             patron_address_mandatory=True,
+            age_verification_mandatory=True,
             pin_text="pin",
             barcode_text="barcode",
         )
