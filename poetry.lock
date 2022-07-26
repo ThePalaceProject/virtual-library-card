@@ -194,11 +194,11 @@ django-compressor = "*"
 
 [[package]]
 name = "django-crispy-forms"
-version = "1.10.0"
+version = "1.14.0"
 description = "Best way to have Django DRY forms"
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.7"
 
 [[package]]
 name = "django-htmlmin"
@@ -768,7 +768,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "bc0b0bc2ef68f139465fc23e94594359143aa11e2f65b76788233e7aea2efe85"
+content-hash = "ff4f4bf166b6be1cf35482b66e02206d71b96cce6961c106d23ee369bb90f33e"
 
 [metadata.files]
 asgiref = [
@@ -837,8 +837,8 @@ django-compressor-postcss = [
     {file = "django_compressor_postcss-0.8.2-py2.py3-none-any.whl", hash = "sha256:c443412f01f8abbb9f138e12ca2342c35d27208c4475ece8b437ef9961c3f012"},
 ]
 django-crispy-forms = [
-    {file = "django-crispy-forms-1.10.0.tar.gz", hash = "sha256:d3f808d20cafe20fd38a49a47e72db1fd519fcf31bef4f47f008619336a3ebff"},
-    {file = "django_crispy_forms-1.10.0-py3-none-any.whl", hash = "sha256:92ed3fdc52c08d21d60adbb9de24e432c590e66e894f43cee0974fc959209976"},
+    {file = "django-crispy-forms-1.14.0.tar.gz", hash = "sha256:35887b8851a931374dd697207a8f56c57a9c5cb9dbf0b9fa54314da5666cea5b"},
+    {file = "django_crispy_forms-1.14.0-py3-none-any.whl", hash = "sha256:bc4d2037f6de602d39c0bc452ac3029d1f5d65e88458872cc4dbc01c3a400604"},
 ]
 django-htmlmin = [
     {file = "django-htmlmin-0.11.0.tar.gz", hash = "sha256:e41b2a2157570846645cc636a9bddde8aa3e03f6834a9211e61a17f2ed42b87e"},
