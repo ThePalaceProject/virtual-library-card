@@ -292,3 +292,13 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         user = self.create_user(library)
         form = CustomAdminUserChangeForm(instance=user)
         assert type(form.fields["over13"].widget) == forms.HiddenInput
+
+    def test_list_filter(self):
+        self.mock_request.user = MagicMock()
+        self.mock_request.user.is_superuser = True
+        filters = self.admin.get_list_filter(self.mock_request)
+        assert "library" in filters
+
+        self.mock_request.user.is_superuser = False
+        filters = self.admin.get_list_filter(self.mock_request)
+        assert "library" not in filters

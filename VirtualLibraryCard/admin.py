@@ -1,5 +1,5 @@
 import csv
-from typing import TYPE_CHECKING, Any, List, Type
+from typing import TYPE_CHECKING, Any, List, Tuple, Type
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
@@ -48,7 +48,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         "nb_library_cards",
     ]
     list_display_links = ("first_name", "last_name", "email")
-    list_filter = UserAdmin.list_filter + ("library", "us_state")
     fieldsets = (
         (
             _("Personal Info"),
@@ -100,6 +99,13 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     # Eg. LibraryCard admin form
     search_fields = ["email"]
     ordering = ["email"]
+
+    def get_list_filter(self, request: Any) -> List[Any]:
+        list_filter = super().get_list_filter(request)
+        if request.user.is_superuser:
+            list_filter = list_filter + ("library",)
+        list_filter = list_filter + ("us_state",)
+        return list_filter
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -279,7 +285,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
         "canceled_by_user",
         "library",
     ]
-    list_filter = ("library", "expiration_date")
+
     actions = ["export_as_csv"]
     readonly_fields = (
         "number",
@@ -303,6 +309,13 @@ class LibraryCardAdmin(admin.ModelAdmin):
             ]
         else:
             return ["number", "canceled_date", "canceled_by_user", "created"]
+
+    def get_list_filter(self, request: Any) -> Tuple[Any]:
+        return (
+            ("library", "expiration_date")
+            if request.user.is_superuser
+            else ("expiration_date",)
+        )
 
     def get_queryset(self, request):
         qs = super(LibraryCardAdmin, self).get_queryset(request)
