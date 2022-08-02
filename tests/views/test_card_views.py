@@ -130,6 +130,34 @@ class TestCardSignup(BaseUnitTest):
             in resp.content.decode()
         )
 
+    @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
+    def test_signup_all_states_allowed(self, mock_geolocalize):
+        library = self.create_library(allow_all_us_states=True, us_states=[])
+        mock_geolocalize.get_user_location.return_value = {
+            "results": [
+                {
+                    "locations": [
+                        {
+                            "adminArea1": "US",
+                            "adminArea3": "Any State",
+                            "adminArea5": "city",
+                            "postalCode": "998867",
+                        }
+                    ]
+                }
+            ]
+        }
+        c = Client()
+        resp = c.post(
+            f"/account/library_card_signup/{library.identifier}/",
+            dict(lat=10, long=10, identifier=library.identifier),
+        )
+        assert resp.status_code == 302
+        assert (
+            resp.url
+            == f"/account/library_card_request/?identifier={library.identifier}"
+        )
+
 
 class TestCardRequest(BaseUnitTest):
     def _assert_card_request_success(self, resp, email, library):

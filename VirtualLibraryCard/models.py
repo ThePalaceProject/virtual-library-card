@@ -100,6 +100,12 @@ class Library(models.Model):
         default=True,
         verbose_name="Require Patron Address",
     )
+    allow_all_us_states = models.BooleanField(
+        choices=((True, _("Yes")), (False, _("No"))),
+        blank=False,
+        default=False,
+        verbose_name="Allow All US States",
+    )
     barcode_text = models.CharField(
         max_length=255, default="barcode", verbose_name="Barcode Text"
     )

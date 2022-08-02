@@ -1,4 +1,5 @@
 import csv
+from typing import TYPE_CHECKING, Any, List, Type
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -21,6 +22,9 @@ from VirtualLibraryCard.models import (
     LibraryCard,
     LibraryStates,
 )
+
+if TYPE_CHECKING:
+    from django.contrib.admin.options import InlineModelAdmin
 
 
 class CustomUserAdmin(LoggingMixin, UserAdmin):
@@ -158,8 +162,6 @@ class LibraryAdmin(admin.ModelAdmin):
     ]
     list_filter = ("card_validity_months", "sequence_start_number")
 
-    inlines = [LibraryStatesInline, LibraryAllowedDomainsInline]
-
     fieldsets = (
         (
             _("Identity"),
@@ -203,6 +205,7 @@ class LibraryAdmin(admin.ModelAdmin):
                 "fields": (
                     "barcode_text",
                     "pin_text",
+                    "allow_all_us_states",
                 )
             },
         ),
@@ -227,6 +230,12 @@ class LibraryAdmin(admin.ModelAdmin):
             return []
         else:
             return ["identifier"]
+
+    def get_inlines(self, request: Any, obj: Library) -> List[Type["InlineModelAdmin"]]:
+        """Dynamic inline forms based on library configs"""
+        if obj and obj.allow_all_us_states is True:
+            return [LibraryAllowedDomainsInline]
+        return [LibraryStatesInline, LibraryAllowedDomainsInline]
 
     def export_as_csv(self, request, queryset):
         return export_list_as_csv(self, request, queryset)

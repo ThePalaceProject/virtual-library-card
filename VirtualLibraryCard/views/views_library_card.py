@@ -210,7 +210,10 @@ class CardSignupView(FormView):
                     context,
                 )
 
-            if state not in library.get_us_states():
+            if (
+                library.allow_all_us_states is False
+                and state not in library.get_us_states()
+            ):
                 return render(
                     self.request,
                     "library_card/library_card_request_denied.html",

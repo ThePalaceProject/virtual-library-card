@@ -2,7 +2,11 @@ from io import FileIO
 from unittest.mock import MagicMock
 
 from tests.base import BaseAdminUnitTest
-from VirtualLibraryCard.admin import LibraryAdmin
+from VirtualLibraryCard.admin import (
+    LibraryAdmin,
+    LibraryAllowedDomainsInline,
+    LibraryStatesInline,
+)
 from VirtualLibraryCard.models import Library, LibraryStates
 
 
@@ -26,6 +30,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "age_verification_mandatory": True,
             "pin_text": "pin",
             "barcode_text": "barcode",
+            "allow_all_us_states": False,
         }
 
         data = {}
@@ -112,6 +117,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             age_verification_mandatory=True,
             pin_text="pin",
             barcode_text="barcode",
+            allow_all_us_states=False,
         )
         self._add_library_states_data(data)
 
@@ -221,3 +227,18 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         library.refresh_from_db()
         assert len(library.library_email_domains.all()) == 1
         assert library.library_email_domains.all()[0].domain == "example.org"
+
+    def test_get_inlines(self):
+        library = self.create_library(allow_all_us_states=False)
+        assert self.admin.get_inlines(None, obj=library) == [
+            LibraryStatesInline,
+            LibraryAllowedDomainsInline,
+        ]
+        library.allow_all_us_states = True
+        assert self.admin.get_inlines(None, obj=library) == [
+            LibraryAllowedDomainsInline
+        ]
+        assert self.admin.get_inlines(None, obj=None) == [
+            LibraryStatesInline,
+            LibraryAllowedDomainsInline,
+        ]
