@@ -142,6 +142,26 @@ class TestCardRequest(BaseUnitTest):
         new_user = CustomUser.objects.get(email=email)
         assert LibraryCard.objects.filter(user=new_user, library=library).exists()
 
+    def _get_card_request_data(self, library, email, **data):
+        post = dict(
+            library=library.id,
+            country_code="US",
+            first_name="New",
+            last_name="User",
+            email=email,
+            street_address_line1="Some street",
+            street_address_line2="",
+            city="city",
+            us_state=library.get_first_us_state(),
+            zip="99887",
+            over13="on",
+            password1="xx123456789",
+            password2="xx123456789",
+            **{"g-recaptcha-response": "xxxcaptcha"},
+        )
+        post.update(data)
+        return post
+
     @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
     def test_card_request(self, mock_checker, with_captcha=True):
         c = Client()
@@ -156,21 +176,8 @@ class TestCardRequest(BaseUnitTest):
         captcha = {"g-recaptcha-response": "xxxcaptcha"} if with_captcha else {}
         resp = c.post(
             f"/account/library_card_request/?identifier={identifier}",
-            dict(
-                library=self._default_library.id,
-                country_code="US",
-                first_name="New",
-                last_name="User",
-                email="test@example.com",
-                street_address_line1="Some street",
-                street_address_line2="",
-                city="city",
-                us_state=self._default_library.get_first_us_state(),
-                zip="99887",
-                over13="on",
-                password1="xx123456789",
-                password2="xx123456789",
-                **captcha,
+            self._get_card_request_data(
+                self._default_library, "test@example.com", **captcha
             ),
         )
 
@@ -236,25 +243,23 @@ class TestCardRequest(BaseUnitTest):
         identifier = library.identifier
         resp = c.post(
             f"/account/library_card_request/?identifier={identifier}",
-            dict(
-                library=library.id,
-                country_code="CA",  # Not US
-                first_name="New",
-                last_name="User",
-                email="test@example.com",
-                street_address_line1="Some street",
-                street_address_line2="",
-                city="city",
-                us_state=library.get_first_us_state(),
-                zip="99887",
-                over13="on",
-                password1="xx123456789",
-                password2="xx123456789",
-                **{"g-recaptcha-response": "xxxcaptcha"},
+            self._get_card_request_data(
+                library,
+                "test@example.com",
+                country_code="CA",
+                street_address_line1="",
+                zip="",
+                city="",
             ),
         )
-
         self._assert_card_request_success(resp, "test@example.com", library)
+
+        ## Form specifics
+        user = self.create_user(library)
+        form = RequestLibraryCardForm(instance=user)
+        for name in ("city", "zip", "street_address_line1", "street_address_line2"):
+            assert form.fields[name].required == False
+            assert type(form.fields[name].widget) == forms.HiddenInput
 
     @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
     def test_card_request_email_no_duplicates(self, mock_checker):
@@ -270,23 +275,7 @@ class TestCardRequest(BaseUnitTest):
 
         error_args = ("form", "email", ["Email address already in use"])
 
-        post_dict = dict(
-            library=library.id,
-            country_code="US",
-            first_name="New",
-            last_name="User",
-            email=user.email,
-            street_address_line1="Some street",
-            street_address_line2="",
-            city="city",
-            us_state=library.get_first_us_state(),
-            zip="99887",
-            over13="on",
-            password1="xx123456789",
-            password2="xx123456789",
-            **{"g-recaptcha-response": "xxxcaptcha"},
-        )
-
+        post_dict = self._get_card_request_data(library, user.email)
         identifier = library.identifier
 
         for test_email in [
@@ -296,7 +285,6 @@ class TestCardRequest(BaseUnitTest):
             "TEst@T.co",
         ]:
             post_dict["email"] = test_email
-            print(test_email)
             resp = c.post(
                 f"/account/library_card_request/?identifier={identifier}",
                 post_dict,
@@ -351,7 +339,8 @@ class TestCardRequest(BaseUnitTest):
             errors=["User must be part of allowed domains: ['example.org']"],
         )
 
-    def test_age_verification(self):
+    @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
+    def test_age_verification(self, mock_checker):
         """over13 form field should be hidden and default to false"""
         library = self.create_library(age_verification_mandatory=False)
         client = Client()
@@ -368,6 +357,16 @@ class TestCardRequest(BaseUnitTest):
         form = RequestLibraryCardForm(instance=view.model)
         assert type(form.fields["over13"].widget) == forms.HiddenInput
         assert form.instance.over13 == False
+
+        ## Do an actual request
+        resp = client.post(
+            f"/account/library_card_request/?identifier={library.identifier}",
+            self._get_card_request_data(library, "user@example.org", over13="False"),
+        )
+
+        self._assert_card_request_success(resp, "user@example.org", library)
+        user = CustomUser.objects.filter(email="user@example.org").first()
+        assert user.over13 == False
 
 
 class TestLibraryCardDelete(BaseUnitTest):

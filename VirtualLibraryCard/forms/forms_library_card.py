@@ -52,11 +52,13 @@ class RequestLibraryCardForm(UserCreationForm):
         user = kwargs["instance"]
         library: Library = user.library
         if library.patron_address_mandatory == False:
-            self.fields["street_address_line1"].required = False
-            self.fields["city"].required = False
-            self.fields["zip"].required = False
+            # Hide unwanted address fields
+            for name in ("street_address_line1", "street_address_line2", "city", "zip"):
+                self.fields[name].required = False
+                self.fields[name].widget = forms.HiddenInput()
         if library.age_verification_mandatory == False:
             # Don't show this in case we don't need age verification
+            self.fields["over13"].required = False
             self.fields["over13"].widget = forms.HiddenInput()
 
         # Focus on form field whenever error occurred
