@@ -133,6 +133,7 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.created_library_card = None
 
         try:
             instance = getattr(self, "instance", None)
@@ -187,6 +188,7 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
                     library_card = CustomUser.create_card_for_library(library, user)
                     self.log.debug("-----------before saving")
                     library_card.save()
+                    self.created_library_card = library_card  # used by the view
                     self.log.debug("-----------saved library_card")
                     Sender.send_user_welcome(library, user, library_card.number)
                 except Exception as e:

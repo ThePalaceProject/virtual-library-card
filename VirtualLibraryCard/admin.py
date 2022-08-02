@@ -1,9 +1,11 @@
 import csv
 from typing import TYPE_CHECKING, Any, List, Type
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.http import HttpResponse
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from sequences.models import Sequence
 
@@ -106,6 +108,28 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
                 obj.us_state = obj.library.get_first_us_state()
 
         super().save_model(request, obj, form, change)
+
+    def save_form(self, request: Any, form: Any, change: Any):
+        # This will call form.save()
+        user: CustomUser = super().save_form(request, form, change)
+        if not user:
+            return
+
+        if (
+            isinstance(form, CustomAdminUserChangeForm)
+            and form.created_library_card is not None
+        ):
+            card = form.created_library_card
+            name = f"admin:{LibraryCard._meta.app_label}_{LibraryCard._meta.model_name}_change"
+            change_route = reverse(name, kwargs={"object_id": card.id})
+            messages.info(
+                request,
+                mark_safe(
+                    f"Created Library Card <a href='{change_route}'>{card.number}</a>"
+                ),
+            )
+
+        return user
 
     def get_readonly_fields(self, request, obj=None):
         ro_fields = ["library_cards"]

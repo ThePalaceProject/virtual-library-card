@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 from django import forms
+from django.contrib.messages import get_messages
 
 from tests.base import BaseAdminUnitTest
 from VirtualLibraryCard.admin import CustomUserAdmin
@@ -128,6 +129,14 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         assert changed_user.street_address_line2 == "street_address2"
         assert changed_user.city == "city"
         assert changed_user.zip == "99999"
+
+        msgs = get_messages(response.wsgi_request)
+        assert len(msgs) == 2  # created card and save success messages
+        for msg in msgs:
+            if "Created Library Card" in msg.message:
+                break
+        else:
+            assert False, "'Created Library Card' not found in request messages"
 
     def test_required_fields_change_form(self):
         response = self.test_client.post(self.get_change_url(self._default_user), {})
