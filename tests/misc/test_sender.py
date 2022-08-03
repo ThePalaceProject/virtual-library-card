@@ -73,6 +73,7 @@ class TestSender(BaseUnitTest):
                 "card_number": card,
                 "login_url": Sender._get_absolute_login_url(library.identifier),
                 "library": library,
+                "user_email_verified": True,
             },
         )
 

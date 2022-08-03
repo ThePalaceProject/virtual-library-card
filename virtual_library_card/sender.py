@@ -50,6 +50,7 @@ class Sender:
                     "card_number": card_number,
                     "login_url": Sender._get_absolute_login_url(library.identifier),
                     "library": library,
+                    "user_email_verified": user.email_verified,
                 },
             )
             plain_message = strip_tags(html_message)

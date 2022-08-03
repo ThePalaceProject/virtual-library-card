@@ -172,6 +172,7 @@ class RequestLibraryCardForm(UserCreationForm):
                     library_card = CustomUser.create_card_for_library(library, user)
                     library_card.save()
                     Sender.send_email_verification(library, user)
+                    Sender.send_user_welcome(library, user, library_card)
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))

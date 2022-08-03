@@ -13,5 +13,11 @@
 {% blocktrans %}You can login in your personal space here: {% endblocktrans %}
 <a href="{{ login_url }}">{{ login_url }}</a>
 <p>{% blocktrans with library=library %}The {{ library.name }} team{% endblocktrans %}</p>
+
+{% if user_email_verified == False %}
+    <p>{% blocktrans %} You must verify your email address before using this account. 
+        An email with instructions for verifying your account has already been sent to this address.{% endblocktrans %}</p>
+{% endif %}
+
 </body>
 </html>

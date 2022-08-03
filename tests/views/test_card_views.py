@@ -213,9 +213,14 @@ class TestCardRequest(BaseUnitTest):
             resp, "test@example.com", self._default_library
         )
 
-        # Verification email sent
-        assert len(mail.outbox) == 1
+        # Verification and welcome email sent
+        assert len(mail.outbox) == 2
         assert mail.outbox[0].subject == "Verify your email address New"
+        assert mail.outbox[1].subject == f"{self._default_library.name} | Welcome"
+        assert (
+            "You must verify your email address before using this account"
+            in mail.outbox[1].body
+        )
 
     @mock.patch("VirtualLibraryCard.forms.forms_library_card.AddressChecker")
     def test_card_request_bad_data(self, mock_checker):
