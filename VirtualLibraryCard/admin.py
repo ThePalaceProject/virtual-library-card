@@ -62,6 +62,13 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
             },
         ),
         (
+            _("Password"),
+            {
+                "fields": ("password",),
+                "description": "This password/PIN is used to login to this website and is the pin associated with your library card in the Palace app.",
+            },
+        ),
+        (
             _("Address"),
             {
                 "fields": (

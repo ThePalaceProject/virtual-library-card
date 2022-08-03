@@ -125,7 +125,6 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             "library",
             "user_permissions",
         ]
-        exclude = ["password"]
         readonly_fields = ["email"]
 
     def library_cards(self):
