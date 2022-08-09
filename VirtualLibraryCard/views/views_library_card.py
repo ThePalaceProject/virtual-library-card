@@ -8,6 +8,7 @@ from django.views.generic import CreateView, FormView, TemplateView, UpdateView
 from virtual_library_card.geoloc import Geolocalize
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.user_session import UserSessionManager
+from VirtualLibraryCard.business_rules.library import LibraryRules
 from VirtualLibraryCard.forms.forms_library_card import (
     LibraryCardDeleteForm,
     RequestLibraryCardForm,
@@ -210,10 +211,10 @@ class CardSignupView(FormView):
                     context,
                 )
 
-            if (
-                library.allow_all_us_states is False
-                and state not in library.get_us_states()
-            ):
+            valid_address = LibraryRules.validate_user_address_fields(
+                library, us_state=state
+            )
+            if not valid_address.us_state_valid:
                 return render(
                     self.request,
                     "library_card/library_card_request_denied.html",

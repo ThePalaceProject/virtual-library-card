@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
-from virtual_library_card.smarty_streets import AddressChecker
+from VirtualLibraryCard.business_rules.library import LibraryRules
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
 
@@ -94,16 +94,11 @@ class RequestLibraryCardForm(UserCreationForm):
                 zip = self.cleaned_data.get("zip")
                 library: Library = self.cleaned_data.get("library")
 
-                if library.patron_address_mandatory:
-                    is_valid_address = AddressChecker.is_valid_zipcode(
-                        city, us_state, zip
-                    )
-                else:
-                    is_valid_address = True
+                valid_address = LibraryRules.validate_user_address_fields(
+                    library, zip=zip, city=city, us_state=us_state
+                )
 
-                # is_valid_address = True
-                # FOR DEV PURPOSE ONLY
-                if is_valid_address:
+                if valid_address.zip_valid:
                     super().validate_unique()
                 else:
                     self.add_error("zip", _("Please check all address fields"))

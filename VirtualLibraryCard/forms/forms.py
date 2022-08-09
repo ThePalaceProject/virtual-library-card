@@ -8,6 +8,7 @@ from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
+from VirtualLibraryCard.business_rules.library import LibraryRules
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
 
@@ -203,6 +204,31 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             user = CustomUser(email=email, library=Library.objects.get(id=library_id))
             if not user.is_valid_email_domain():
                 self.add_error("email", _("Invalid email domain"))
+                return False
+
+            # validate the zip/state fields on user edit
+            current_user = self.instance
+            library: Library = current_user.library
+
+            # If the state was edited, the user must reside within the library defined states
+            us_state = self.data.get("us_state")
+            zip = self.data.get("zip")
+            city = self.data.get("city")
+
+            validation = LibraryRules.validate_user_address_fields(
+                library, us_state=us_state, zip=zip, city=city
+            )
+            if not validation.us_state_valid:
+                self.add_error(
+                    "us_state",
+                    _(
+                        f"The user must be within the library defined states: {','.join(library.get_us_states())}"
+                    ),
+                )
+                return False
+
+            if not validation.zip_valid:
+                self.add_error("zip", _(f"The zip is not valid for this address"))
                 return False
 
         return super().is_valid()

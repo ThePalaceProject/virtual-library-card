@@ -148,10 +148,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         ro_fields = ["library_cards"]
         if request.user and not request.user.is_superuser:
             ro_fields.append("library")
-        if (
-            obj and obj.us_state
-        ):  # This is the case when obj is already created i.e. it's an edit
-            ro_fields.append("us_state")
 
         return ro_fields
 
