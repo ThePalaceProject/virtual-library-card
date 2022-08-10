@@ -139,6 +139,12 @@
                 visibility: hidden;
             }
 
+            /* Hide unrequired save button types in add and change forms*/
+            .submit-row input[name="_addanother"],
+            .submit-row input[name="_continue"] {
+                display: none;
+            }
+
         </style>
     {% endblock %}
 
