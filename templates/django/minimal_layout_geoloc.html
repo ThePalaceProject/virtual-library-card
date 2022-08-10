@@ -37,9 +37,6 @@
         // not AFTER. For some obscure reasons, Maretialize geerates labels for INPUTs after these, while it
         // generates labels for SELECT before these. So we capitulate and rely to this hack...
         $('.required').find('input ~ label').append(' *');
-        // We also cleanup any value prefilled by the browser:
-        $('input[type=email]').delay(125).val('');
-        $('input[type=password]').delay(125).val('');
 
         $('form').bind('submit', function () {
             $(this).find(':input').prop('disabled', false);
