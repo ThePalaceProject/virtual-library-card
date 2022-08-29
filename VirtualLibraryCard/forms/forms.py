@@ -111,6 +111,9 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
+    class Media:
+        css = {"all": ("css/admin.css",)}
+
     class Meta(UserChangeForm):
         model = CustomUser
         state = forms.CharField(widget=USStateSelect)
@@ -134,6 +137,11 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.created_library_card = None
+
+        # Customize the password change link UI
+        password = self.fields.get("password")
+        if password:
+            password.help_text = "<span class='password-help'><a href='../password'>CHANGE PASSWORD</a></span>"
 
         try:
             instance = getattr(self, "instance", None)
