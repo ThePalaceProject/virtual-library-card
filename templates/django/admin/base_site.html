@@ -47,6 +47,7 @@
 
             .module h2, .module caption, .inline-group h2 {
                 background-color: var(--primary-color-faded);
+                color: var(--primary-fg);
             }
 
             div.breadcrumbs {
@@ -57,8 +58,9 @@
                 color: var(--primary-color-faded);
             }
 
-            .selector-chosen h2 {
-                background: var(--primary-color-faded) !important;
+            form .selector-chosen h2 {
+                background: var(--primary-color-faded);
+                color: var(--primary-fg);
             }
 
             .button, input[type=submit], input[type=button], .submit-row input, a.button {
@@ -144,6 +146,13 @@
             .submit-row input[name="_continue"] {
                 display: none;
             }
+
+            .password-help {
+                font-size: 1.2em;
+                border: 1px gray solid;
+                padding: 4px;
+            }
+
 
         </style>
     {% endblock %}

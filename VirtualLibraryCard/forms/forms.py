@@ -111,9 +111,6 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
-    class Media:
-        css = {"all": ("css/admin.css",)}
-
     class Meta(UserChangeForm):
         model = CustomUser
         state = forms.CharField(widget=USStateSelect)
