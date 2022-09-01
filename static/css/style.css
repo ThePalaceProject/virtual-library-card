@@ -864,15 +864,6 @@ h1, h2, h3, h4, h5, h6, figure {
     -webkit-transition: 0.5s;
     -o-transition: 0.5s;
     transition: 0.5s;
-    padding: 8px 20px;
-}
-
-.btn.btn-md {
-    padding: 8px 20px !important;
-}
-
-.btn.btn-lg {
-    padding: 18px 36px !important;
 }
 
 .btn:hover, .btn:active, .btn:focus {
