@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path
 
+from VirtualLibraryCard.admin import admin_site
 from VirtualLibraryCard.views import (
     CustomLoginView,
     LibraryCardDeleteView,
@@ -60,7 +60,7 @@ if settings.HAS_WEBSITE:
         # HOME
         path("", views_profile.ProfileView.as_view()),
         # ADMIN
-        path("admin/", admin.site.urls),
+        path("admin/", admin_site.urls),
         path("accounts/", include("django.contrib.auth.urls")),
         # APPLY FOR LIBRARY CARD
         path(

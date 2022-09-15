@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -7,6 +11,9 @@ from django.utils.translation import gettext as _
 
 from virtual_library_card.logging import log
 from virtual_library_card.tokens import Tokens, TokenTypes
+
+if TYPE_CHECKING:
+    from VirtualLibraryCard.models import Library
 
 
 class Sender:
@@ -85,6 +92,22 @@ class Sender:
             msg.send()
         except Exception as e:
             log.exception(f"Verification Email: Could not email {user.email}")
+
+    @staticmethod
+    def send_bulk_upload_report(email: str, library: Library, report_file: str):
+        subject = _(
+            "Bulk Upload Results | %(library_name)s" % dict(library_name=library.name)
+        )
+        html_string = render_to_string(
+            "email/csv_upload_report.html", {"library_name": library.name}
+        )
+        plain_message = strip_tags(html_string)
+        msg = EmailMultiAlternatives(
+            subject, plain_message, settings.DEFAULT_FROM_EMAIL, to=[email]
+        )
+        msg.attach_alternative(html_string, "text/html")
+        msg.attach_file(report_file)
+        msg.send()
 
     @staticmethod
     def _get_absolute_login_url(library_identifier):

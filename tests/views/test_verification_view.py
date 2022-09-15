@@ -1,5 +1,6 @@
 from types import LambdaType
 
+from django.contrib.auth.forms import SetPasswordForm
 from django.core import mail
 from django.urls import reverse
 from parameterized import parameterized
@@ -92,3 +93,33 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
 
         assert len(mail.outbox) == 0
         assert "?success=f" in response.get("location")
+
+    def test_no_password_form(self):
+        user = self._default_user
+        user.password = ""
+        user.save()
+        token = Tokens.generate(
+            TokenTypes.EMAIL_VERIFICATION, expires_in_days=1, email=user.email
+        )
+        response = self.client.get("/verify/email", dict(token=token))
+        assert "form" in response.context_data
+        assert type(response.context_data["form"]) == SetPasswordForm
+
+    def test_password_set_post(self):
+        """Is the password set on a post to the verification form
+        This sounds funny, but the password set form is on the email verification page
+        because a user may be created without a password, and will subsequently require a password to log in"""
+        user = self._default_user
+        token = Tokens.generate(
+            TokenTypes.EMAIL_VERIFICATION, expires_in_days=1, email=user.email
+        )
+        response = self.client.post(
+            f"/verify/email?token={token}",
+            data=dict(new_password1="test123456", new_password2="test123456"),
+        )
+
+        assert response.status_code == 200
+        assert response.context_data.get("did_set_password") == True
+
+        user.refresh_from_db()
+        assert user.check_password("test123456")

@@ -8,6 +8,8 @@ from virtual_library_card.sender import Sender
 
 
 class CardNumber:
+    NUMBER_GENERATION_RETRIES = 100
+
     @staticmethod
     def _generate_number_from_sequence(library):
         next_val = get_next_value(
@@ -91,12 +93,32 @@ class CardNumber:
                                    """
         serialized_length = 14 - len(library_card.library.prefix)
 
+        exists = False
         with transaction.atomic():
-            pattern = "{:0" + serialized_length.__str__() + "d}"
-            suffix_number = pattern.format(
-                CardNumber._generate_number_from_sequence(library_card.library)
-            )
-            library_card.number = library_card.library.prefix + suffix_number
+            # failsafe number of tries before failing the generation
+            for _ in range(CardNumber.NUMBER_GENERATION_RETRIES):
+                pattern = "{:0" + serialized_length.__str__() + "d}"
+                suffix_number = pattern.format(
+                    CardNumber._generate_number_from_sequence(library_card.library)
+                )
+                number = library_card.library.prefix + suffix_number
+                # Test the availability of this number, else retry
+                exists = VirtualLibraryCard.models.LibraryCard.objects.filter(
+                    library=library_card.library, number=number
+                ).exists()
+                if exists:
+                    continue
+                # Number is available
+                library_card.number = number
+                break
+            else:
+                log.error(
+                    f"Could not create a unique card number. Last tried: {suffix_number}"
+                )
+
+        # Raise an error taht we failed, after exiting the atomic transaction
+        if exists:
+            raise RuntimeError("Could not create a unique card number")
 
     @staticmethod
     def _card_number_sequence_name(library):

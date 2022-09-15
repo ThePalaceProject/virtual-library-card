@@ -1,6 +1,10 @@
 from typing import Any, Dict
+from urllib.request import Request
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
+from django.contrib.auth.forms import SetPasswordForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
@@ -28,6 +32,10 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         if self.user:
             context["user"] = self.user
+
+            # Should the user set their password?
+            if not self.user.password:
+                context["form"] = self._password_form(self.user)
         return context
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -73,6 +81,30 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
             return HttpResponseRedirect(redirect)
 
         return super().get(request, *args, **kwargs)
+
+    def post(self, request: Request) -> HttpResponse:
+        token = self.request.GET.get("token")
+        # A POST form submit is only going to come through a
+        # successful page load above, we don't need to do more error
+        # handling for the token here
+        decoded = Tokens.verify(token)
+        email = decoded.get("email")
+        user: CustomUser = CustomUser.objects.get(email=email)
+        form = self._password_form(user, data=request.POST)
+        if form.is_valid():
+            user.set_password(request.POST["new_password1"])
+            user.save()
+            return self.render_to_response(
+                {"user": user, "form": None, "did_set_password": True}
+            )
+        else:
+            return self.render_to_response({"form": form, "user": user})
+
+    def _password_form(self, user, data=None):
+        form = SetPasswordForm(user, data=data)
+        form.helper = FormHelper()
+        form.helper.add_input(Submit("submit", "save"))
+        return form
 
 
 class EmailVerificationResendToken(FormView):

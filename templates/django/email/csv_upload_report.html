@@ -1,0 +1,17 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <p>{% blocktrans with library_name=library_name %} The users upload job has completed for {{ library_name }}. {% endblocktrans %}</p>
+    <p>{% blocktrans %} Please find the results attached to this email {% endblocktrans %}</p>
+    
+</body>
+
+</html>

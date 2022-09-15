@@ -24,6 +24,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "phone": "",
             "email": "",
             "prefix": "",
+            "bulk_upload_prefix": "",
             "sequence_start_number": 0,
             "sequence_down": False,
             "patron_address_mandatory": True,
@@ -31,6 +32,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "pin_text": "pin",
             "barcode_text": "barcode",
             "allow_all_us_states": False,
+            "allow_bulk_card_uploads": False,
         }
 
         data = {}
@@ -111,6 +113,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             privacy_url="privacyurl",
             terms_conditions_url="termsurl",
             prefix="new",
+            bulk_upload_prefix="bulk",
             sequence_start_number=0,
             sequence_down=False,
             patron_address_mandatory=True,
@@ -118,6 +121,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             pin_text="pin",
             barcode_text="barcode",
             allow_all_us_states=False,
+            allow_bulk_card_uploads=False,
         )
         self._add_library_states_data(data)
 

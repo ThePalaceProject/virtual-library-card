@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html"%}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extrahead %}
+    {{ super }}
+    <link rel="stylesheet" href='{% static "css/bootstrap.css" %}'>
+{% endblock %}
+
+{% block content %}
+    {% blocktrans with required_columns=required_columns optional_columns=optional_columns %}
+    <h1>UPLOAD LIBRARY CARDS BY CSV</h1>
+    <p>
+        <span class="vlc-text-info">
+            The uploaded csv must have the following columns: {{ required_columns }}
+            <br>
+            It may optionally have these additional columns: {{ optional_columns }}
+        </span>
+    </p>
+    {% endblocktrans %}
+    {% crispy form %}
+{% endblock %}

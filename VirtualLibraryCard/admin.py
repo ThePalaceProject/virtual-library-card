@@ -1,19 +1,27 @@
 import csv
-from typing import TYPE_CHECKING, Any, List, Tuple, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
-from django.http import HttpResponse
-from django.urls import reverse
+from django.http import HttpRequest, HttpResponse
+from django.urls import URLPattern, URLResolver, path, reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+from django.views.generic.base import TemplateView
 from sequences.models import Sequence
 
 from virtual_library_card.logging import LoggingMixin
+from VirtualLibraryCard.business_rules.library_card import (
+    BulkUploadBadHeadersException,
+    BulkUploadDuplicatesException,
+    BulkUploadLibraryException,
+    LibraryCardBulkUpload,
+)
 from VirtualLibraryCard.forms.forms import (
     CustomAdminUserChangeForm,
     CustomUserCreationForm,
     LibraryCardCreationForm,
+    LibraryCardsUploadByCSVForm,
     LibraryChangeForm,
     LibraryCreationForm,
 )
@@ -226,6 +234,7 @@ class LibraryAdmin(admin.ModelAdmin):
                 "fields": (
                     "card_validity_months",
                     "prefix",
+                    "bulk_upload_prefix",
                     "sequence_start_number",
                     "sequence_end_number",
                     "sequence_down",
@@ -239,6 +248,7 @@ class LibraryAdmin(admin.ModelAdmin):
                     "barcode_text",
                     "pin_text",
                     "allow_all_us_states",
+                    "allow_bulk_card_uploads",
                 )
             },
         ),
@@ -311,7 +321,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
                 "created",
             ]
         else:
-            return ["number", "canceled_date", "canceled_by_user", "created"]
+            return ["canceled_date", "canceled_by_user", "created"]
 
     def get_list_filter(self, request: Any) -> Tuple[Any]:
         return (
@@ -360,9 +370,70 @@ def export_list_as_csv(self, request, queryset):
     return response
 
 
-admin.site.enable_nav_sidebar = False
-admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Library, LibraryAdmin)
-admin.site.register(LibraryCard, LibraryCardAdmin)
-admin.site.unregister(Sequence)
-admin.site.register(Sequence, CustomSequenceAdmin)
+class LibraryCardsUploadCSV(TemplateView):
+    """The template view that displays the bulk CSV form on the admin panel"""
+
+    template_name: str = "library_card/upload_by_csv.html"
+
+    http_method_names: List[str] = ["get", "post"]
+
+    def _get_columns_ctx(self) -> Dict[str, Any]:
+        return dict(
+            required_columns=", ".join(LibraryCardBulkUpload.REQUIRED_CSV_HEADERS),
+            optional_columns=", ".join(LibraryCardBulkUpload.OPTIONAL_CSV_HEADERS),
+        )
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        ctx["form"] = LibraryCardsUploadByCSVForm()
+        ctx.update(self._get_columns_ctx())
+        return ctx
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """The form post submit"""
+        form = LibraryCardsUploadByCSVForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            try:
+                library: Library = Library.objects.get(
+                    id=int(form.cleaned_data["library"])
+                )
+                LibraryCardBulkUpload.bulk_upload_csv(
+                    library,
+                    form.files["csv_file"],
+                    admin_user=request.user,
+                    _async=True,
+                )
+            except BulkUploadBadHeadersException as e:
+                form.add_error("csv_file", str(e))
+            except BulkUploadDuplicatesException as e:
+                fstr = f"Duplicate values present in the file: emails: {e.duplicates['emails']}, ids: {e.duplicates['ids']}"
+                form.add_error("csv_file", fstr)
+            except BulkUploadLibraryException as e:
+                form.add_error("library", str(e))
+            else:
+                messages.add_message(
+                    request, messages.SUCCESS, f"User upload has been initiated."
+                )
+
+        ctx = self.get_context_data()
+        ctx["form"] = form
+        return self.render_to_response(ctx)
+
+
+class VLCAdminSite(admin.AdminSite):
+    """The admin site configuration"""
+
+    def get_urls(self) -> List[Union[URLResolver, URLPattern]]:
+        urls = super().get_urls()
+        urls = [
+            path("librarycard/upload_by_csv", LibraryCardsUploadCSV.as_view())
+        ] + urls
+        return urls
+
+
+admin_site = VLCAdminSite()
+admin_site.enable_nav_sidebar = False
+admin_site.register(CustomUser, CustomUserAdmin)
+admin_site.register(Library, LibraryAdmin)
+admin_site.register(LibraryCard, LibraryCardAdmin)
+admin_site.register(Sequence, CustomSequenceAdmin)

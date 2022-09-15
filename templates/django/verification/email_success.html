@@ -17,8 +17,23 @@
 <div>
     {% blocktrans with user_name=user.first_name %}
     <p>
-        Your email has been verified successfully {{ user_name }}!!
+        <h2>Your email has been verified successfully {{ user_name }}!!</h2>
     </p>
     {% endblocktrans %}
+    <br>
+    
+    {# This workflow has a password set form as well #}
+    {# since the verification page would be the first page a user without a password would see #}
+    {% if form is not None %}
+        {% blocktrans %}
+        <p>
+            <h3>You must set the password for this account!</h3>
+        </p>
+        {% endblocktrans %}
+        {% crispy form %}
+    {% endif %}
+    {% if did_set_password %}
+        <p>You password was successfully set. Thank you!</p>
+    {% endif %}
 </div>
 {% endblock %}

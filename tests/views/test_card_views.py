@@ -215,11 +215,11 @@ class TestCardRequest(BaseUnitTest):
 
         # Verification and welcome email sent
         assert len(mail.outbox) == 2
-        assert mail.outbox[0].subject == "Verify your email address New"
-        assert mail.outbox[1].subject == f"{self._default_library.name} | Welcome"
+        assert mail.outbox[0].subject == f"{self._default_library.name} | Welcome"
+        assert mail.outbox[1].subject == "Verify your email address New"
         assert (
             "You must verify your email address before using this account"
-            in mail.outbox[1].body
+            in mail.outbox[0].body
         )
 
     @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")

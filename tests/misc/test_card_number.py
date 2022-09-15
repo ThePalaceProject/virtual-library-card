@@ -114,3 +114,40 @@ class TestCardNumber(BaseUnitTest):
         self._default_library.prefix = "p" * 20
         with pytest.raises(ValueError, match="Invalid format specifier"):
             CardNumber.generate_card_number(lc1)
+
+    def test_generate_unique_card_number(self):
+        library = self.create_library(prefix="AA")
+        pattern = "AA{:0" + str(14 - len(library.prefix)) + "d}"
+        lc = self.create_library_card(
+            self._default_user, library, number=pattern.format(0)
+        )
+        number1 = lc.number
+        CardNumber.generate_card_number(lc)
+        assert lc.number != number1
+        assert lc.number[-1] == "1"
+
+        # generate 3 more cards
+        for i in range(2, 5):
+            self.create_library_card(
+                self._default_user, library, number=pattern.format(i)
+            )
+
+        # This should now be 5
+        CardNumber.generate_card_number(lc)
+        assert lc.number[-1] == "5"
+
+        # Now retry MAX times till you fail, sequence should advance after failure
+        for i in range(6, 6 + CardNumber.NUMBER_GENERATION_RETRIES):
+            self.create_library_card(
+                self._default_user, library, number=pattern.format(i)
+            )
+
+        with pytest.raises(RuntimeError) as ex:
+            CardNumber.generate_card_number(lc)
+
+        assert ex.match("Could not create a unique card number")
+        # Ensure the sequence generator has moved forward before failing
+        assert (
+            CardNumber._generate_number_from_sequence(lc.library)
+            == CardNumber.NUMBER_GENERATION_RETRIES + 6
+        )

@@ -1,5 +1,8 @@
 from gettext import gettext as _
+from typing import Any, Dict, Optional
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.forms.utils import ErrorList
@@ -7,8 +10,8 @@ from django.utils.safestring import mark_safe
 from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
-from virtual_library_card.sender import Sender
 from VirtualLibraryCard.business_rules.library import LibraryRules
+from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
 
@@ -23,6 +26,38 @@ class LibraryCardCreationForm(forms.ModelForm):
         model = LibraryCard
         exclude = []
         labels = {"user": _("User Email")}
+
+    def __init__(self, data: Dict = None, *args, **kwargs) -> None:
+        super().__init__(data, *args, **kwargs)
+
+        # If we have the field and also have a new instance (on create)
+        number = self.fields.get("number")
+        if number and not (self.instance and self.instance.pk):
+            number.required = False
+            number.help_text = _(
+                "The card number will be automatically generated if it is not provided already.\
+                <br>In case a number is provided it will be prefixed by the Library prefix"
+            )
+
+    def clean(self) -> Optional[Dict[str, Any]]:
+        super().clean()
+        number = self.cleaned_data.get("number")
+        if not self.instance.pk and number:
+            library = self.cleaned_data["library"]
+            self.cleaned_data["number"] = library.prefix + number
+
+        return self.cleaned_data
+
+    def validate_unique(self) -> None:
+        """validate if the manually entered card number is unique"""
+        super().validate_unique()
+        if self.cleaned_data.get("number"):
+            library = self.cleaned_data["library"]
+            exists = LibraryCard.objects.filter(
+                number=self.cleaned_data["number"], library=library
+            ).exists()
+            if exists:
+                self.add_error("number", "This number already exists for this library")
 
 
 class LibraryChangeForm(forms.ModelForm):
@@ -184,20 +219,9 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         library = user.library
         if library:
             self.log.debug(f"library {library}")
-            existing_library_card: LibraryCard = LibraryCard.objects.filter(
-                user=user, library=library
-            ).first()
-            if existing_library_card is None:
-                try:
-                    self.log.debug("-----------before creating card")
-                    library_card = CustomUser.create_card_for_library(library, user)
-                    self.log.debug("-----------before saving")
-                    library_card.save()
-                    self.created_library_card = library_card  # used by the view
-                    self.log.debug("-----------saved library_card")
-                    Sender.send_user_welcome(library, user, library_card.number)
-                except Exception as e:
-                    self.log.error(f"Exception {e}")
+            card, is_new = LibraryCardRules.new_card(user, library)
+            if is_new:
+                self.created_library_card = card
 
         return user
 
@@ -237,3 +261,23 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
                 return False
 
         return super().is_valid()
+
+
+class LibraryCardsUploadByCSVForm(forms.Form):
+
+    library = forms.ChoiceField()
+    csv_file = forms.FileField()
+
+    def __init__(self, data=None, **kwargs) -> None:
+        super().__init__(data, **kwargs)
+        library_field: forms.Select = self.fields.get("library")
+        library_field.choices = [
+            (l.id, l.name) for l in Library.objects.filter(allow_bulk_card_uploads=True)
+        ]
+        if not library_field.choices:
+            library_field.choices = [(0, "No Library allows bulk uploads")]
+
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit("Start the CSV Upload job", "Start the CSV Upload job")
+        )

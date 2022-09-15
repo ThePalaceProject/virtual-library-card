@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from VirtualLibraryCard.business_rules.library import LibraryRules
+from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
 
 
@@ -164,10 +165,9 @@ class RequestLibraryCardForm(UserCreationForm):
                         )
 
                 else:
-                    library_card = CustomUser.create_card_for_library(library, user)
-                    library_card.save()
+                    card, _ = LibraryCardRules.new_card(user, library)
+                    card.save()
                     Sender.send_email_verification(library, user)
-                    Sender.send_user_welcome(library, user, library_card)
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))

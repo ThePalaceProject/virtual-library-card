@@ -86,6 +86,7 @@ class Library(models.Model):
     social_facebook = models.CharField(max_length=255, null=True, blank=True)
     social_twitter = models.CharField(max_length=255, null=True, blank=True)
     prefix = models.CharField(max_length=10, null=True, blank=False)
+    bulk_upload_prefix = models.CharField(max_length=10, null=True, blank=False)
     card_validity_months = models.PositiveSmallIntegerField(null=True, blank=True)
     sequence_start_number = models.IntegerField(default=0)
     sequence_end_number = models.IntegerField(null=True, blank=True)
@@ -115,6 +116,12 @@ class Library(models.Model):
         blank=False,
         default=True,
         verbose_name="Require Patron Age Verification",
+    )
+    allow_bulk_card_uploads = models.BooleanField(
+        choices=((True, _("Yes")), (False, _("No"))),
+        blank=False,
+        default=False,
+        verbose_name="Allow Bulk Upload For Library Cards",
     )
 
     def get_us_states(self):
@@ -350,12 +357,15 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     @staticmethod
-    def create_card_for_library(library: Library, user):
+    def create_card_for_library(library: Library, user, number=None):
         library_card: LibraryCard = LibraryCard()
         library_card.user = user
         library_card.library = library
         library_card.expiration_date = library_card.get_expiration_date()
-        CardNumber.generate_card_number(library_card)
+        if number is None:
+            CardNumber.generate_card_number(library_card)
+        else:
+            library_card.number = number
         return library_card
 
     def get_smart_name(self):

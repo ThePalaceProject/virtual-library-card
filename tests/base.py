@@ -40,12 +40,19 @@ class TestData:
         )
 
     def create_library(
-        self, name=None, identifier=None, us_states=None, prefix=None, **kwargs
+        self,
+        name=None,
+        identifier=None,
+        us_states=None,
+        prefix=None,
+        bulk_upload_prefix=None,
+        **kwargs,
     ):
         obj = Library(
             name=name or self._random_name(),
             identifier=identifier or self._random_name(),
             prefix=prefix or self._random_name(),
+            bulk_upload_prefix=bulk_upload_prefix or self._random_name(),
             logo=kwargs.pop("logo", "http://example.logo/"),
             phone=kwargs.pop("phone", "999999999"),
             email=kwargs.pop("email", "default@example.com"),
@@ -175,3 +182,19 @@ class BaseAdminUnitTest(BaseUnitTest):
     def _response_errors(self, response):
         """Helper function for debuging form submits"""
         return response.context[0]["adminform"].errors
+
+
+class MockThread:
+    """Mock threading for test runs"""
+
+    def __init__(self, target=None, args=None, kwargs=None, daemon=True):
+        self.target = target
+        self.args = args
+        self.kwargs = kwargs
+        self.daemon = daemon
+
+    def start(self):
+        """synchronous run"""
+        args = self.args or []
+        kwargs = self.kwargs or {}
+        self.target(*args, **kwargs)
