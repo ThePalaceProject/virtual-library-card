@@ -304,7 +304,10 @@ class CustomUserManager(BaseUserManager):
 
 def default_library():
     """The default library for a CustomUser, must use only(id) else future migrations will break"""
-    return Library.objects.order_by("id").only("id").first()
+    try:
+        return Library.objects.order_by("id").only("id").first()
+    except:
+        return None
 
 
 class CustomUser(AbstractUser):
