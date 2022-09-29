@@ -35,12 +35,10 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
         for ix, email_num in enumerate([111, 222, 333, 444]):
             assert users[ix].email == f"{email_num}@example.org"
 
-        # Welcome email and Verification email per user, and one result email
-        assert len(mail.outbox) == 9
-        for ix in range(0, len(mail.outbox) - 1, 2):
-            verify = mail.outbox[ix]
-            welcome = mail.outbox[ix + 1]
-            assert "Verify" in verify.subject
+        # Welcome email per user, and one result email
+        assert len(mail.outbox) == 5
+        for ix in range(0, len(mail.outbox) - 1):
+            welcome = mail.outbox[ix]
             assert "Welcome" in welcome.subject
 
         result_email = mail.outbox[-1]
@@ -118,7 +116,7 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
         assert user.city == "New York"
         assert user.us_state == "NY"
         assert user.zip == "10001"
-        assert len(mail.outbox) == 3
+        assert len(mail.outbox) == 2
 
     @patch("VirtualLibraryCard.business_rules.library_card.Thread", new=MockThread)
     def test_async_mode(self):
@@ -139,7 +137,7 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
         assert type(bulk._async_thread.args[0]) == str  # filename not fileio
 
         assert CustomUser.objects.filter(library=library).count() == 4
-        assert len(mail.outbox) == 9
+        assert len(mail.outbox) == 5
 
         # Did we clean up the file
         assert not bulk.storage_class().exists(bulk._async_thread.args[0])

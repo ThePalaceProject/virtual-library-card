@@ -84,7 +84,9 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
         response = self.client.post("/verify/email/resend")
 
         assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject.startswith("Verify your email address")
+        assert mail.outbox[0].subject.startswith(
+            f"{self._default_library.name} | Welcome"
+        )
 
         # session will be popped
         assert self.client.session.get("verification_email_address") == None

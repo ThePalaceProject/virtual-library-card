@@ -13,7 +13,7 @@ from virtual_library_card.logging import log
 from virtual_library_card.tokens import Tokens, TokenTypes
 
 if TYPE_CHECKING:
-    from VirtualLibraryCard.models import Library
+    from VirtualLibraryCard.models import CustomUser, Library
 
 
 class Sender:
@@ -44,20 +44,41 @@ class Sender:
         msg.send()
 
     @staticmethod
-    def send_user_welcome(library, user, card_number):
+    def send_user_welcome(
+        library: Library,
+        user: CustomUser,
+        card_number: str = None,
+    ):
+        """Send out a welcome email which has two optional parts
+        - User welcome for a new card
+        - Email verification for an unverified email
+        :param library: The library of the patron
+        :param user: The patron
+        :param card_number: The card number of a newly created card"""
         to = user.email
-
+        host = settings.ROOT_URL
+        has_welcome = card_number is not None
         log.debug(f"send_user_welcome to: {to}, from: {settings.DEFAULT_FROM_EMAIL}")
+
         try:
+            token = None
+            verification_link = None
+            if not user.email_verified:
+                token = Tokens.generate(TokenTypes.EMAIL_VERIFICATION, email=user.email)
+                verification_link = (
+                    f"{host}{reverse('email_token_verify')}?token={token}"
+                )
+
             subject = _("%(library_name)s | Welcome" % {"library_name": library.name})
             html_message = render_to_string(
                 "email/welcome_user.html",
                 {
-                    "identifier": library.identifier,
                     "card_number": card_number,
                     "login_url": Sender._get_absolute_login_url(library.identifier),
                     "library": library,
-                    "user_email_verified": user.email_verified,
+                    "verification_link": verification_link,
+                    "has_welcome": has_welcome,
+                    "has_verification": not user.email_verified,
                 },
             )
             plain_message = strip_tags(html_message)
@@ -68,30 +89,6 @@ class Sender:
             msg.send()
         except Exception as e:
             log.error(f"send email error {e}")
-
-    @staticmethod
-    def send_email_verification(library, user):
-        try:
-            host = settings.ROOT_URL
-            subject = _(
-                "Verify your email address %(name)s" % {"name": user.first_name}
-            )
-            token = Tokens.generate(TokenTypes.EMAIL_VERIFICATION, email=user.email)
-            html_string = render_to_string(
-                "email/email_verification.html",
-                {
-                    "link": f"{host}{reverse('email_token_verify')}?token={token}",
-                    "library_name": library.name,
-                },
-            )
-            plain_message = strip_tags(html_string)
-            msg = EmailMultiAlternatives(
-                subject, plain_message, settings.DEFAULT_FROM_EMAIL, to=[user.email]
-            )
-            msg.attach_alternative(html_string, "text/html")
-            msg.send()
-        except Exception as e:
-            log.exception(f"Verification Email: Could not email {user.email}")
 
     @staticmethod
     def send_bulk_upload_report(email: str, library: Library, report_file: str):

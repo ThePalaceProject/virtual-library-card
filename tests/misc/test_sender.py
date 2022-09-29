@@ -2,6 +2,7 @@ from unittest import mock
 
 from django.conf import settings
 from django.core import mail
+from django.urls import reverse
 
 from tests.base import BaseUnitTest
 from virtual_library_card.sender import Sender
@@ -54,8 +55,12 @@ class TestSender(BaseUnitTest):
 
     @mock.patch("virtual_library_card.sender.EmailMultiAlternatives")
     @mock.patch("virtual_library_card.sender.render_to_string")
+    @mock.patch("virtual_library_card.sender.Tokens")
     def test_send_user_welcome(
-        self, mock_render: mock.MagicMock, mock_email: mock.MagicMock
+        self,
+        mock_tokens: mock.MagicMock,
+        mock_render: mock.MagicMock,
+        mock_email: mock.MagicMock,
     ):
         library = self._default_library
         user = self._default_user
@@ -64,16 +69,19 @@ class TestSender(BaseUnitTest):
         render_string = "mockrender"
         mock_render.return_value = render_string
 
-        Sender.send_user_welcome(library, user, card)
+        Sender.send_user_welcome(library, user, card.number)
+        token_url = f"{settings.ROOT_URL}{reverse('email_token_verify')}?token="
+
         assert mock_render.call_count == 1
         assert mock_render.call_args[0] == (
             "email/welcome_user.html",
             {
-                "identifier": library.identifier,
-                "card_number": card,
+                "card_number": card.number,
                 "login_url": Sender._get_absolute_login_url(library.identifier),
                 "library": library,
-                "user_email_verified": True,
+                "verification_link": None,
+                "has_verification": False,
+                "has_welcome": True,
             },
         )
 
@@ -92,24 +100,28 @@ class TestSender(BaseUnitTest):
         )
         assert mock_email().send.call_count == 1
 
+        mock_render.reset_mock()
+        user.email_verified = False
+        mock_tokens.generate.return_value = "Generated"
+        Sender.send_user_welcome(library, user)
+        assert mock_render.call_args[0] == (
+            "email/welcome_user.html",
+            {
+                "card_number": None,
+                "login_url": Sender._get_absolute_login_url(library.identifier),
+                "library": library,
+                "verification_link": token_url + "Generated",
+                "has_verification": True,
+                "has_welcome": False,
+            },
+        )
+
     def test_get_absolute_login_url(self):
         url = Sender._get_absolute_login_url(self._default_library.identifier)
         assert (
             url
             == f"{settings.ROOT_URL}/accounts/login/{self._default_library.identifier}/"
         )
-
-    # @mock.patch("virtual_library_card.sender.EmailMultiAlternatives")
-    def test_email_verification(self):
-        Sender.send_email_verification(self._default_library, self._default_user)
-
-        assert len(mail.outbox) == 1
-        sent = mail.outbox[0]
-        assert (
-            sent.subject == f"Verify your email address {self._default_user.first_name}"
-        )
-        assert sent.to == [self._default_user.email]
-        assert "Please verify your email" in sent.body
 
     def test_libary_email_configurables(self):
         library = self._default_library
@@ -125,10 +137,8 @@ class TestSender(BaseUnitTest):
 
         # New text is present
         assert "Your library totally not a number is" in msg.body
-        assert (
-            "Use the totally not a number and the very special secret you set"
-            in msg.body
-        )
+        assert "Use the totally not a number" in msg.body
+        assert "the very special secret you set" in msg.body
         # Original text is not present
         assert "card number" not in msg.body.lower()
         assert "password" not in msg.body.lower()

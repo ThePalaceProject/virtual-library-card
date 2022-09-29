@@ -140,7 +140,7 @@ class RequestLibraryCardForm(UserCreationForm):
                     ):
                         reactivate_library_card(existing_library_card)
                         Sender.send_user_welcome(
-                            library, user, existing_library_card.number
+                            library, user, card_number=existing_library_card.number
                         )
                     else:
                         a_library_card_message = _(
@@ -167,7 +167,6 @@ class RequestLibraryCardForm(UserCreationForm):
                 else:
                     card, _ = LibraryCardRules.new_card(user, library)
                     card.save()
-                    Sender.send_email_verification(library, user)
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))

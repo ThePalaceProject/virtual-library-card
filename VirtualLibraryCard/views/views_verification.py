@@ -139,7 +139,8 @@ class EmailVerificationResendToken(FormView):
                 email__iexact=email.lower()
             ).first()
             if user:
-                Sender.send_email_verification(user.library, user)
+                # Only send the verification part of the email
+                Sender.send_user_welcome(user.library, user)
                 request.session.pop("verification_email_address")
             else:
                 success = False

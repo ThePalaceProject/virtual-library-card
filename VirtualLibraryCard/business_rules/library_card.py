@@ -156,13 +156,11 @@ class LibraryCardBulkUpload:
                     raise Exception(
                         f"Email {user.email} already exists in the system for a different library."
                     )
-                if is_new:
-                    Sender.send_email_verification(self.library, user)
 
                 user_id = item.pop("id")
 
                 prefix = self.library.bulk_upload_prefix
-                card, is_new = LibraryCardRules.new_card(
+                card, _ = LibraryCardRules.new_card(
                     user, self.library, number=prefix + user_id
                 )
                 log.log(f"Created user and card for {user.email}: {card.number}")

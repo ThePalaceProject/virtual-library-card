@@ -1,23 +1,53 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
-<body>
-<p>{% blocktrans with library_name=library.name %}Thank you for joining the {{ library_name }}{% endblocktrans %} </p>
-<p>{% blocktrans with card_number=card_number barcode_text=library.barcode_text%}Your library {{ barcode_text }} is
-    <strong>{{ card_number }}</strong>{% endblocktrans %} </p>
-<p>{% blocktrans with barcode_text=library.barcode_text%}Please remember this {{ barcode_text }} so you may use it to access library ebooks and audiobooks from your
-    library in Palace.{% endblocktrans %}
-    {% blocktrans with barcode_text=library.barcode_text pin_text=library.pin_text%}Use the {{ barcode_text }} and the {{ pin_text }} you set when you applied together.{% endblocktrans %} </p>
-<p>{% blocktrans with pin_text=library.pin_text%}You can go to your personal space to manage your account, manage your information or even reset your
-    {{ pin_text }} if needed{% endblocktrans %} </p>
-{% blocktrans %}You can login in your personal space here: {% endblocktrans %}
-<a href="{{ login_url }}">{{ login_url }}</a>
-<p>{% blocktrans with library=library %}The {{ library.name }} team{% endblocktrans %}</p>
 
-{% if user_email_verified == False %}
-    <p>{% blocktrans %} You must verify your email address before using this account. 
-        An email with instructions for verifying your account has already been sent to this address.{% endblocktrans %}</p>
-{% endif %}
+<body>
+    <p>{% translate "Hello," %}</p>
+
+    <p>{% blocktrans with library_name=library.name %}
+        You are receiving this message because someone used this email address
+        to request a library card for {{ library_name }}.
+        <br>
+        If you were not expecting this to happen, please ignore this message and do NOT click the verification link below.
+        {% endblocktrans %}
+    </p>
+
+    <p>{% blocktrans with library_name=library.name %}Thank you for joining {{ library_name }}.{% endblocktrans %}
+    </p>
+
+    {% if has_verification %}
+    <p>{% blocktrans with link=link %} Please verify your email address by clicking this link: <a
+            href="{{ verification_link }}">{{ verification_link }}</a> {% endblocktrans %}
+        <br>
+        {% blocktrans %} This link is valid for 24 hours,
+        after which you may recreate a new verification email by visiting the same link. {% endblocktrans %}
+        <br>
+        {% blocktrans %} Your account will not be activated until the link has been clicked.{% endblocktrans %}
+    </p>
+    {% endif %}
+
+    {% if has_welcome %}
+    <p>{% blocktrans with card_number=card_number barcode_text=library.barcode_text%}Your library {{ barcode_text }} is
+        <strong>{{ card_number }}</strong>.{% endblocktrans %}
+        <br>
+        {% blocktrans with barcode_text=library.barcode_text%}Please remember this {{ barcode_text }} so you may use it
+        to access library materials available in Palace.{% endblocktrans %}
+        <br>
+        {% blocktrans with barcode_text=library.barcode_text pin_text=library.pin_text%}Use the {{ barcode_text }} and
+        the {{ pin_text }} you set when you applied to login to the Palace app.{% endblocktrans %}
+    </p>
+
+    <p>{% blocktrans with pin_text=library.pin_text%}You can go to your personal space to manage your account, manage
+        your information, or even reset your {{ pin_text }}, if needed.{% endblocktrans %}
+        <br>
+        {% blocktrans %}You can log into your personal space here: {% endblocktrans %}
+        <a href="{{ login_url }}">{{ login_url }}</a>
+    </p>
+    {% endif %}
+
+    <p>{% blocktrans with library_name=library.name %}The {{ library_name }} team{% endblocktrans %}</p>
 
 </body>
+
 </html>

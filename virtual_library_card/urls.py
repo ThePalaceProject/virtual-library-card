@@ -26,6 +26,7 @@ from VirtualLibraryCard.views import (
     ProfileView,
     TemplateView,
     UserLibraryCardViewSet,
+    debug_templates,
     views_library_card,
     views_password,
     views_profile,
@@ -162,6 +163,13 @@ if settings.HAS_WEBSITE:
     ]
 
     if settings.DEBUG:
+        urlpatterns += [
+            path(
+                "debug/template/<path:template_path>",
+                debug_templates,
+                name="debug_templates",
+            )
+        ]
         urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = "VirtualLibraryCard.views.handler404"
