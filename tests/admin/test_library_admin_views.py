@@ -1,6 +1,8 @@
 from io import FileIO
 from unittest.mock import MagicMock
 
+from django.test import RequestFactory
+
 from tests.base import BaseAdminUnitTest
 from VirtualLibraryCard.admin import (
     LibraryAdmin,
@@ -233,16 +235,40 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         assert library.library_email_domains.all()[0].domain == "example.org"
 
     def test_get_inlines(self):
+        f = RequestFactory()
+        get = f.get("")
+        post_has_states = f.post("", {"library_states-TOTAL_FORMS": "0"})
         library = self.create_library(allow_all_us_states=False)
-        assert self.admin.get_inlines(None, obj=library) == [
+
+        # View a library that doesn't allow all states
+        assert self.admin.get_inlines(get, obj=library) == [
             LibraryStatesInline,
             LibraryAllowedDomainsInline,
         ]
-        library.allow_all_us_states = True
-        assert self.admin.get_inlines(None, obj=library) == [
+        # Change a library to not allow all states
+        assert self.admin.get_inlines(post_has_states, obj=library) == [
+            LibraryStatesInline,
+            LibraryAllowedDomainsInline,
+        ]
+
+        # Change a library to allow all states
+        post_without_states = f.post("", {})
+        assert self.admin.get_inlines(post_without_states, obj=library) == [
             LibraryAllowedDomainsInline
         ]
-        assert self.admin.get_inlines(None, obj=None) == [
+        # View a library with all states
+        library.allow_all_us_states = True
+        assert self.admin.get_inlines(get, obj=library) == [LibraryAllowedDomainsInline]
+
+        # New object view/creation
+        assert self.admin.get_inlines(get, obj=None) == [
             LibraryStatesInline,
+            LibraryAllowedDomainsInline,
+        ]
+        assert self.admin.get_inlines(post_has_states, obj=None) == [
+            LibraryStatesInline,
+            LibraryAllowedDomainsInline,
+        ]
+        assert self.admin.get_inlines(post_without_states, obj=None) == [
             LibraryAllowedDomainsInline,
         ]

@@ -276,7 +276,14 @@ class LibraryAdmin(admin.ModelAdmin):
 
     def get_inlines(self, request: Any, obj: Library) -> List[Type["InlineModelAdmin"]]:
         """Dynamic inline forms based on library configs"""
-        if obj and obj.allow_all_us_states is True:
+        states_inline = False
+        if request.method == "GET":
+            # A page "view" depends on what the data is on the object
+            states_inline = obj.allow_all_us_states is False if obj else True
+        else:
+            # A page that is a "change" depends on the new data
+            states_inline = "library_states-TOTAL_FORMS" in request.POST
+        if not states_inline:
             return [LibraryAllowedDomainsInline]
         return [LibraryStatesInline, LibraryAllowedDomainsInline]
 
