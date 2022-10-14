@@ -1,4 +1,5 @@
 from io import FileIO
+from typing import List
 from unittest.mock import MagicMock
 
 from django.test import RequestFactory
@@ -47,7 +48,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         return data
 
     def _add_library_states_data(
-        self, data: dict, us_states: list[str] = None, library=None
+        self, data: dict, us_states: List[str] = None, library=None
     ):
         """Helper function for change form data, for the inline library form"""
         us_states = us_states or []

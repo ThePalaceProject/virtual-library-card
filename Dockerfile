@@ -20,7 +20,7 @@ ENV UWSGI_MASTER=1 \
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
     curl mime-support && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.1.12" && \
+    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.2.1" && \
     ln -s /opt/poetry/bin/poetry /bin/poetry && \
     apt-get remove curl -y && \
     apt-get autoremove -y && \
@@ -32,8 +32,8 @@ RUN apt-get update -y && \
 COPY pyproject.toml poetry.lock $APP_DIR
 WORKDIR $APP_DIR
 RUN apt-get update -y && \
-    apt-get install --no-install-recommends -y build-essential default-libmysqlclient-dev libpcre3-dev && \
-    POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev --no-interaction && \
+    apt-get install --no-install-recommends -y build-essential libpcre3-dev && \
+    POETRY_VIRTUALENVS_CREATE=false poetry install --only-root --no-interaction && \
     apt-get remove build-essential -y && \
     apt-get autoremove -y && \
     rm -Rf /var/lib/apt/lists/* && \

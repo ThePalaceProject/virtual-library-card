@@ -1,4 +1,4 @@
-from unittest import mock
+import sys
 
 from django.conf import settings
 from django.core import mail
@@ -6,6 +6,12 @@ from django.urls import reverse
 
 from tests.base import BaseUnitTest
 from virtual_library_card.sender import Sender
+
+# TODO: we can drop this when we drop support for Python 3.7
+if sys.version_info < (3, 8):
+    import mock
+else:
+    from unittest import mock
 
 
 class TestSender(BaseUnitTest):

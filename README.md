@@ -1,4 +1,10 @@
-# Virtual Library Cards
+# Virtual Library Card
+
+[![Test](https://github.com/ThePalaceProject/virtual-library-card/actions/workflows/test.yml/badge.svg)](https://github.com/ThePalaceProject/virtual-library-card/actions/workflows/test.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+![Python: 3.7,3.8,3.9,3.10](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue)
 
 ## Prerequisites
 
@@ -11,8 +17,6 @@ Python 3.7+ must be installed, and a SQL database must be available.
   (see -
   [Strategy based on multiple settings files](https://simpleisbetterthancomplex.com/tips/2017/07/03/django-tip-20-working-with-multiple-settings-modules.html)
   ).
-- IMPORTANT: A `settings/prod_pg.py` file has been added with sample PostgreSQL config. So replace "prod.py" by
-  "prod_pg.py" everywhere in what follows if needed...
 - The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags in the
   `settings/prod.py` allow to control what is deployed.
 
@@ -30,7 +34,7 @@ Python 3.7+ must be installed, and a SQL database must be available.
     pip install virtualenv
     python3 -m venv venv
     source venv/bin/activate
-    poetry install --no-dev
+    poetry install --only-root
 
 Note: activate the virtual env before installing the requirements.
 
@@ -48,7 +52,7 @@ See [django documentation](https://docs.djangoproject.com/en/2.2/howto/deploymen
 ### 4. Create a database and adjust the database connection parameters`
 
 The database connection parameters for a development (resp. production) environment are located in the `settings/dev.py`
-(resp.`settings/prod.py` and `settings/prod_pg.py`) files:
+(resp.`settings/prod.py`) files:
 
     DATABASES = {
         'default': {
@@ -66,8 +70,6 @@ The database connection parameters for a development (resp. production) environm
 After the initial clone and subsequent `git pull` commands, the database schema must be updated by the following command:
 
     python3 manage.py migrate --settings=virtual_library_card.settings.prod
-
-Note: in the previous command, please use `prod_pg` if you are using PostgreSQL.
 
 ### 6. Create the superuser
 
@@ -129,7 +131,7 @@ Typically:
 
     sudo apache2ctl restart
 
-## Updating the project
+### Updating the project
 
     git pull
     python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
@@ -244,7 +246,81 @@ Then, the server can be started thanks to the "Run dropdown":
     python3 manage.py makemessages --settings=virtual_library_card.settings.dev
     python3 manage.py compilemessages --settings=virtual_library_card.settings.dev
 
-References
+3. Run pre-commit
+
+## Testing & CI
+
+This project runs all the unit tests through Github Actions for new pull requests and when merging into the default
+`main` branch. The relevant file can be found in `.github/workflows/test.yml`. When contributing updates or fixes,
+it's required for the test Github Action to pass for all python environments.
+
+### Code Style
+
+Code style on this project is linted using [pre-commit](https://pre-commit.com/). This python application is included
+in our `pyproject.toml` file, so if you have the applications requirements installed it should be available. pre-commit
+is run automatically on each push and PR.
+
+You can run it manually on all files with the command: `pre-commit run --all-files`.
+
+For more details about our code style, see the
+[code style section of the circulation README](https://github.com/ThePalaceProject/circulation#code-style).
+
+### Testing
+
+Github Actions runs our unit tests against different Python versions automatically using
+[tox](https://tox.readthedocs.io/en/latest/). `tox` is included in our development dependencies, so it should be
+available once you run `poetry install`.
+
+Tox has an environment for each python version and an optional `-docker` factor that will automatically use docker to
+deploy service container used for the tests. You can select the environment you would like to test with the tox `-e`
+flag.
+
+#### Environments
+
+| Environment | Python Version |
+| ----------- | -------------- |
+| py37        | Python 3.7     |
+| py38        | Python 3.8     |
+| py39        | Python 3.9     |
+| py310       | Python 3.10    |
+
+All of these environments are tested by default when running tox. To test one specific environment you can use the `-e`
+flag.
+
+Test Python 3.8
+
+    tox -e py38
+
+You need to have the Python versions you are testing against installed on your local system. `tox` searches the system
+for installed Python versions, but does not install new Python versions. If `tox` doesn't find the Python version its
+looking for it will give an `InterpreterNotFound` error.
+
+[Pyenv](https://github.com/pyenv/pyenv) is a useful tool to install multiple Python versions, if you need to install
+missing Python versions in your system for local testing.
+
+#### Docker
+
+If you install `tox-docker` tox will take care of setting up all the service containers necessary to run the unit tests
+and pass the correct environment variables to configure the tests to use these services. Using `tox-docker` is not
+required, but it is the recommended way to run the tests locally, since it runs the tests in the same way they are run
+on Github Actions. `tox-docker` is included in the project's development dependencies, so it should always be available.
+
+The docker functionality is included in a `docker` factor that can be added to the environment. To run an environment
+with a particular factor you add it to the end of the environment.
+
+Test with Python 3.8 using docker containers for the services.
+
+    tox -e py38-docker
+
+#### Pytest
+
+Tests are performed using [pytest-django](https://pytest-django.readthedocs.io/en/latest/index.html). The tests
+require a database, and use the settings configured in [dev.py](virtual_library_card/settings/dev.py). The test database
+uses the database name configured in `dev.py` with `test_` prepended to it (`test_virtual_library_card_dev`). This
+database will be created automatically by the tests, and cleaned up afterwords. So the database user must have
+permission to create and drop databases.
+
+### References
 
 - [How To Serve Django Applications](https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-debian-8)
 - [Deploy Django on Apache with Virtualenv and mod_wsgi](https://www.thecodeship.com/deployment/deploy-django-apache-virtualenv-and-mod_wsgi/)
@@ -253,7 +329,7 @@ References
 
 ### 1. Build docker container
 
-After cloning the respository, this step builds the docker container.
+After cloning the repository, this step builds the docker container.
 Eventually you will be able to pull the container from dockerhub.
 
     docker build -t virtual_libary_card .

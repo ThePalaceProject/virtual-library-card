@@ -37,7 +37,6 @@ django-sequences = "2.5"
 djangorestframework = "3.12.2"
 jinja2 = "2.11.3"
 libsass = "0.20.1"
-mysqlclient = "2.0.3"
 Pillow = "8.3.2"
 psycopg2-binary = "2.8.6"
 PyJWT = "^2.4.0"
@@ -48,13 +47,19 @@ pytz = "2020.5"
 rcssmin = "1.0.6"
 requests = "2.28.1"
 rjsmin = "1.1.0"
-six = "1.12.0"
+six = "1.14.0"
 smartystreets-python-sdk = "4.7.2"
 uwsgi = ">=2.0,<2.1"
 
-[tool.poetry.dev-dependencies]
-parameterized = "^0.8.1"
+[tool.poetry.group.ci.dependencies]
 pre-commit = "~2.17"
+tox = "^3.26.0"
+tox-docker = "^3.1.0"
+tox-gh-actions = "^2.10.0"
+
+[tool.poetry.group.dev.dependencies]
+mock = { version = "~4.0", python = "< 3.8" }
+parameterized = "^0.8.1"
 pytest = "^7.1.1"
 pytest-django = "^4.5.2"
 
