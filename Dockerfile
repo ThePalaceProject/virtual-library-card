@@ -33,7 +33,7 @@ COPY pyproject.toml poetry.lock $APP_DIR
 WORKDIR $APP_DIR
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y build-essential libpcre3-dev && \
-    POETRY_VIRTUALENVS_CREATE=false poetry install --only-root --no-interaction && \
+    POETRY_VIRTUALENVS_CREATE=false poetry install --only main --no-interaction && \
     apt-get remove build-essential -y && \
     apt-get autoremove -y && \
     rm -Rf /var/lib/apt/lists/* && \
