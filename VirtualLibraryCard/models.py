@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.db import models
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -18,7 +19,6 @@ from localflavor.us.models import USStateField, USZipCodeField
 from virtual_library_card.card_number import CardNumber
 from virtual_library_card.location_utils import LocationUtils
 from virtual_library_card.logging import log
-from virtual_library_card.storage import OverwriteStorage
 
 
 def value_to_link(_value, _display_label):
@@ -74,9 +74,7 @@ class Library(models.Model):
     )
     ######
 
-    logo = models.ImageField(
-        storage=OverwriteStorage(), upload_to=generate_filename, null=True, blank=False
-    )
+    logo = models.ImageField(upload_to=generate_filename, null=True, blank=False)
     phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)
     terms_conditions_url = models.CharField(max_length=255, blank=False)
@@ -145,7 +143,11 @@ class Library(models.Model):
         else:
             img_html += ' width="100px"'
         img_html += " />"
-        return mark_safe(img_html % (logo_filename))
+
+        file_url = (
+            logo_filename if root_url else default_storage.url(str(logo_filename))
+        )
+        return mark_safe(img_html % (file_url))
 
     def logo_thumbnail(self):
         return self.get_logo_img(self.get_logo_root_url(), self.logo_filename(), False)
@@ -159,9 +161,9 @@ class Library(models.Model):
         return self.get_logo_img(self.get_logo_root_url(), self.logo_filename(), True)
 
     def get_logo_root_url(self):
-        if self.logo:
-            return settings.MEDIA_URL
-        return os.path.join(settings.STATIC_URL, "images/")
+        if not self.logo:
+            return os.path.join(settings.STATIC_URL, "images/")
+        return ""
 
     def state_name(self):
         return LocationUtils.get_library_state_name(self)

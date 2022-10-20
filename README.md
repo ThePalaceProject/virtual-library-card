@@ -212,8 +212,33 @@ Typically, on a developer machine you will set both to `True`.
 
 The `RECAPTCHA_PUBLIC_KEY` and `RECAPTCHA_PRIVATE_KEY` must be set if the `captcha` django plugin
 is installed via the `INSTALLED_APPS` setting.
-If the `catcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
+If the `captcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
 captcha to be present on that page.
+
+### AWS S3 Setup
+
+An S3 bucket should be created out-of-band to store any uploaded files.
+The following variables must be populated in the settings file.
+
+    `DEFAULT_FILE_STORAGE` = "storages.backends.s3boto3.S3Boto3Storage"
+    `AWS_STORAGE_BUCKET_NAME` = "The name of the already created S3 bucket"
+
+Optionally, the following settings can be set
+
+    # Either
+    `AWS_S3_SESSION_PROFILE` = "profile-name"
+    # Or
+    `AWS_S3_ACCESS_KEY_ID` = "The AWS access key"
+    `AWS_S3_SECRET_ACCESS_KEY` = "The AWS secret key"
+
+In case neither session profile or key-secret are provided, the boto3 "default" session will be used.
+In case a public bucket is being used `AWS_S3_QUERYSTRING_AUTH = False` can be set, to avoid using signed URLs.
+
+Additional optional settings can be added as per the documentation for
+[django-storages](https://django-storages.readthedocs.io/en/latest/).
+In a developement setting the minio container may also be used to mimic
+a local S3 deployment, in which case `AWS_S3_ENDPOINT_URL` should also be configured.
+Refer [Bitnami Minio](https://hub.docker.com/r/bitnami/minio/).
 
 ### 7. Start the web server (runserver)
 

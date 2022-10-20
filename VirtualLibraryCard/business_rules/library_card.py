@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 from dataclasses import dataclass
 from datetime import datetime
+from io import BytesIO
 from os import linesep
 from random import random
 from threading import Thread
@@ -37,6 +38,9 @@ class LibraryCardRules:
 class LibraryCardBulkUpload:
     REQUIRED_CSV_HEADERS = ["id", "first_name", "email"]
     OPTIONAL_CSV_HEADERS = ["last_name", "city", "us_state", "zip"]
+    FOLDER = "bulk_upload_csvs"
+    # Write uploaded CSVs to the local system since they are temporary files
+    # Must change this in the future if and when implementing async out-of-band queues and job servers
     storage_class = FileSystemStorage
 
     @classmethod
@@ -85,11 +89,17 @@ class LibraryCardBulkUpload:
         self.validate_data(reader)
 
         if self._async:
-            # We must right the csv io contents to something available to a thread
+            # We must write the csv io contents to something available to a thread
             storage = self.storage_class()
             t = datetime.now().timestamp()
-            filename = storage.get_available_name(f"bulk-upload-csv-{t}-{random()}.csv")
-            with storage.open(filename, "w") as fp:
+            filename = storage.get_available_name(
+                f"{self.FOLDER}/bulk-upload-csv-{t}-{random()}.csv"
+            )
+
+            # Saving the file first ensures the directory structure is created
+            storage.save(filename, BytesIO(b""))
+
+            with storage.open(filename, mode="w") as fp:
                 for line in csv_lines:
                     fp.write(line)
                     fp.write(linesep)
@@ -117,7 +127,7 @@ class LibraryCardBulkUpload:
         if type(csv_file) is str:
             storage = self.storage_class()
             with storage.open(csv_file, "r") as fp:
-                csv_lines = fp.readlines()
+                csv_lines = list(iter_clean_lines(fp))
         else:
             csv_lines = list(iter_clean_lines(csv_file))
 
@@ -182,13 +192,14 @@ class LibraryCardBulkUpload:
             log.error("No admin user to send the upload report to!")
             return
 
-        # Write the report as an attachment
-        storage = self.storage_class()
+        # Write the report as an attachment, must be locally stored in order to attach to emails
+        storage = FileSystemStorage()
         t = datetime.now().timestamp()
         filename = storage.get_available_name(f"upload-report-{t}-{random()}.csv")
 
         try:
             report_fields = ["first_name", "email", "card number", "error"]
+            storage.save(filename, BytesIO(b""))
             with storage.open(filename, mode="w") as fp:
                 writer = csv.DictWriter(fp, fieldnames=report_fields)
                 writer.writeheader()
@@ -240,12 +251,13 @@ class LibraryCardBulkUpload:
 def iter_clean_lines(io: IO) -> Generator[str, None, None]:
     """Iterate over an IO object and ignore blank lines
     This is to specifically ignore empty last lines in csvs"""
-    line: bytes
+    line: str | bytes
     for line in io.readlines():
-        sline = line.decode()
-        if sline.isspace():
+        if type(line) == bytes:
+            line = line.decode()
+        if line.isspace():
             continue
-        yield sline.strip()
+        yield line.strip()
 
 
 class BulkUploadBadHeadersException(Exception):
