@@ -1,6 +1,6 @@
-import os
 import re
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import datedelta
@@ -11,6 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.db import models
+from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
@@ -56,9 +57,7 @@ class Library(models.Model):
         return library
 
     def generate_filename(self, filename):
-        ext = f".{filename.split('.')[-1]}"  # .png
-        name = "logo_%s" % self.identifier + ext
-        return os.path.join("", "uploads/library/", name)
+        return f"library/logo_{self.identifier}{Path(filename).suffix}"
 
     BOOL_CHOICES = ((True, _("Descending")), (False, _("Ascending")))
 
@@ -128,42 +127,27 @@ class Library(models.Model):
     def get_first_us_state(self):
         return self.get_us_states()[0]
 
-    def get_logo_img(self, root_url, logo_filename, header):
-        img_html = (
-            '<img  alt="'
-            + self.name
-            + ' logo" aria-label="'
-            + self.name
-            + ' logo"  src="'
-            + root_url
-            + '%s" '
-        )
-        if header:
-            img_html += ' class="logo"'
-        else:
-            img_html += ' width="100px"'
-        img_html += " />"
+    def get_logo_img(self, logo_url, header):
+        img_html = '<img alt="{} logo" aria-label="{} logo" src="{}"{}/>'
 
-        file_url = (
-            logo_filename if root_url else default_storage.url(str(logo_filename))
-        )
-        return mark_safe(img_html % (file_url))
+        if header:
+            additional = ' class="logo"'
+        else:
+            additional = ' width="100px"'
+
+        return mark_safe(img_html.format(self.name, self.name, logo_url, additional))
 
     def logo_thumbnail(self):
-        return self.get_logo_img(self.get_logo_root_url(), self.logo_filename(), False)
+        return self.get_logo_img(self.logo_url(), False)
 
-    def logo_filename(self):
+    def logo_url(self):
         if self.logo:
-            return self.logo
-        return "logo.png"
+            return default_storage.url(str(self.logo))
+        else:
+            return static("images/logo.png")
 
     def logo_header(self):
-        return self.get_logo_img(self.get_logo_root_url(), self.logo_filename(), True)
-
-    def get_logo_root_url(self):
-        if not self.logo:
-            return os.path.join(settings.STATIC_URL, "images/")
-        return ""
+        return self.get_logo_img(self.logo_url(), True)
 
     def state_name(self):
         return LocationUtils.get_library_state_name(self)

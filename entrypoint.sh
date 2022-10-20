@@ -17,8 +17,4 @@ if [[ -z "${SUPERUSER_PASSWORD}" ]]; then
 fi
 python manage.py createsuperusernoninteractive --email $SUPERUSER_EMAIL --password $SUPERUSER_PASSWORD
 
-# Fix permissions on media folder
-mkdir compiled/media
-chown -R "vlc:vlc" compiled/media
-
-uwsgi --static-map "/static/=$APP_DIR/compiled/static/" --static-map "/media/=$APP_DIR/compiled/media/" --show-config
+exec uwsgi --show-config

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.templatetags.static import static
 from django.utils import timezone
 from sequences import get_last_value
 
@@ -33,9 +34,7 @@ class TestLibraryModel(BaseUnitTest):
     def test_generate_filename(self):
         filename = "testname.something.ext"
         generated = self._default_library.generate_filename(filename)
-        assert (
-            generated == f"uploads/library/logo_{self._default_library.identifier}.ext"
-        )
+        assert generated == f"library/logo_{self._default_library.identifier}.ext"
 
     def test_get_us_states(self):
         us_states = ["AL", "TX", "WA", "KA"]
@@ -58,26 +57,18 @@ class TestLibraryModel(BaseUnitTest):
 
     def test_get_logo_img(self):
         library = self._default_library
-        filename = "testlogo.png"
-        url = "http://example.com/"
+        url = "http://test.com/testlogo.png"
 
-        img_tag = library.get_logo_img(url, filename, False)
-        file_url = default_storage.url(filename)
+        img_tag = library.get_logo_img(url, False)
         assert (
             img_tag
-            == f'<img  alt="{library.name} logo" aria-label="{library.name} logo"  src="{url}{filename}"  width="100px" />'
+            == f'<img alt="{library.name} logo" aria-label="{library.name} logo" src="{url}" width="100px"/>'
         )
 
-        img_tag = library.get_logo_img(url, filename, True)
+        img_tag = library.get_logo_img(url, True)
         assert (
             img_tag
-            == f'<img  alt="{library.name} logo" aria-label="{library.name} logo"  src="{url}{filename}"  class="logo" />'
-        )
-
-        img_tag = library.get_logo_img("", filename, True)
-        assert (
-            img_tag
-            == f'<img  alt="{library.name} logo" aria-label="{library.name} logo"  src="{file_url}"  class="logo" />'
+            == f'<img alt="{library.name} logo" aria-label="{library.name} logo" src="{url}" class="logo"/>'
         )
 
     def test_s3_specific_signed_urls(self):
@@ -89,19 +80,12 @@ class TestLibraryModel(BaseUnitTest):
         assert "Signature=" not in file_url
         assert "Expires=" not in file_url
 
-    def test_logo_root_url(self):
+    def test_logo_url(self):
         library = self.create_library(logo="somelogo")
-        assert library.get_logo_root_url() == ""
+        assert library.logo_url() == default_storage.url("somelogo")
 
         library.logo = None
-        assert library.get_logo_root_url() == settings.STATIC_URL + "images/"
-
-    def test_logo_filename(self):
-        library = self.create_library(logo="somelogo")
-        assert library.logo_filename() == "somelogo"
-
-        library.logo = None
-        assert library.logo_filename() == "logo.png"
+        assert library.logo_url() == static("images/logo.png")
 
     def test_state_name(self):
         """library.state_name() is Not really used anywhere but still testing for it"""

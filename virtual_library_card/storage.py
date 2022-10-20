@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from storages.backends import s3boto3
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -29,3 +30,21 @@ class OverwriteStorage(FileSystemStorage):
         if self.exists(path):
             os.remove(path)
         return name
+
+
+class S3StaticStorage(s3boto3.S3StaticStorage):
+    # Override some default settings for this S3 Storage backend. See the list of
+    # options here: https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+    location = "static"
+    is_gzipped = True
+    querystring_auth = False
+    s3_object_parameters = {"CacheControl": "public, max-age=604800"}
+    default_acl = "public-read"
+
+
+class S3PublicStorage(s3boto3.S3Boto3Storage):
+    # Override some default settings for this S3 Storage backend. See the list of
+    # options here: https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+    location = "public"
+    querystring_auth = False
+    default_acl = "public-read"
