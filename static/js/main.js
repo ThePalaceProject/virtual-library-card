@@ -289,3 +289,36 @@
 
 
 }());
+
+/**
+ * 
+ * @param {int} interval 
+ * @param {function} fn 
+ * @returns debounced function
+ * 
+ * Debounce the <fn> method passed in so it is not called continuously 
+ * but only once every <interval> milliseconds, if called at all
+ */
+function debounce(interval, fn) {
+	var last_run = 0;
+	var run_queued = false;
+
+	var run_fn = function (args) {
+		last_run = Date.now(); 
+		fn.call(this, args); 
+		run_queued = false;
+	}
+
+	var dfn = function () {
+		var gap = Date.now() - last_run;
+		if (gap < interval) {
+			if (!run_queued) {
+				setTimeout(run_fn, interval - gap, arguments)
+			}
+			run_queued = true;
+		} else {
+			run_fn(arguments)
+		}
+	}
+	return dfn;
+}

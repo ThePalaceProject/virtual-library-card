@@ -36,6 +36,21 @@ class LowerCharField(models.CharField):
         return super().get_prep_value(value)
 
 
+class LibraryCustomization(models.Model):
+    """Adding all text based customization in a different table
+    so that large chunks of data are not read on every access
+    """
+
+    welcome_email_top_text = models.TextField(max_length=512, null=True, blank=True)
+    welcome_email_bottom_text = models.TextField(max_length=512, null=True, blank=True)
+
+
+def default_customization():
+    lc = LibraryCustomization()
+    lc.save()
+    return lc.id
+
+
 class Library(models.Model):
     class Meta:
         verbose_name_plural = "libraries"
@@ -119,6 +134,15 @@ class Library(models.Model):
         blank=False,
         default=False,
         verbose_name="Allow Bulk Upload For Library Cards",
+    )
+
+    customization = models.ForeignKey(
+        LibraryCustomization,
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        related_name="library",
+        default=default_customization,
     )
 
     def get_us_states(self):

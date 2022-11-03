@@ -5,6 +5,8 @@
 <body>
     <p>{% translate "Hello," %}</p>
 
+    {{ custom_top_text | safe }}
+
     <p>{% blocktrans with library_name=library.name %}
         You are receiving this message because someone used this email address
         to request a library card for {{ library_name }}.
@@ -45,6 +47,8 @@
         <a href="{{ login_url }}">{{ login_url }}</a>
     </p>
     {% endif %}
+
+    {{ custom_bottom_text | safe }}
 
     <p>{% blocktrans with library_name=library.name %}The {{ library_name }} team{% endblocktrans %}</p>
 

@@ -18,6 +18,11 @@ if TYPE_CHECKING:
 
 class Sender:
     @staticmethod
+    def text_whitespaces_to_html(string: str) -> str:
+        """Change whitespaces [space, newline] to an html format"""
+        return string.replace("  ", "&nbsp;&nbsp;").replace("\n", "<br/>")
+
+    @staticmethod
     def send_admin_card_numbers_alert(library, library_admin_users, super_users):
         # Send library_alert
         to = [u.email for u in library_admin_users]
@@ -52,6 +57,10 @@ class Sender:
         """Send out a welcome email which has two optional parts
         - User welcome for a new card
         - Email verification for an unverified email
+
+        The user generated top and bottom text is first sanitized,
+        then it's whitespaces are formatted to HTML
+
         :param library: The library of the patron
         :param user: The patron
         :param card_number: The card number of a newly created card"""
@@ -79,6 +88,12 @@ class Sender:
                     "verification_link": verification_link,
                     "has_welcome": has_welcome,
                     "has_verification": not user.email_verified,
+                    "custom_top_text": Sender.text_whitespaces_to_html(
+                        strip_tags(library.customization.welcome_email_top_text)
+                    ),
+                    "custom_bottom_text": Sender.text_whitespaces_to_html(
+                        strip_tags(library.customization.welcome_email_bottom_text)
+                    ),
                 },
             )
             plain_message = strip_tags(html_message)

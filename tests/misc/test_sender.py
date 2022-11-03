@@ -72,6 +72,9 @@ class TestSender(BaseUnitTest):
         user = self._default_user
         card = self._default_card
 
+        library.customization.welcome_email_top_text = "Welcome user top text"
+        library.customization.welcome_email_bottom_text = "Welcome user bottom text"
+
         render_string = "mockrender"
         mock_render.return_value = render_string
 
@@ -88,6 +91,8 @@ class TestSender(BaseUnitTest):
                 "verification_link": None,
                 "has_verification": False,
                 "has_welcome": True,
+                "custom_top_text": library.customization.welcome_email_top_text,
+                "custom_bottom_text": library.customization.welcome_email_bottom_text,
             },
         )
 
@@ -119,6 +124,8 @@ class TestSender(BaseUnitTest):
                 "verification_link": token_url + "Generated",
                 "has_verification": True,
                 "has_welcome": False,
+                "custom_top_text": library.customization.welcome_email_top_text,
+                "custom_bottom_text": library.customization.welcome_email_bottom_text,
             },
         )
 
@@ -148,3 +155,11 @@ class TestSender(BaseUnitTest):
         # Original text is not present
         assert "card number" not in msg.body.lower()
         assert "password" not in msg.body.lower()
+
+    def test_whitespaces_to_html(self):
+        string = """A\n\nB    C D   E  \nF"""
+
+        assert (
+            "A<br/><br/>B&nbsp;&nbsp;&nbsp;&nbsp;C D&nbsp;&nbsp; E&nbsp;&nbsp;<br/>F"
+            == Sender.text_whitespaces_to_html(string)
+        )

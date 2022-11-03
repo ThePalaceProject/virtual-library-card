@@ -13,6 +13,7 @@ from virtual_library_card.logging import LoggingMixin
 from VirtualLibraryCard.business_rules.library import LibraryRules
 from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
 from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.widgets.buttons import LinkButtonField
 
 
 class LibraryCreationForm(forms.ModelForm):
@@ -61,6 +62,9 @@ class LibraryCardCreationForm(forms.ModelForm):
 
 
 class LibraryChangeForm(forms.ModelForm):
+
+    Customize_emails_field = LinkButtonField("../welcome_email/update")
+
     class Meta:
         model = Library
         exclude = []
@@ -102,6 +106,14 @@ class LibraryChangeForm(forms.ModelForm):
                 )
             )
         self.fields["sequence_down"].label = _("Sequence order")
+
+        # Customisation button setup
+        emails_field: LinkButtonField = self.fields["Customize_emails_field"]
+        emails_field.initial = _("Update")
+        emails_field.label = _("Welcome Email")
+        emails_field.help_text = _(
+            "Add some custom text to the welcome emails sent to new patrons."
+        )
 
 
 class LibraryCardChangeForm(forms.ModelForm):

@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2>{% blocktrans %}Customize the welcome email template{% endblocktrans %} </h2>
+     {% crispy form %}
+     <br />
+     <br />
+
+     <h3>Preview</h3>
+     <div id="email_preview"></div>
+
+     <script>
+        jQuery(function($) {
+            // Multi line email_str comes in from the templating engine
+            var email_str = `{{ email_str }}`;
+            var preview = $("#email_preview");
+
+            /** Replace text whitespaces to html whitespaces */
+            function to_html(str) {
+                return str.replace(/\n/g, "<br/>").replace(/  /g, "&nbsp;&nbsp;")
+            }
+
+            /** Update the preview from the form textboxes, 
+             * also update the hidden form inputs that will hold
+             * the to_html formatted inputs
+             */
+            function update() {
+                var rendered_str = email_str;
+                
+                // First we must WYSIWYG the input text
+                // Then replace within the email template or display a placeholder
+                var top_text = to_html($("#id_top_text").val()) || "<i style='color: red;'>Top text here</i>",
+                    bottom_text = to_html($("#id_bottom_text").val()) || "<i style='color: red;'>Bottom text here</i>"
+                    ;
+                rendered_str = rendered_str.replace("[[CUSTOM_TOP_TEXT]]", top_text)
+                rendered_str = rendered_str.replace("[[CUSTOM_BOTTOM_TEXT]]", bottom_text)
+
+                // display the preview
+                preview.html(rendered_str); 
+            }
+            
+            // Debounce the update function
+            var update_dbc = debounce(500, update)
+            // update the preview once on startup
+            update();
+            
+            // Setup the listeners for continuous updates
+            $("#id_top_text").on("keyup", function(ev) { update_dbc(); } )
+            $("#id_bottom_text").on("keyup", function(ev) { update_dbc(); } )
+            
+        })
+
+     </script>
+{% endblock %}

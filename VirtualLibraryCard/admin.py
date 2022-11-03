@@ -32,6 +32,9 @@ from VirtualLibraryCard.models import (
     LibraryCard,
     LibraryStates,
 )
+from VirtualLibraryCard.views.admin_email_customize import (
+    AdminCustomizeWelcomeEmailView,
+)
 
 if TYPE_CHECKING:
     from django.contrib.admin.options import InlineModelAdmin
@@ -249,6 +252,7 @@ class LibraryAdmin(admin.ModelAdmin):
                     "pin_text",
                     "allow_all_us_states",
                     "allow_bulk_card_uploads",
+                    "Customize_emails_field",
                 )
             },
         ),
@@ -433,7 +437,11 @@ class VLCAdminSite(admin.AdminSite):
     def get_urls(self) -> List[Union[URLResolver, URLPattern]]:
         urls = super().get_urls()
         urls = [
-            path("librarycard/upload_by_csv", LibraryCardsUploadCSV.as_view())
+            path("librarycard/upload_by_csv", LibraryCardsUploadCSV.as_view()),
+            path(
+                "VirtualLibraryCard/library/<id>/welcome_email/update",
+                AdminCustomizeWelcomeEmailView.as_view(),
+            ),
         ] + urls
         return urls
 
