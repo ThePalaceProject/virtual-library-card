@@ -20,11 +20,9 @@ Python 3.7+ must be installed, and a SQL database must be available.
 - The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags in the
   `settings/prod.py` allow to control what is deployed.
 
-## Deploying for production
+## Running the application locally
 
 ### 1. Clone the repository
-
-`cd` to the directory where you want to deploy the project files (as specified in the apache conf file), and clone the repository:
 
     git clone git@github.com:ThePalaceProject/virtual-library-card.git
 
@@ -40,12 +38,11 @@ Note: activate the virtual env before installing the requirements.
 
 ### 3. Collect the static files
 
-The static files must be "collected" to the dedicated directory:
+The static files must be "collected":
 
     python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
 
-This directory is by default `static`, inside the project root, but you can adjust it to whatever you want, as described
-in section "8. Prepare the web server".
+Our default configuration puts these files into a public s3 bucket.
 
 See [django documentation](https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/modwsgi/#serving-files).
 
@@ -67,7 +64,7 @@ The database connection parameters for a development (resp. production) environm
 
 ### 5. Create / update the database schema
 
-After the initial clone and subsequent `git pull` commands, the database schema must be updated by the following command:
+The database schema must be initialized and updated with:
 
     python3 manage.py migrate --settings=virtual_library_card.settings.prod
 
@@ -84,7 +81,7 @@ Notes:
         DEFAULT_SUPERUSER_LIBRARY_PREFIX = "0123"
         DEFAULT_SUPERUSER_LIBRARY_STATE = "NY"
 
-- The pseudo of the superuser can be also configured in the settings files:
+- The name of the superuser can be also configured in the settings files:
 
         DEFAULT_SUPERUSER_FIRST_NAME = "superuser"
 
@@ -94,119 +91,60 @@ The website and API are in the same Django project and app. The `HAS_API` and `H
 what is deployed.
 You can adjust these values in the `settings/prod.py` file.
 
-### 8. Prepare the web server
+### 8. Run webserver
 
-We are using Apache 2 in the sample deployment. See
-[modwsgi docs](https://modwsgi.readthedocs.io/en/develop/user-guides/virtual-environments.html#embedded-mode-single-application)
-for details. `mod_wsgi` must be installed and enabled.
+#### Development
 
-Ensure your apache2 was installed with the same python version as your virtualenv
+For development, you can use the Django `runserver` command.
 
-The `sample-apache-config/vlc-website.conf` file contains a sample Apache conf file for the website (exact same to
-deploy the API). This file must be placed into /etc/apache2/sites-available, and be enabled with `a2ensite`.
+    python manage.py runserver --settings=virtual_library_card.settings.prod
 
-In this file, adjust:
-- The project code root directory
-- The static and media files directories
+#### UWSGI
 
-By default, the static files are placed in the `static` subdirectory. If you want to place them anywhere outside, you
-must adjust the following:
-- in the `settings/base.py`, you must adjust the `STATICFILES_DIR` param
-- the Apache config file section related to the static and media files:
+For development or production use you can run the application under uwsgi.
 
-        Alias /media/ <path_to_deployment_dir>/media/
-        Alias /static/ <path_to_deployment_dir>/static/
+    uwsgi --wsgi-file virtual_library_card/wsgi.py --http :8000
 
-         <Directory <path_to_deployment_dir>/media>
-          Require all granted
-         </Directory>
+## Running the application with docker-compose
 
-         <Directory <path_to_deployment_dir>/static>
-          Require all granted
-         </Directory>
+We have an example [docker-compose.yml](docker-compose.yml) that can be used as a starting
+point for deploying the code to production, or as an easy way to run the application for
+development. It runs three containers: postgresql, minio and vlc. It takes care of setting
+up the environment variables to configure the containers to talk to one another.
 
-### 9. Start the web server (Apache)
+    docker-compose up -d
 
-Typically:
+Then you should be able to access the site at `http://localhost:8000` with the username (test@test.com)
+and password (test) defined in [`docker-compose.yml`](./docker-compose.yml).
 
-    sudo apache2ctl restart
+## Running the application in docker
 
-### Updating the project
+### 1. Build docker container
 
-    git pull
-    python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
-    python manage.py migrate --settings=virtual_library_card.settings.prod
+After cloning the repository, this step builds the docker container.
+Eventually you will be able to pull the container from dockerhub.
 
-Some changes in the code may require restarting the web server, too:
+    docker build -t virtual_libary_card .
 
-    sudo apache2ctl restart
+### 2. Create PostgreSQL Container (Only for testing)
 
-## Setting up the project on a DEVELOPER machine
+Either create a new database in the production PostgreSQL Database. Or use the docker PostgreSQL container for testing.
 
-The steps are mostly the same, except that on a developer machine, Apache won't usually be used. Instead, we use django's
-`runserver` command`
+    docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:12
 
-### 1. Clone the repository
+### 3. Create settings file
 
-`cd` to the directory where you want to deploy the project files (as specified in the apache conf file), and clone the repository:
+Create the settings file for the app and bind mount it into the container. The `virtual_library_card/settings/dev.py`
+is an example of this file, and in most cases can be used for basic testing.
 
-    git clone git@github.com:ThePalaceProject/virtual-library-card.git
-    python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
+### 4. Start container
 
-### 2. Create and initialize a Python virtual env
+    docker run --name vlc --rm -p 8000:8000 -e SUPERUSER_EMAIL=test@test.com -e SUPERUSER_PASSWORD=test -e \
+      DJANGO_SETTINGS_MODULE=virtual_library_card.settings.dev --link pg virtual_library_card
 
-    pip install --upgrade pip
-    pip install virtualenv
-    python3 -m venv venv
-    source venv/bin/activate
-    poetry install
+### 5. View site
 
-Note: activate the virtual env before installing the requirements
-
-### 3. Adjust the database connection parameters
-
-The database connection parameters for a development (resp. production) environment are located in the `settings/dev.py`
-(resp.`settings/prod.py`) files:
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'virtual_library_card',
-            'USER': 'vlcdbuser',
-            'PASSWORD': 'vlc2020',
-            'HOST': 'localhost',
-            'PORT': '',
-        }
-    }
-
-### 4. Create / update the database schema
-
-After the initial clone and subsequent `git pull` commands, the database schema must be updated by the following command:
-
-    python manage.py migrate --settings=virtual_library_card.settings.prod
-
-### 5. Create the superuser
-
-    python manage.py createsuperuser --settings=virtual_library_card.settings.prod
-
-Notes:
-
-- This will also create the "default" library, which can be customized through a few settings in `settings/base.py`:
-
-        DEFAULT_SUPERUSER_LIBRARY_NAME = "Lyrasis"
-        DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER = "lyra"
-        DEFAULT_SUPERUSER_LIBRARY_PREFIX = "0123"
-        DEFAULT_SUPERUSER_LIBRARY_STATE = "NY"
-
-- The pseudo of the superuser can be also configured in the settings files:
-
-        DEFAULT_SUPERUSER_FIRST_NAME = "superuser"
-
-### 6. Select what (website or/and API) will be deployed
-
-The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags allow to control
-what is deployed. You can adjust these values in the `settings/dev.py` file.
-Typically, on a developer machine you will set both to `True`.
+The site should be available in your browser for testing at `https://localhost:8000`.
 
 ## Other settings
 
@@ -239,39 +177,6 @@ Additional optional settings can be added as per the documentation for
 In a development setting the minio container may also be used to mimic
 a local S3 deployment, in which case `AWS_S3_ENDPOINT_URL` should also be configured.
 Refer [Bitnami Minio](https://hub.docker.com/r/bitnami/minio/).
-
-### 7. Start the web server (runserver)
-
-### 8. Schedule clear_sessions in crontab
-
-    0 3 * * * cd <project_root> && <project_root>/venv/bin/python <project_root>/manage.py clearsessions  --settings=virtual_library_card.settings.prod
-
-#### Through the command-line
-
-Make sure the virtual is activated before launching the following command:
-
-    python3 manage.py runserver cms.mantano.com:8000 --settings=virtual_library_card.settings.dev
-
-#### Through the PyCharm IDE
-
-You must first configure the project to use the virtual environment, as described in the
-[PyCharm documentation](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html).
-
-Then, the server can be started thanks to the "Run dropdown":
-![Run dropdown screenshot](doc/screenshots/PyCharmRunDropdown.png)
-
-### 8. What to do before pushing code modifications
-
-1. Make sure poetry lock file us up to date
-
-    poetry lock
-
-2. Update and compile the translations
-
-    python3 manage.py makemessages --settings=virtual_library_card.settings.dev
-    python3 manage.py compilemessages --settings=virtual_library_card.settings.dev
-
-3. Run pre-commit
 
 ## Testing & CI
 
@@ -344,37 +249,3 @@ require a database, and use the settings configured in [dev.py](virtual_library_
 uses the database name configured in `dev.py` with `test_` prepended to it (`test_virtual_library_card_dev`). This
 database will be created automatically by the tests, and cleaned up afterwords. So the database user must have
 permission to create and drop databases.
-
-### References
-
-- [How To Serve Django Applications](https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-debian-8)
-- [Deploy Django on Apache with Virtualenv and mod_wsgi](https://www.thecodeship.com/deployment/deploy-django-apache-virtualenv-and-mod_wsgi/)
-
-## Deploying with Docker
-
-### 1. Build docker container
-
-After cloning the repository, this step builds the docker container.
-Eventually you will be able to pull the container from dockerhub.
-
-    docker build -t virtual_libary_card .
-
-### 2. Create PostgreSQL Container (Only for testing)
-
-Either create a new database in the production PostgreSQL Database. Or use the docker PostgreSQL container for testing.
-
-    docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:12
-
-### 3. Create settings file
-
-Create the settings file for the app and bind mount it into the container. The `virtual_library_card/settings/dev.py`
-is an example of this file, and in most cases can be used for basic testing.
-
-### 4. Start container
-
-    docker run --name vlc --rm -p 8000:8000 -e SUPERUSER_EMAIL=test@test.com -e SUPERUSER_PASSWORD=test -e \
-      DJANGO_SETTINGS_MODULE=virtual_library_card.settings.dev --link pg virtual_library_card
-
-### 5. View site
-
-The site should be available in your browser for testing at `https://localhost:8000`.

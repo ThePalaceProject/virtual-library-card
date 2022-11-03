@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  # example docker compose configuration for testing and development
+
+  vlc:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_started
+      minio:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: "virtual_library_card.settings.dev"
+      VLC_DEV_DB_PORT: "5432"
+      VLC_DEV_DB_HOST: "pg"
+      VLC_DEV_AWS_S3_ENDPOINT_URL: "http://minio:9000"
+      VLC_DEV_AWS_S3_CUSTOM_DOMAIN: "localhost:9000/vlc-test"
+      VLC_DEV_AWS_S3_URL_PROTOCOL: "http:"
+      SUPERUSER_EMAIL: "test@test.com"
+      SUPERUSER_PASSWORD: "test"
+
+  pg:
+    image: "postgres:12"
+    environment:
+      POSTGRES_USER: vlc
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: virtual_library_card_dev
+
+  minio:
+    image: "bitnami/minio:2022.3.3"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: "vlc-minio"
+      MINIO_SECRET_KEY: "123456789"
+      MINIO_DEFAULT_BUCKETS: "vlc-test:download"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      start_period: 30s
+      timeout: 20s
+      retries: 3
