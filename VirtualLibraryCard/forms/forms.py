@@ -115,6 +115,25 @@ class LibraryChangeForm(forms.ModelForm):
             "Add some custom text to the welcome emails sent to new patrons."
         )
 
+        self.fields["bulk_upload_prefix"].required = False
+        self.fields["bulk_upload_prefix"].help_text = _(
+            "This field is only required when Bulk Card Uploads are enabled."
+        )
+
+    def is_valid(self) -> bool:
+        valid = super().is_valid()
+
+        # If the bulk uploads are allowed we must have a prefix set for them
+        if self.cleaned_data["allow_bulk_card_uploads"] is True:
+            if not self.cleaned_data.get("bulk_upload_prefix"):  # None or empty
+                valid = False
+                self.add_error(
+                    "bulk_upload_prefix",
+                    "When bulk card uploads are allowed, this field must be given a value.",
+                )
+
+        return valid
+
 
 class LibraryCardChangeForm(forms.ModelForm):
     sequence_down = forms.TypedChoiceField(

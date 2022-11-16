@@ -140,6 +140,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             privacy_url="",
             terms_conditions_url="",
             prefix="",
+            allow_bulk_card_uploads=False,
             # sequence_start_number=0,
             # sequence_down=False,
         )
@@ -273,3 +274,31 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         assert self.admin.get_inlines(post_without_states, obj=None) == [
             LibraryAllowedDomainsInline,
         ]
+
+    def test_optional_bulk_upload_prefix(self):
+        """If the allow_bulk_card_uploads attribute is true then the bulk uploads prefix is mandatory,
+        else it is optional"""
+        library = self.create_library()
+        changes = self._get_library_change_data(library, allow_bulk_card_uploads=True)
+        del changes["logo"]
+        del changes["bulk_upload_prefix"]
+        response = self.test_client.post(self.get_change_url(library), changes)
+
+        assert response.status_code == 200
+        self.assertFormError(
+            response,
+            "adminform",
+            "bulk_upload_prefix",
+            "When bulk card uploads are allowed, this field must be given a value.",
+        )
+
+        # When allow_bulk_card_uploads is False, the field is optional
+        changes["allow_bulk_card_uploads"] = False
+        response = self.test_client.post(self.get_change_url(library), changes)
+        assert response.status_code == 302
+
+        # When allow_bulk_card_uploads is True, and the field is provided we're A-OK
+        changes["bulk_upload_prefix"] = "bulkupload"
+        changes["allow_bulk_card_uploads"] = True
+        response = self.test_client.post(self.get_change_url(library), changes)
+        assert response.status_code == 302
