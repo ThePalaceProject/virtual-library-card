@@ -10,9 +10,15 @@
     <p>{% blocktrans with library_name=library.name %}
         You are receiving this message because someone used this email address
         to request a library card for {{ library_name }}.
-        <br>
-        If you were not expecting this to happen, please ignore this message and do NOT click the verification link below.
         {% endblocktrans %}
+        <br>
+        {# We keep the text "message" in both if-else blocks so that we can control the spacing for the "."(period) #}
+        {% translate "If you were not expecting this to happen, please ignore this" %}
+        {% if has_verification %}
+            {% translate "message and do NOT click the verification link below." %}
+        {% else %}
+            {% translate "message." %}
+        {% endif %}
     </p>
 
     <p>{% blocktrans with library_name=library.name %}Thank you for joining {{ library_name }}.{% endblocktrans %}
