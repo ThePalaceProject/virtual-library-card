@@ -10,6 +10,7 @@ from VirtualLibraryCard.business_rules.library_card import (
     BulkUploadDuplicatesException,
     BulkUploadLibraryException,
     LibraryCardBulkUpload,
+    iter_clean_lines,
 )
 from VirtualLibraryCard.models import CustomUser, LibraryCard
 
@@ -141,3 +142,37 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
 
         # Did we clean up the file
         assert not bulk.storage_class().exists(bulk._async_thread.args[0])
+
+    def test_upload_bom_character(self):
+        # csv bytes with a BOM character, and special unicode characters
+        csv_bytes = bytes(
+            """id,first_name,email
+                111,name111,111@example.org
+                222,nāme ƚŵŏ,222@example.org""",
+            "utf-8-sig",
+        )
+
+        uploaded = BytesIO(csv_bytes)
+
+        # Unit test the cleaning
+        for line in iter_clean_lines(uploaded):
+            assert "id" == line[:2]
+            # Only the first line matters
+            break
+
+        # Test the workflow
+        uploaded.seek(0)
+        library = self.create_library(
+            allow_bulk_card_uploads=True, bulk_upload_prefix="bulk"
+        )
+        LibraryCardBulkUpload.bulk_upload_csv(
+            library, uploaded, admin_user=self._default_user, _async=False
+        )
+
+        users_q = CustomUser.objects.filter(library=library)
+        cards_q = LibraryCard.objects.filter(library=library)
+        assert cards_q.count() == 2
+        assert {"bulk111", "bulk222"} == {c.number for c in cards_q}
+        assert users_q.count() == 2
+        assert {"111@example.org", "222@example.org"} == {c.email for c in users_q}
+        assert {"name111", "nāme ƚŵŏ"} == {c.first_name for c in users_q}

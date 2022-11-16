@@ -3,12 +3,13 @@ from __future__ import annotations
 import csv
 from dataclasses import dataclass
 from datetime import datetime
-from io import BytesIO
+from io import BytesIO, StringIO
 from os import linesep
 from random import random
 from threading import Thread
 from typing import IO, Any, Dict, Generator, List, Set, Tuple
 
+import chardet
 from django.core.files.storage import FileSystemStorage
 from django.db.utils import IntegrityError
 
@@ -257,11 +258,22 @@ class LibraryCardBulkUpload:
 
 def iter_clean_lines(io: IO) -> Generator[str, None, None]:
     """Iterate over an IO object and ignore blank lines
-    This is to specifically ignore empty last lines in csvs"""
-    line: str | bytes
+    This is to specifically ignore empty last lines in csvs
+    decoding is done through charset detection
+    This handles unicode BOM characters since we do not control how the browser might read the file"""
+    # Detect charset and the decode entire file
+    detectline = io.read(128)
+    io.seek(0)
+    if isinstance(detectline, bytes):
+        charset = chardet.detect(detectline)["encoding"]
+        all_lines = io.read().decode(charset)
+        # A new decoded IO instance
+        io = StringIO(all_lines)
+
+    line: str
     for line in io.readlines():
-        if type(line) == bytes:
-            line = line.decode()
+        # Replace null characters, python csv does not accept NUL
+        line = line.replace(chr(0), "")
         if line.isspace():
             continue
         yield line.strip()
