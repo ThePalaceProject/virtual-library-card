@@ -18,7 +18,6 @@ from django.utils.translation import gettext as _
 from localflavor.us.models import USStateField, USZipCodeField
 
 from virtual_library_card.card_number import CardNumber
-from virtual_library_card.location_utils import LocationUtils
 from virtual_library_card.logging import log
 
 
@@ -64,10 +63,13 @@ class Library(models.Model):
         )
         library.save()
 
-        ls = LibraryStates(
-            library=library, us_state=settings.DEFAULT_SUPERUSER_LIBRARY_STATE
-        )
-        ls.save()
+        # Load the library-place if it is present
+        place = Place.objects.filter(
+            abbreviation=settings.DEFAULT_SUPERUSER_LIBRARY_STATE
+        ).first()
+        if place is not None:
+            lp = LibraryPlace(library=library, place=place)
+            lp.save()
 
         return library
 
@@ -83,7 +85,7 @@ class Library(models.Model):
     us_state = USStateField(_("State"), blank=False)
     us_state.system_check_deprecated_details = dict(
         msg="Library.us_state is a deprecated field",
-        hint="Use LibraryState associations only",
+        hint="Use the LibraryPlace associations only",
         id="fields.us_state_001",
     )
     ######
@@ -145,11 +147,16 @@ class Library(models.Model):
         default=default_customization,
     )
 
-    def get_us_states(self):
-        return [ls.us_state for ls in self.library_states.order_by("id").all()]
+    def get_places(self):
+        return [
+            ls.place.abbreviation for ls in self.library_places.order_by("id").all()
+        ]
 
-    def get_first_us_state(self):
-        return self.get_us_states()[0]
+    def get_first_place(self):
+        try:
+            return self.get_places()[0]
+        except IndexError:
+            return None
 
     def get_logo_img(self, logo_url, header):
         img_html = '<img alt="{} logo" aria-label="{} logo" src="{}"{}/>'
@@ -174,7 +181,10 @@ class Library(models.Model):
         return self.get_logo_img(self.logo_url(), True)
 
     def state_name(self):
-        return LocationUtils.get_library_state_name(self)
+        try:
+            return self.library_places.first().place.name
+        except AttributeError:
+            return None
 
     def social_links(self):
         global_links = ""
@@ -227,6 +237,46 @@ class LibraryStates(models.Model):
     us_state = USStateField(_("State"), blank=False)
 
 
+class LibraryPlace(models.Model):
+    """Library to Place relation"""
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["library", "place"], name="unique_library_place"
+            )
+        ]
+
+    library = models.ForeignKey(
+        Library,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name="library_places",
+    )
+    place = models.ForeignKey(
+        "Place",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name="place_libraries",
+    )
+
+    @classmethod
+    def associate(cls, library: Library, place_abbreviation: str) -> "LibraryPlace":
+        """Associate a library with a 'place' via abbreviation notation
+        Only if it does not exist already"""
+        place = Place.objects.get(abbreviation=place_abbreviation)
+        lp = LibraryPlace.objects.filter(library=library, place=place).first()
+        if not lp:
+            lp = LibraryPlace(library=library, place=place)
+            lp.save()
+        return lp
+
+    def __repr__(self) -> str:
+        return f"(type={self.place.type}, name={self.place.name})"
+
+
 def validate_domain(domain: str) -> bool:
     matched = re.match("[a-z0-9-_]+\.[a-z0-9-_]{2,}", domain, flags=re.IGNORECASE)
     return matched is not None
@@ -259,25 +309,25 @@ class CustomUserManager(BaseUserManager):
     """
 
     def create_user(
-        self, email, password, library, us_state, first_name, **extra_fields
+        self, email, password, library, place_abbreviation, first_name, **extra_fields
     ):
         """
         Create and save a User with the given email and password.
         """
         if not email:
-            raise ValueError(_("The Email must be set"))
+            raise ValueError(_("The email must be set"))
         if not first_name:
-            raise ValueError(_("The First name must be set"))
+            raise ValueError(_("The first name must be set"))
         if not library:
-            raise ValueError(_("The Library must be set"))
-        if not us_state:
-            raise ValueError(_("The State must be set"))
+            raise ValueError(_("The library must be set"))
+        if not place_abbreviation:
+            raise ValueError(_("The place must be set"))
         email = self.normalize_email(email)
         user = self.model(
             email=email,
             library=library,
-            us_state=us_state,
             first_name=first_name,
+            place=Place.objects.filter(abbreviation=place_abbreviation).first(),
             **extra_fields,
         )
         user.set_password(password)
@@ -306,7 +356,7 @@ class CustomUserManager(BaseUserManager):
             email,
             password,
             default_library,
-            default_library.get_first_us_state(),
+            default_library.get_first_place(),
             first_name,
             **extra_fields,
         )
@@ -328,7 +378,23 @@ class CustomUser(AbstractUser):
         _("Street address line 2"), max_length=255, null=True, blank=True
     )
     city = models.CharField(max_length=255, null=True, blank=False)
-    us_state = USStateField(_("State"), null=False, blank=False)
+
+    ## Deprecated - do not use this field, use the place field
+    us_state = USStateField(_("State"), null=True)
+    us_state.system_check_deprecated_details = dict(
+        msg="CustomUser.us_state is a deprecated field",
+        hint="Use the Place association only",
+        id="fields.us_state_002",
+    )
+    ######
+
+    place = models.ForeignKey(
+        "Place",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+    )
+
     country_code = models.CharField(
         max_length=255, null=True, blank=False, default="US"
     )
@@ -390,10 +456,10 @@ class CustomUser(AbstractUser):
         return smart_name.strip()
 
     def library_states(self):
-        return self.library.get_us_states()
+        return self.library.get_places()
 
     def library_state_name(self):
-        return LocationUtils.get_library_state_name(self.library)
+        return self.library.state_name()
 
     def groups_permission(self):
         """
@@ -531,3 +597,46 @@ class LibraryCard(models.Model):
         if self.canceled_date is not None:
             return _(" | CANCELLED")
         return ""
+
+
+class Place(models.Model):
+    """A store of locations around the world, libraries and users should reference locations in this table
+    Places are hierarchical, that means a Place may be contained within another Place.
+    This is denoted by the Parent relationship.
+    Eg. Texas is a state within the US, so the Place(type=state, name=Texas) will have a
+    relationship parent=Place(type=country, name=United States)."""
+
+    class Types:
+        COUNTRY = "country"
+        STATE = "state"
+        PROVINCE = "province"
+        COUNTY = "county"
+        CITY = "city"
+
+    AREA_TYPES = (
+        (Types.COUNTRY, Types.COUNTRY),
+        (Types.STATE, Types.STATE),
+        (Types.PROVINCE, Types.PROVINCE),
+        (Types.COUNTY, Types.COUNTY),
+        (Types.CITY, Types.CITY),
+    )
+
+    # The external identifier from the datasource, this cannot change
+    external_id = models.CharField(max_length=20, null=False, blank=False, unique=True)
+
+    # cities and counties have blank abbreviations
+    abbreviation = models.CharField(max_length=5, null=False, blank=True)
+
+    name = models.CharField(max_length=100, null=False, blank=False)
+    type = models.CharField(max_length=20, choices=AREA_TYPES)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
+    latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
+
+    @classmethod
+    def by_abbreviation(cls, abbreviation: str) -> "Place":
+        """Search for place with an exact match on the abbreviation"""
+        return cls.objects.filter(abbreviation=abbreviation).first()
+
+    def __str__(self) -> str:
+        return f"{self.name} | {self.abbreviation} | {self.type}"

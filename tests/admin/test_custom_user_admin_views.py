@@ -10,6 +10,7 @@ from VirtualLibraryCard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
+    Place,
 )
 
 
@@ -115,7 +116,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             "zip": kwargs.get("zip") or user.zip or "",
             "over13": "on",
             "is_active": "on",
-            "us_state": kwargs.get("us_state") or user.us_state,
+            "place": kwargs.get("place_id") or user.place.id,
         }
 
     def test_valid_change_form(self):
@@ -257,7 +258,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             ["Enter a zip code in the format XXXXX or XXXXX-XXXX."],
         )
 
-    def test_invalid_us_state_change(self):
+    def test_invalid_place_change(self):
         user = self.create_user(
             self._default_library,
             "test1@user.com",
@@ -266,10 +267,10 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             street_address_line1="street",
             city="city",
             zip="99999",
-            us_state="NY",
+            place_id=Place.by_abbreviation("NY").id,
         )
         data = self._get_user_change_data(user)
-        data["us_state"] = "HI"
+        data["place"] = Place.by_abbreviation("HI").id
         self.mock_checker.is_valid_zipcode.return_value = True
 
         response = self.test_client.post(self.get_change_url(user), data)
@@ -277,11 +278,11 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         self.assertFormError(
             response,
             "adminform",
-            "us_state",
-            ["The user must be within the library defined states: NY"],
+            "place",
+            ["The user must be within the library defined places: NY"],
         )
 
-        data["us_state"] = "NY"
+        data["place"] = Place.by_abbreviation("NY").id
         response = self.test_client.post(self.get_change_url(user), data)
         assert response.status_code == 302
 

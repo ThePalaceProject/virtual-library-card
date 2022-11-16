@@ -1,5 +1,5 @@
 import csv
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Tuple, Union
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
@@ -30,14 +30,12 @@ from VirtualLibraryCard.models import (
     Library,
     LibraryAllowedEmailDomains,
     LibraryCard,
-    LibraryStates,
+    LibraryPlace,
+    Place,
 )
 from VirtualLibraryCard.views.admin_email_customize import (
     AdminCustomizeWelcomeEmailView,
 )
-
-if TYPE_CHECKING:
-    from django.contrib.admin.options import InlineModelAdmin
 
 
 class CustomUserAdmin(LoggingMixin, UserAdmin):
@@ -54,7 +52,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         "is_active",
         "library",
         "authorization_expires",
-        "us_state",
+        "state",
         "groups_permission",
         "nb_library_cards",
     ]
@@ -86,7 +84,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
                     "street_address_line1",
                     "street_address_line2",
                     "city",
-                    "us_state",
+                    "place",
                     "zip",
                 )
             },
@@ -118,18 +116,22 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     search_fields = ["email"]
     ordering = ["email"]
 
+    def state(self, obj):
+        return obj.place and str(obj.place.name)
+
     def get_list_filter(self, request: Any) -> List[Any]:
         list_filter = super().get_list_filter(request)
         if request.user.is_superuser:
             list_filter = list_filter + ("library",)
-        list_filter = list_filter + ("us_state",)
+        list_filter = list_filter + ("place",)
         return list_filter
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
             if not request.user.is_superuser:
                 obj.library = request.user.library
-                obj.us_state = obj.library.get_first_us_state()
+                libplace = obj.library.library_places.first()
+                obj.place = libplace and libplace.place
 
         super().save_model(request, obj, form, change)
 
@@ -169,16 +171,15 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
 
     def get_queryset(self, request):
         qs = super(CustomUserAdmin, self).get_queryset(request)
-        self.log.debug(f"{request.user.is_superuser} request.user.is_superuser")
         if request.user.is_superuser:
             return qs
         return qs.filter(library=request.user.library.id)
 
 
-class LibraryStatesInline(admin.StackedInline):
-    model = LibraryStates
+class LibraryPlacesInline(admin.StackedInline):
+    model = LibraryPlace
     extra = 0
-    verbose_name_plural = "Library States"
+    verbose_name_plural = "Library Places"
 
 
 class LibraryAllowedDomainsInline(admin.StackedInline):
@@ -196,7 +197,7 @@ class LibraryAdmin(admin.ModelAdmin):
         "logo_thumbnail",
         "name",
         "identifier",
-        "get_us_states",
+        "get_place_abbrs",
         "phone",
         "email",
         "terms_conditions_link",
@@ -250,7 +251,6 @@ class LibraryAdmin(admin.ModelAdmin):
                 "fields": (
                     "barcode_text",
                     "pin_text",
-                    "allow_all_us_states",
                     "allow_bulk_card_uploads",
                     "Customize_emails_field",
                 )
@@ -261,10 +261,15 @@ class LibraryAdmin(admin.ModelAdmin):
 
     actions = ["export_as_csv"]
 
-    def get_us_states(self, obj):
-        return obj.get_us_states()
+    inlines = [
+        LibraryPlacesInline,
+        LibraryAllowedDomainsInline,
+    ]
 
-    get_us_states.short_description = "US States"
+    @admin.decorators.display(description="US States")
+    def get_place_abbrs(self, obj):
+        """Display the state abbreviations on the list page"""
+        return [lp.place.abbreviation for lp in obj.library_places.all()]
 
     def get_queryset(self, request):
         qs = super(LibraryAdmin, self).get_queryset(request)
@@ -277,19 +282,6 @@ class LibraryAdmin(admin.ModelAdmin):
             return []
         else:
             return ["identifier"]
-
-    def get_inlines(self, request: Any, obj: Library) -> List[Type["InlineModelAdmin"]]:
-        """Dynamic inline forms based on library configs"""
-        states_inline = False
-        if request.method == "GET":
-            # A page "view" depends on what the data is on the object
-            states_inline = obj.allow_all_us_states is False if obj else True
-        else:
-            # A page that is a "change" depends on the new data
-            states_inline = "library_states-TOTAL_FORMS" in request.POST
-        if not states_inline:
-            return [LibraryAllowedDomainsInline]
-        return [LibraryStatesInline, LibraryAllowedDomainsInline]
 
     def export_as_csv(self, request, queryset):
         return export_list_as_csv(self, request, queryset)
@@ -452,3 +444,4 @@ admin_site.register(CustomUser, CustomUserAdmin)
 admin_site.register(Library, LibraryAdmin)
 admin_site.register(LibraryCard, LibraryCardAdmin)
 admin_site.register(Sequence, CustomSequenceAdmin)
+admin_site.register(Place, admin.ModelAdmin)

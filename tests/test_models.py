@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.db.utils import IntegrityError
 from django.templatetags.static import static
 from django.utils import timezone
 from sequences import get_last_value
@@ -20,6 +21,8 @@ from VirtualLibraryCard.models import (
     Library,
     LibraryAllowedEmailDomains,
     LibraryCard,
+    LibraryPlace,
+    Place,
 )
 
 
@@ -29,7 +32,7 @@ class TestLibraryModel(BaseUnitTest):
         assert library.name == settings.DEFAULT_SUPERUSER_LIBRARY_NAME
         assert library.identifier == settings.DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER
         assert library.prefix == settings.DEFAULT_SUPERUSER_LIBRARY_PREFIX
-        assert library.get_us_states() == [settings.DEFAULT_SUPERUSER_LIBRARY_STATE]
+        assert library.get_places() == [settings.DEFAULT_SUPERUSER_LIBRARY_STATE]
 
     def test_generate_filename(self):
         filename = "testname.something.ext"
@@ -37,23 +40,23 @@ class TestLibraryModel(BaseUnitTest):
         assert generated == f"library/logo_{self._default_library.identifier}.ext"
 
     def test_get_us_states(self):
-        us_states = ["AL", "TX", "WA", "KA"]
-        library = self.create_library(us_states=us_states)
-        assert library.get_us_states() == us_states
+        us_states = ["AL", "TX", "WA", "KS"]
+        library = self.create_library(places=us_states)
+        assert library.get_places() == us_states
 
-    def test_get_first_us_state(self):
-        us_states = ["AL", "TX", "WA", "KA"]
-        library = self.create_library(us_states=us_states)
-        assert library.get_first_us_state() == "AL"
+    def test_get_first_place(self):
+        us_states = ["AL", "TX", "WA", "KS"]
+        library = self.create_library(places=us_states)
+        assert library.get_first_place() == "AL"
 
         # ensure this wasn't a fluke
         random.shuffle(us_states)
-        l1 = self.create_library(us_states=us_states)
-        l1.get_first_us_state() == us_states[0]
+        l1 = self.create_library(places=us_states)
+        l1.get_first_place() == us_states[0]
 
         random.shuffle(us_states)
-        l2 = self.create_library(us_states=us_states)
-        l2.get_first_us_state() == us_states[0]
+        l2 = self.create_library(places=us_states)
+        l2.get_first_place() == us_states[0]
 
     def test_get_logo_img(self):
         library = self._default_library
@@ -89,7 +92,7 @@ class TestLibraryModel(BaseUnitTest):
 
     def test_state_name(self):
         """library.state_name() is Not really used anywhere but still testing for it"""
-        library = self.create_library(us_states=["NY"])
+        library = self.create_library(places=["NY"])
         assert library.state_name() == "New York"
 
     def test_allowed_domains(self):
@@ -149,14 +152,14 @@ class TestCustomUserModel(BaseUnitTest):
             last_name="last name",
         )
         assert user.email == "email"
-        assert user.us_state == "NY"
+        assert user.place.abbreviation == "NY"
         assert user.first_name == "first name"
         assert user.library == self._default_library
         assert user.last_name == "last name"
 
     def test_manager_create_user_missing_fields(self):
 
-        with pytest.raises(ValueError, match="The Email must be set"):
+        with pytest.raises(ValueError, match="The email must be set"):
             CustomUser.objects.create_user(
                 None,
                 "password",
@@ -166,7 +169,7 @@ class TestCustomUserModel(BaseUnitTest):
                 last_name="last name",
             )
 
-        with pytest.raises(ValueError, match="The Library must be set"):
+        with pytest.raises(ValueError, match="The library must be set"):
             CustomUser.objects.create_user(
                 "email",
                 "password",
@@ -176,7 +179,7 @@ class TestCustomUserModel(BaseUnitTest):
                 last_name="last name",
             )
 
-        with pytest.raises(ValueError, match="The State must be set"):
+        with pytest.raises(ValueError, match="The place must be set"):
             CustomUser.objects.create_user(
                 "email",
                 "password",
@@ -186,7 +189,7 @@ class TestCustomUserModel(BaseUnitTest):
                 last_name="last name",
             )
 
-        with pytest.raises(ValueError, match="The First name must be set"):
+        with pytest.raises(ValueError, match="The first name must be set"):
             CustomUser.objects.create_user(
                 "email",
                 "password",
@@ -375,3 +378,18 @@ class TestLibraryCardModel(BaseUnitTest):
         card.canceled_date = None
         card.is_expired = MagicMock(return_value=True)
         assert card.status_str() == " | EXPIRED"
+
+
+class TestLibraryPlace(BaseUnitTest):
+    def test_uniqueness(self):
+        place = Place.by_abbreviation("AL")
+        LibraryPlace(library=self._default_library, place=place).save()
+        with pytest.raises(IntegrityError):
+            LibraryPlace(library=self._default_library, place=place).save()
+
+    def test_associate(self):
+        """Test the idempotent association"""
+        lp1 = LibraryPlace.associate(self._default_library, "AL")
+        lp2 = LibraryPlace.associate(self._default_library, "AL")
+        # No new association was created
+        assert lp1.id == lp2.id

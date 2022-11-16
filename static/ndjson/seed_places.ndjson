@@ -1,0 +1,74 @@
+{"name": "United States", "abbreviation": "US", "id": "US", "type": "country" }
+{"name": "Alabama", "abbreviation": "AL", "id": "US_AL", "parent_id": "US", "type": "state" }
+{"name": "Alaska", "abbreviation": "AK", "id": "US_AK", "parent_id": "US", "type": "state" }
+{"name": "American Samoa", "abbreviation": "AS", "id": "US_AS", "parent_id": "US", "type": "state" }
+{"name": "Arizona", "abbreviation": "AZ", "id": "US_AZ", "parent_id": "US", "type": "state" }
+{"name": "Arkansas", "abbreviation": "AR", "id": "US_AR", "parent_id": "US", "type": "state" }
+{"name": "California", "abbreviation": "CA", "id": "US_CA", "parent_id": "US", "type": "state" }
+{"name": "Colorado", "abbreviation": "CO", "id": "US_CO", "parent_id": "US", "type": "state" }
+{"name": "Connecticut", "abbreviation": "CT", "id": "US_CT", "parent_id": "US", "type": "state" }
+{"name": "Delaware", "abbreviation": "DE", "id": "US_DE", "parent_id": "US", "type": "state" }
+{"name": "District Of Columbia", "abbreviation": "DC", "id": "US_DC", "parent_id": "US", "type": "state" }
+{"name": "Federated States Of Micronesia", "abbreviation": "FM", "id": "US_FM", "parent_id": "US", "type": "state" }
+{"name": "Florida", "abbreviation": "FL", "id": "US_FL", "parent_id": "US", "type": "state" }
+{"name": "Georgia", "abbreviation": "GA", "id": "US_GA", "parent_id": "US", "type": "state" }
+{"name": "Guam", "abbreviation": "GU", "id": "US_GU", "parent_id": "US", "type": "state" }
+{"name": "Hawaii", "abbreviation": "HI", "id": "US_HI", "parent_id": "US", "type": "state" }
+{"name": "Idaho", "abbreviation": "ID", "id": "US_ID", "parent_id": "US", "type": "state" }
+{"name": "Illinois", "abbreviation": "IL", "id": "US_IL", "parent_id": "US", "type": "state" }
+{"name": "Indiana", "abbreviation": "IN", "id": "US_IN", "parent_id": "US", "type": "state" }
+{"name": "Iowa", "abbreviation": "IA", "id": "US_IA", "parent_id": "US", "type": "state" }
+{"name": "Kansas", "abbreviation": "KS", "id": "US_KS", "parent_id": "US", "type": "state" }
+{"name": "Kentucky", "abbreviation": "KY", "id": "US_KY", "parent_id": "US", "type": "state" }
+{"name": "Louisiana", "abbreviation": "LA", "id": "US_LA", "parent_id": "US", "type": "state" }
+{"name": "Maine", "abbreviation": "ME", "id": "US_ME", "parent_id": "US", "type": "state" }
+{"name": "Marshall Islands", "abbreviation": "MH", "id": "US_MH", "parent_id": "US", "type": "state" }
+{"name": "Maryland", "abbreviation": "MD", "id": "US_MD", "parent_id": "US", "type": "state" }
+{"name": "Massachusetts", "abbreviation": "MA", "id": "US_MA", "parent_id": "US", "type": "state" }
+{"name": "Michigan", "abbreviation": "MI", "id": "US_MI", "parent_id": "US", "type": "state" }
+{"name": "Minnesota", "abbreviation": "MN", "id": "US_MN", "parent_id": "US", "type": "state" }
+{"name": "Mississippi", "abbreviation": "MS", "id": "US_MS", "parent_id": "US", "type": "state" }
+{"name": "Missouri", "abbreviation": "MO", "id": "US_MO", "parent_id": "US", "type": "state" }
+{"name": "Montana", "abbreviation": "MT", "id": "US_MT", "parent_id": "US", "type": "state" }
+{"name": "Nebraska", "abbreviation": "NE", "id": "US_NE", "parent_id": "US", "type": "state" }
+{"name": "Nevada", "abbreviation": "NV", "id": "US_NV", "parent_id": "US", "type": "state" }
+{"name": "New Hampshire", "abbreviation": "NH", "id": "US_NH", "parent_id": "US", "type": "state" }
+{"name": "New Jersey", "abbreviation": "NJ", "id": "US_NJ", "parent_id": "US", "type": "state" }
+{"name": "New Mexico", "abbreviation": "NM", "id": "US_NM", "parent_id": "US", "type": "state" }
+{"name": "New York", "abbreviation": "NY", "id": "US_NY", "parent_id": "US", "type": "state" }
+{"name": "North Carolina", "abbreviation": "NC", "id": "US_NC", "parent_id": "US", "type": "state" }
+{"name": "North Dakota", "abbreviation": "ND", "id": "US_ND", "parent_id": "US", "type": "state" }
+{"name": "Northern Mariana Islands", "abbreviation": "MP", "id": "US_MP", "parent_id": "US", "type": "state" }
+{"name": "Ohio", "abbreviation": "OH", "id": "US_OH", "parent_id": "US", "type": "state" }
+{"name": "Oklahoma", "abbreviation": "OK", "id": "US_OK", "parent_id": "US", "type": "state" }
+{"name": "Oregon", "abbreviation": "OR", "id": "US_OR", "parent_id": "US", "type": "state" }
+{"name": "Palau", "abbreviation": "PW", "id": "US_PW", "parent_id": "US", "type": "state" }
+{"name": "Pennsylvania", "abbreviation": "PA", "id": "US_PA", "parent_id": "US", "type": "state" }
+{"name": "Puerto Rico", "abbreviation": "PR", "id": "US_PR", "parent_id": "US", "type": "state" }
+{"name": "Rhode Island", "abbreviation": "RI", "id": "US_RI", "parent_id": "US", "type": "state" }
+{"name": "South Carolina", "abbreviation": "SC", "id": "US_SC", "parent_id": "US", "type": "state" }
+{"name": "South Dakota", "abbreviation": "SD", "id": "US_SD", "parent_id": "US", "type": "state" }
+{"name": "Tennessee", "abbreviation": "TN", "id": "US_TN", "parent_id": "US", "type": "state" }
+{"name": "Texas", "abbreviation": "TX", "id": "US_TX", "parent_id": "US", "type": "state" }
+{"name": "Utah", "abbreviation": "UT", "id": "US_UT", "parent_id": "US", "type": "state" }
+{"name": "Vermont", "abbreviation": "VT", "id": "US_VT", "parent_id": "US", "type": "state" }
+{"name": "Virgin Islands", "abbreviation": "VI", "id": "US_VI", "parent_id": "US", "type": "state" }
+{"name": "Virginia", "abbreviation": "VA", "id": "US_VA", "parent_id": "US", "type": "state" }
+{"name": "Washington", "abbreviation": "WA", "id": "US_WA", "parent_id": "US", "type": "state" }
+{"name": "West Virginia", "abbreviation": "WV", "id": "US_WV", "parent_id": "US", "type": "state" }
+{"name": "Wisconsin", "abbreviation": "WI", "id": "US_WI", "parent_id": "US", "type": "state" }
+{"name": "Wyoming", "abbreviation": "WY", "id": "US_WY", "parent_id": "US", "type": "state" }
+{"name": "Canada", "abbreviation": "CA", "id": "CA", "type": "country" }
+{"name": "Alberta", "abbreviation": "AB", "id": "CA_AB", "parent_id": "CA", "type": "province" }
+{"name": "British Columbia", "abbreviation": "BC", "id": "CA_BC", "parent_id": "CA", "type": "province" }
+{"name": "Manitoba", "abbreviation": "MB", "id": "CA_MB", "parent_id": "CA", "type": "province" }
+{"name": "New Brunswick", "abbreviation": "NB", "id": "CA_NB", "parent_id": "CA", "type": "province" }
+{"name": "Newfoundland and Labrador", "abbreviation": "NL", "id": "CA_NL", "parent_id": "CA", "type": "province" }
+{"name": "Northwest Territories", "abbreviation": "NT", "id": "CA_NT", "parent_id": "CA", "type": "province" }
+{"name": "Nova Scotia", "abbreviation": "NS", "id": "CA_NS", "parent_id": "CA", "type": "province" }
+{"name": "Nunavut", "abbreviation": "NU", "id": "CA_NU", "parent_id": "CA", "type": "province" }
+{"name": "Ontario", "abbreviation": "ON", "id": "CA_ON", "parent_id": "CA", "type": "province" }
+{"name": "Prince Edward Island", "abbreviation": "PE", "id": "CA_PE", "parent_id": "CA", "type": "province" }
+{"name": "Quebec", "abbreviation": "QC", "id": "CA_QC", "parent_id": "CA", "type": "province" }
+{"name": "Saskatchewan", "abbreviation": "SK", "id": "CA_SK", "parent_id": "CA", "type": "province" }
+{"name": "Yukon Territory", "abbreviation": "YT", "id": "CA_YT", "parent_id": "CA", "type": "province" }

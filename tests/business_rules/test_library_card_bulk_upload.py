@@ -114,7 +114,7 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
 
         assert user.last_name == "000"
         assert user.city == "New York"
-        assert user.us_state == "NY"
+        assert user.place.abbreviation == "NY"
         assert user.zip == "10001"
         assert len(mail.outbox) == 2
 

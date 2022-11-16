@@ -200,7 +200,7 @@ class CardSignupView(FormView):
                 {
                     "identifier": library.identifier,
                     "library": library,
-                    "state_names": ", ".join(library.get_us_states()),
+                    "state_names": ", ".join(library.get_places()),
                 }
             )
 
@@ -212,9 +212,9 @@ class CardSignupView(FormView):
                 )
 
             valid_address = LibraryRules.validate_user_address_fields(
-                library, us_state=state
+                library, place=state
             )
-            if not valid_address.us_state_valid:
+            if not valid_address.state_valid:
                 return render(
                     self.request,
                     "library_card/library_card_request_denied.html",

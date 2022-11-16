@@ -14,7 +14,7 @@ from django.db.utils import IntegrityError
 
 from virtual_library_card.logging import log
 from virtual_library_card.sender import Sender
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, Place
 
 
 class LibraryCardRules:
@@ -154,7 +154,14 @@ class LibraryCardBulkUpload:
                 # Set the additional data points, if present
                 for name in self.OPTIONAL_CSV_HEADERS:
                     if name in item and item[name]:
-                        setattr(user, name, item[name])
+                        if name == "us_state":
+                            value = Place.objects.filter(
+                                abbreviation=item[name]
+                            ).first()
+                            name = "place"
+                        else:
+                            value = item[name]
+                        setattr(user, name, value)
 
                 try:
                     user.save()

@@ -19,7 +19,7 @@ from VirtualLibraryCard.views.views_library_card import LibraryCardRequestView
 class TestCardSignup(BaseUnitTest):
     @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
     def test_signup_redirect(self, mock_geolocalize: mock.MagicMock):
-        library = self.create_library(us_states=["AL", "NC"])
+        library = self.create_library(places=["AL", "NC"])
 
         # US State 1
         mock_geolocalize.get_user_location.return_value = {
@@ -84,7 +84,7 @@ class TestCardSignup(BaseUnitTest):
                     "locations": [
                         {
                             "adminArea1": "Not US",
-                            "adminArea3": self._default_library.get_first_us_state(),
+                            "adminArea3": self._default_library.get_first_place(),
                             "adminArea5": "city",
                             "postalCode": "998867",
                         }
@@ -118,7 +118,7 @@ class TestCardSignup(BaseUnitTest):
             ]
         }
 
-        library = self.create_library("MultiState", us_states=["NY", "WA"])
+        library = self.create_library("MultiState", places=["NY", "WA"])
         c = Client()
         resp = c.post(
             f"/account/library_card_signup/{library.identifier}/",
@@ -126,13 +126,13 @@ class TestCardSignup(BaseUnitTest):
         )
         assert resp.status_code == 200
         assert (
-            f"You must be in <strong>{', '.join(library.get_us_states())} </strong> to request"
+            f"You must be in <strong>{', '.join(library.get_places())} </strong> to request"
             in resp.content.decode()
         )
 
     @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
     def test_signup_all_states_allowed(self, mock_geolocalize):
-        library = self.create_library(allow_all_us_states=True, us_states=[])
+        library = self.create_library(places=["US"])
         mock_geolocalize.get_user_location.return_value = {
             "results": [
                 {
@@ -180,7 +180,7 @@ class TestCardRequest(BaseUnitTest):
             street_address_line1="Some street",
             street_address_line2="",
             city="city",
-            us_state=library.get_first_us_state(),
+            us_state=library.get_first_place(),
             zip="99887",
             over13="on",
             password1="xx123456789",
@@ -240,7 +240,7 @@ class TestCardRequest(BaseUnitTest):
                 # street_address_line1="Some street", # No street address
                 street_address_line2="",
                 city="city",
-                us_state=self._default_library.get_first_us_state(),
+                us_state=self._default_library.get_first_place(),
                 # zip="99887",
                 over13="on",
                 password1="xx123456789",
@@ -348,7 +348,7 @@ class TestCardRequest(BaseUnitTest):
             street_address_line1="Some street",
             street_address_line2="",
             city="city",
-            us_state=library.get_first_us_state(),
+            us_state=library.get_first_place(),
             zip="99887",
             over13="on",
             password1="xx123456789",

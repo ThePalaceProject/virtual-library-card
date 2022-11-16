@@ -11,7 +11,13 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from virtual_library_card.logging import log
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, LibraryStates
+from VirtualLibraryCard.models import (
+    CustomUser,
+    Library,
+    LibraryCard,
+    LibraryPlace,
+    Place,
+)
 
 log._logger.addHandler(StreamHandler(stream=sys.stdout))
 
@@ -43,7 +49,7 @@ class TestData:
         self,
         name=None,
         identifier=None,
-        us_states=None,
+        places=None,
         prefix=None,
         bulk_upload_prefix=None,
         **kwargs,
@@ -64,12 +70,8 @@ class TestData:
         )
         obj.save()
 
-        library_states = [
-            LibraryStates(us_state=s, library=obj) for s in (us_states or ["NY"])
-        ]
-        for ls in library_states:
-            ls.save()
-        obj.library_states.set(library_states)
+        for s in places or ["NY"]:
+            LibraryPlace.associate(obj, s)
         obj.save()
 
         return obj
@@ -80,17 +82,17 @@ class TestData:
         email=None,
         password=None,
         first_name=None,
-        us_state="NY",
+        place_abbreviation="NY",
         **kwargs,
     ):
         user = CustomUser(
             email=email or f"{self._random_name()}@example.com",
             password=password or self._random_name(),
             library=library,
-            us_state=us_state,
             first_name=first_name or self._random_name(),
             **kwargs,
         )
+        user.place = Place.by_abbreviation(place_abbreviation)
         user.save()
         return user
 
@@ -132,7 +134,7 @@ class BaseUnitTest(TestData, TestCase):
                         "locations": [
                             {
                                 "adminArea1": "US",
-                                "adminArea3": self._default_library.get_first_us_state(),
+                                "adminArea3": self._default_library.get_first_place(),
                                 "adminArea5": "city",
                                 "postalCode": "998867",
                             }

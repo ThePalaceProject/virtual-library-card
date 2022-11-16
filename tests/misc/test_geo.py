@@ -6,7 +6,6 @@ from smartystreets_python_sdk.exceptions import SmartyException
 
 from tests.base import BaseUnitTest
 from virtual_library_card.geoloc import Geolocalize
-from virtual_library_card.location_utils import LocationUtils
 from virtual_library_card.smarty_streets import AddressChecker
 
 # TODO: we can drop this when we drop support for Python 3.7
@@ -45,17 +44,6 @@ class TestGeolocalize(BaseUnitTest):
         )  # called once when setting up urlopen().read mock object
         assert mock_urllib.request.urlopen.call_args[0][0] == expected_url
         assert response == return_value
-
-
-class TestLocationUtils(BaseUnitTest):
-    def test_get_library_state_name(self):
-        library = self.create_library(us_states=["NY", "AL"])
-        # returns the first state (alphabetical order) (we shouldn't have weird behaviour like this)
-        assert LocationUtils.get_library_state_name(library) == "Alabama"
-
-        library = self.create_library(us_states=["AX", "NY"])
-        # returns the first valid state name
-        assert LocationUtils.get_library_state_name(library) == "New York"
 
 
 class TestAddressChecker(BaseUnitTest):

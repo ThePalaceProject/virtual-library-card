@@ -47,7 +47,7 @@ class UserSessionManager:
         request.session["social_twitter"] = library.social_twitter
         request.session["logo_header"] = library.logo_header()
         request.session["email"] = library.email
-        request.session["library_states"] = library.get_us_states()
+        request.session["places"] = library.get_places()
         request.session["terms_conditions_url"] = library.terms_conditions_url
         request.session["privacy_url"] = library.terms_conditions_url
 
@@ -61,7 +61,7 @@ class UserSessionManager:
         request.session.pop("social_twitter", None)
         request.session.pop("logo_header", None)
         request.session.pop("email", None)
-        request.session.pop("library_states", None)
+        request.session.pop("places", None)
         request.session.pop("terms_conditions_url", None)
         # Also cleanup user location data
         request.session.pop("state", None)

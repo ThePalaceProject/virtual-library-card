@@ -91,12 +91,12 @@ class RequestLibraryCardForm(UserCreationForm):
                 street_address_line1 = self.cleaned_data.get("street_address_line1")
                 street_address_line2 = self.cleaned_data.get("street_address_line2")
                 city = self.cleaned_data.get("city")
-                us_state = self.cleaned_data.get("us_state")
+                us_state: str = self.cleaned_data.get("us_state")
                 zip = self.cleaned_data.get("zip")
                 library: Library = self.cleaned_data.get("library")
 
                 valid_address = LibraryRules.validate_user_address_fields(
-                    library, zip=zip, city=city, us_state=us_state
+                    library, zip=zip, city=city, place=us_state
                 )
 
                 if valid_address.zip_valid:

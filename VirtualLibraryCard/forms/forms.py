@@ -12,7 +12,7 @@ from localflavor.us.forms import USStateSelect
 from virtual_library_card.logging import LoggingMixin
 from VirtualLibraryCard.business_rules.library import LibraryRules
 from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, Place
 from VirtualLibraryCard.widgets.buttons import LinkButtonField
 
 
@@ -169,7 +169,7 @@ class CustomUserCreationForm(UserCreationForm):
             "street_address_line2",
             "city",
             "zip",
-            "us_state",
+            "place",
             "library",
             "country_code",
             "over13",
@@ -209,7 +209,7 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         try:
             instance = getattr(self, "instance", None)
             if (
-                instance and not instance.us_state
+                instance and not instance.place
             ):  # Edition just after creation form with minimal fields
                 self.fields[
                     "email"
@@ -244,12 +244,9 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         super().get_form(request, obj, **kwargs)
 
     def save(self, commit=True):
-        self.log.debug("-----------before save CustomAdminUserChangeForm")
         user: CustomUser = super().save(commit)
-        self.log.debug(f"user {user}")
         library = user.library
         if library:
-            self.log.debug(f"library {library}")
             card, is_new = LibraryCardRules.new_card(user, library)
             if is_new:
                 self.created_library_card = card
@@ -271,18 +268,22 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             library: Library = current_user.library
 
             # If the state was edited, the user must reside within the library defined states
-            us_state = self.data.get("us_state")
+            place_id = self.data.get("place")
+            if place_id:
+                place = Place.objects.get(id=place_id)
+            else:
+                place = None
             zip = self.data.get("zip")
             city = self.data.get("city")
 
             validation = LibraryRules.validate_user_address_fields(
-                library, us_state=us_state, zip=zip, city=city
+                library, place=(place and place.abbreviation), zip=zip, city=city
             )
-            if not validation.us_state_valid:
+            if not validation.state_valid:
                 self.add_error(
-                    "us_state",
+                    "place",
                     _(
-                        f"The user must be within the library defined states: {','.join(library.get_us_states())}"
+                        f"The user must be within the library defined places: {','.join(library.get_places())}"
                     ),
                 )
                 return False

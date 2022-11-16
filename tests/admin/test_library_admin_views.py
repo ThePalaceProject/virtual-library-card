@@ -1,16 +1,11 @@
+from __future__ import annotations
+
 from io import FileIO
-from typing import List
 from unittest.mock import MagicMock
 
-from django.test import RequestFactory
-
 from tests.base import BaseAdminUnitTest
-from VirtualLibraryCard.admin import (
-    LibraryAdmin,
-    LibraryAllowedDomainsInline,
-    LibraryStatesInline,
-)
-from VirtualLibraryCard.models import Library, LibraryStates
+from VirtualLibraryCard.admin import LibraryAdmin
+from VirtualLibraryCard.models import Library, LibraryPlace, Place
 
 
 class TestLibraryAdminViews(BaseAdminUnitTest):
@@ -34,7 +29,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "age_verification_mandatory": True,
             "pin_text": "pin",
             "barcode_text": "barcode",
-            "allow_all_us_states": False,
             "allow_bulk_card_uploads": False,
         }
 
@@ -43,18 +37,19 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             data[key] = changes.get(key, getattr(library, key, value))
 
         self._add_library_states_data(
-            data, library=library, us_states=changes.get("us_states")
+            data, library=library, places=changes.get("places")
         )
         return data
 
     def _add_library_states_data(
-        self, data: dict, us_states: List[str] = None, library=None
+        self, data: dict, places: list[str] = None, library=None
     ):
         """Helper function for change form data, for the inline library form"""
-        us_states = us_states or []
-        prev_states = list(LibraryStates.objects.filter(library=library).all())
-        total_prev_states = len(prev_states)
-        total_forms = len(us_states + prev_states)
+        places = places or []
+        place_ids = [p.id for p in Place.objects.filter(abbreviation__in=places).all()]
+        prev_places = list(LibraryPlace.objects.filter(library=library).all())
+        total_prev_places = len(prev_places)
+        total_forms = len(places + prev_places)
 
         data.update(
             {
@@ -70,38 +65,38 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
 
         data.update(
             {
-                "library_states-TOTAL_FORMS": total_forms,
-                "library_states-INITIAL_FORMS": total_prev_states,
-                "library_states-MIN_NUM_FORMS": 0,
-                "library_states-MAX_NUM_FORMS": 1000,
+                "library_places-TOTAL_FORMS": total_forms,
+                "library_places-INITIAL_FORMS": total_prev_places,
+                "library_places-MIN_NUM_FORMS": 0,
+                "library_places-MAX_NUM_FORMS": 1000,
             }
         )
 
-        for ix, state in enumerate(prev_states):
+        for ix, place in enumerate(prev_places):
             data.update(
                 {
-                    f"library_states-{ix}-id": state.id,
-                    f"library_states-{ix}-library": library.id,
-                    f"library_states-{ix}-us_state": state.us_state,
+                    f"library_places-{ix}-id": place.id,
+                    f"library_places-{ix}-library": library.id,
+                    f"library_places-{ix}-place": place.place.id,
                 }
             )
 
-        for ix, state in enumerate(us_states):
-            idx = ix + total_prev_states
+        for ix, place_id in enumerate(place_ids):
+            idx = ix + total_prev_places
             data.update(
                 {
-                    f"library_states-{idx}-id": "",
-                    f"library_states-{idx}-library": library.id,
-                    f"library_states-{idx}-us_state": state,
+                    f"library_places-{idx}-id": "",
+                    f"library_places-{idx}-library": library.id,
+                    f"library_places-{idx}-place": place_id,
                 }
             )
 
         if library:
             data.update(
                 {
-                    f"library_states-__prefix__-id": "",
-                    f"library_states-__prefix__-library": library.id,
-                    f"library_states-__prefix__-us_state": "",
+                    f"library_places-__prefix__-id": "",
+                    f"library_places-__prefix__-library": library.id,
+                    f"library_places-__prefix__-place": "",
                 }
             )
 
@@ -123,7 +118,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             age_verification_mandatory=True,
             pin_text="pin",
             barcode_text="barcode",
-            allow_all_us_states=False,
             allow_bulk_card_uploads=False,
         )
         self._add_library_states_data(data)
@@ -194,15 +188,15 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         assert library.sequence_start_number == 99
 
     def test_library_add_states(self):
-        library = self.create_library(name="test", us_states=["FL"])
-        data = self._get_library_change_data(library, us_states=["NY"], prefix="pref")
+        library = self.create_library(name="test", places=["FL"])
+        data = self._get_library_change_data(library, places=["NY"], prefix="pref")
         del data["logo"]  # Don't need a logo if it exists
 
         response = self.test_client.post(self.get_change_url(library), data)
 
         assert response.status_code == 302
         saved = Library.objects.get(id=library.id)
-        assert saved.get_us_states() == ["FL", "NY"]
+        assert saved.get_places() == ["FL", "NY"]
 
     def test_read_only_fields(self):
         self.mock_request.user = MagicMock()
@@ -235,45 +229,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         library.refresh_from_db()
         assert len(library.library_email_domains.all()) == 1
         assert library.library_email_domains.all()[0].domain == "example.org"
-
-    def test_get_inlines(self):
-        f = RequestFactory()
-        get = f.get("")
-        post_has_states = f.post("", {"library_states-TOTAL_FORMS": "0"})
-        library = self.create_library(allow_all_us_states=False)
-
-        # View a library that doesn't allow all states
-        assert self.admin.get_inlines(get, obj=library) == [
-            LibraryStatesInline,
-            LibraryAllowedDomainsInline,
-        ]
-        # Change a library to not allow all states
-        assert self.admin.get_inlines(post_has_states, obj=library) == [
-            LibraryStatesInline,
-            LibraryAllowedDomainsInline,
-        ]
-
-        # Change a library to allow all states
-        post_without_states = f.post("", {})
-        assert self.admin.get_inlines(post_without_states, obj=library) == [
-            LibraryAllowedDomainsInline
-        ]
-        # View a library with all states
-        library.allow_all_us_states = True
-        assert self.admin.get_inlines(get, obj=library) == [LibraryAllowedDomainsInline]
-
-        # New object view/creation
-        assert self.admin.get_inlines(get, obj=None) == [
-            LibraryStatesInline,
-            LibraryAllowedDomainsInline,
-        ]
-        assert self.admin.get_inlines(post_has_states, obj=None) == [
-            LibraryStatesInline,
-            LibraryAllowedDomainsInline,
-        ]
-        assert self.admin.get_inlines(post_without_states, obj=None) == [
-            LibraryAllowedDomainsInline,
-        ]
 
     def test_optional_bulk_upload_prefix(self):
         """If the allow_bulk_card_uploads attribute is true then the bulk uploads prefix is mandatory,

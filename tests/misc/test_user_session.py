@@ -12,7 +12,7 @@ class TestUserSessionManager(BaseUnitTest):
         library = self.create_library(
             social_facebook="fb",
             social_twitter="tw",
-            us_states=["NY"],
+            places=["NY"],
         )
         request = mock.MagicMock()
         request.session = dict()
@@ -23,7 +23,7 @@ class TestUserSessionManager(BaseUnitTest):
         assert request.session["social_facebook"] == library.social_facebook
         assert request.session["social_twitter"] == library.social_twitter
         assert request.session["email"] == library.email
-        assert request.session["library_states"] == ["NY"]
+        assert request.session["places"] == ["NY"]
         assert request.session["terms_conditions_url"] == library.terms_conditions_url
         assert request.session["privacy_url"] == library.terms_conditions_url
 
