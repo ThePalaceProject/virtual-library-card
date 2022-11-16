@@ -303,12 +303,16 @@ class LibraryCardsUploadByCSVForm(forms.Form):
     library = forms.ChoiceField()
     csv_file = forms.FileField()
 
-    def __init__(self, data=None, **kwargs) -> None:
+    def __init__(self, user, data=None, **kwargs) -> None:
         super().__init__(data, **kwargs)
         library_field: forms.Select = self.fields.get("library")
-        library_field.choices = [
-            (l.id, l.name) for l in Library.objects.filter(allow_bulk_card_uploads=True)
-        ]
+
+        # If a user is not a superuser only provide the library which the user belongs to.
+        query = Library.objects.filter(allow_bulk_card_uploads=True)
+        if not user.is_superuser:
+            query = query.filter(id=user.library.id)
+
+        library_field.choices = [(l.id, l.name) for l in query]
         if not library_field.choices:
             library_field.choices = [(0, "No Library allows bulk uploads")]
 

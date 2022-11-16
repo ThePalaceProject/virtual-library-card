@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.urls import URLPattern, URLResolver, path, reverse
 from django.utils.safestring import mark_safe
@@ -385,12 +386,29 @@ def export_list_as_csv(self, request, queryset):
     return response
 
 
-class LibraryCardsUploadCSV(TemplateView):
+class LibraryCardsUploadCSV(PermissionRequiredMixin, TemplateView):
     """The template view that displays the bulk CSV form on the admin panel"""
 
     template_name: str = "library_card/upload_by_csv.html"
 
     http_method_names: List[str] = ["get", "post"]
+
+    def has_permission(self) -> bool:
+        """Only allow superusers or staff members that are of the same library"""
+        user = self.request.user
+        if not (user.is_staff or user.is_superuser):
+            return False
+        # In a GET request, anybody with change permission is allowed
+        if self.request.method == "GET":
+            return True
+        # superusers are exempt
+        elif user.is_superuser:
+            return True
+        # A form submit needs the user to belong to the library being modified.
+        elif self.request.method == "POST" and user.is_staff:
+            return user.library.id == int(self.request.POST.get("library", 0))
+
+        return False
 
     def _get_columns_ctx(self) -> Dict[str, Any]:
         return dict(
@@ -400,13 +418,15 @@ class LibraryCardsUploadCSV(TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
-        ctx["form"] = LibraryCardsUploadByCSVForm()
+        ctx["form"] = LibraryCardsUploadByCSVForm(self.request.user)
         ctx.update(self._get_columns_ctx())
         return ctx
 
     def post(self, request: HttpRequest) -> HttpResponse:
         """The form post submit"""
-        form = LibraryCardsUploadByCSVForm(data=request.POST, files=request.FILES)
+        form = LibraryCardsUploadByCSVForm(
+            self.request.user, data=request.POST, files=request.FILES
+        )
         if form.is_valid():
             try:
                 library: Library = Library.objects.get(

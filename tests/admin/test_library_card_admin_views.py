@@ -1,5 +1,10 @@
-from tests.base import BaseAdminUnitTest
-from VirtualLibraryCard.admin import LibraryCardAdmin
+import pytest
+from django.core.exceptions import PermissionDenied
+from django.test import RequestFactory
+
+from tests.base import BaseAdminUnitTest, BaseUnitTest
+from VirtualLibraryCard.admin import LibraryCardAdmin, LibraryCardsUploadCSV
+from VirtualLibraryCard.forms.forms import LibraryCardsUploadByCSVForm
 from VirtualLibraryCard.models import LibraryCard
 
 
@@ -81,3 +86,69 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "number",
             ["This number already exists for this library"],
         )
+
+
+class TestLibraryCardUploadsCSV(BaseUnitTest):
+    def test_permissions(self):
+        rf = RequestFactory()
+        library = self.create_library()
+        superuser = self.create_user(library, is_superuser=True)
+        staff = self.create_user(library, is_staff=True)
+        other_staff = self.create_user(self._default_library, is_staff=True)
+        just_user = self.create_user(library)
+
+        get = rf.get("/")
+        post = rf.post("/", data={"library": library.id})
+
+        view = LibraryCardsUploadCSV()
+
+        view.setup(get)
+        get.user = superuser
+        assert view.dispatch(get).status_code == 200
+
+        get.user = staff
+        assert view.dispatch(get).status_code == 200
+
+        get.user = just_user
+        with pytest.raises(PermissionDenied):
+            view.dispatch(get)
+
+        view.setup(post)
+        post.user = superuser
+        assert view.dispatch(post).status_code == 200
+
+        post.user = staff
+        assert view.dispatch(post).status_code == 200
+
+        # Other library staff may not modify this library
+        post.user = other_staff
+        with pytest.raises(PermissionDenied):
+            assert view.dispatch(post).status_code == 200
+
+        # nor can a user
+        post.user = just_user
+        with pytest.raises(PermissionDenied):
+            assert view.dispatch(post).status_code == 200
+
+
+class TestLibraryCardsUploadByCSVForm(BaseUnitTest):
+    def test_library_field(self):
+        library = self.create_library()
+        superuser = self.create_user(library, is_superuser=True)
+        staff = self.create_user(library, is_staff=True)
+
+        library.allow_bulk_card_uploads = True
+        self._default_library.allow_bulk_card_uploads = True
+        self._default_library.save()
+        library.save()
+
+        form = LibraryCardsUploadByCSVForm(superuser)
+        assert set(form.fields["library"].choices) == {
+            (library.id, library.name),
+            (self._default_library.id, self._default_library.name),
+        }
+
+        form = LibraryCardsUploadByCSVForm(staff)
+        assert set(form.fields["library"].choices) == {
+            (library.id, library.name),
+        }
