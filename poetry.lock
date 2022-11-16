@@ -83,11 +83,11 @@ crt = ["awscrt (==0.14.0)"]
 
 [[package]]
 name = "certifi"
-version = "2020.12.5"
+version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 
 [[package]]
 name = "cfgv"
@@ -985,7 +985,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "e6868ac3def73de821c2685bbaebbcd47bcb6da16c97e031b1a4dbd469a6ec0d"
+content-hash = "520804a43f3dbd376d33e8ba6c3b2f09d77281b12ba8bf6757e9d0e5f958ae89"
 
 [metadata.files]
 asgiref = [
@@ -1013,8 +1013,8 @@ botocore = [
     {file = "botocore-1.29.10.tar.gz", hash = "sha256:68af34e51597389e7de5ec239ce582853b65d4288308d19f40a30eb3e241fb0d"},
 ]
 certifi = [
-    {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},
-    {file = "certifi-2020.12.5.tar.gz", hash = "sha256:1a4995114262bffbc2413b159f2a1a480c969de6e6eb13ee966d470af86af59c"},
+    {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
+    {file = "certifi-2022.9.24.tar.gz", hash = "sha256:0d9c601124e5a6ba9712dbc60d9c53c21e34f5f641fe83002317394311bdce14"},
 ]
 cfgv = [
     {file = "cfgv-3.3.1-py2.py3-none-any.whl", hash = "sha256:c6a0883f3917a037485059700b9e75da2464e6c27051014ad85ba6aaa5884426"},
