@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 from django import forms
+from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
 
 from tests.base import BaseAdminUnitTest
@@ -101,7 +102,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
     def _get_user_change_data(self, user, **kwargs):
-        return {
+        changes = {
             "first_name": kwargs.get("first_name") or user.first_name,
             "last_name": kwargs.get("last_name") or user.last_name or "",
             "library": kwargs.get("library_id") or user.library.id,
@@ -118,6 +119,13 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             "is_active": "on",
             "place": kwargs.get("place_id") or user.place.id,
         }
+
+        # Some changes are either explicit values, or must be omitted
+        for key in ("is_staff", "is_superuser"):
+            if key in kwargs:
+                changes[key] = kwargs[key]
+
+        return changes
 
     def test_valid_change_form(self):
         user = self.create_user(
@@ -291,7 +299,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
 
         self.mock_request.user.is_superuser = False
         ro_fields = self.admin.get_readonly_fields(self.mock_request)
-        assert ["library_cards", "library"] == ro_fields
+        assert ["library_cards", "library", "is_superuser"] == ro_fields
 
     def test_allowed_email_domains(self):
         library = self.create_library()
@@ -340,3 +348,38 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         self.mock_request.user.is_superuser = False
         filters = self.admin.get_list_filter(self.mock_request)
         assert "library" not in filters
+
+    def test_save_permissions(self):
+        """Test whether the save related does the right thing, and changes the permissions"""
+        # Start with a simple staff user
+        user = self.create_user(self._default_library)
+        data = self._get_user_change_data(user, is_staff=True)
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.user_permissions.count() == 8
+
+        # Removing the staff status removes the permissions
+        data = self._get_user_change_data(user, is_staff=False)
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.user_permissions.count() == 0
+
+        # superusers get all permissions
+        data = self._get_user_change_data(user, is_superuser=True)
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.user_permissions.count() == Permission.objects.count()
+
+        # Reverting back to staff keeps only the staff permissions
+        data = self._get_user_change_data(user, is_staff=True)
+        response = self.test_client.post(self.get_change_url(user), data)
+
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.user_permissions.count() == 8

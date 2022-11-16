@@ -200,11 +200,21 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.created_library_card = None
+        self.user = kwargs.get("user")
 
         # Customize the password change link UI
         password = self.fields.get("password")
         if password:
             password.help_text = "<span class='password-help'><a href='../password'>CHANGE PASSWORD</a></span>"
+
+        is_active = self.fields.get("is_active")
+        if is_active:
+            is_active.label = "Active User status"
+            is_active.help_text = "Assigning the active setting doesn't mean that the user will be allowed to log in to the admin site"
+
+        is_superuser = self.fields.get("is_superuser")
+        if is_superuser:
+            is_superuser.label = "VLC Super Administrator status"
 
         try:
             instance = getattr(self, "instance", None)
@@ -235,13 +245,6 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         self.fields["street_address_line1"].required = False
         self.fields["city"].required = False
         self.fields["zip"].required = False
-
-    def get_form(self, request, obj=None, **kwargs):
-        if self.request.user.is_superuser:
-            self.exclude.append("Permissions")  # here!
-        if obj:
-            self.fields["email"].value = obj.email
-        super().get_form(request, obj, **kwargs)
 
     def save(self, commit=True):
         user: CustomUser = super().save(commit)

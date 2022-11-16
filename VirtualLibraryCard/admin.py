@@ -17,6 +17,7 @@ from VirtualLibraryCard.business_rules.library_card import (
     BulkUploadLibraryException,
     LibraryCardBulkUpload,
 )
+from VirtualLibraryCard.business_rules.user import UserRules
 from VirtualLibraryCard.forms.forms import (
     CustomAdminUserChangeForm,
     CustomUserCreationForm,
@@ -135,6 +136,16 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
 
         super().save_model(request, obj, form, change)
 
+    def save_related(self, request: Any, form: Any, formsets: Any, change: Any) -> None:
+        """Use this method to modify any "related" objects. Eg: permissions"""
+        super().save_related(request, form, formsets, change)
+        user = form.instance
+        # We only change the permissions if the status of the user was changed
+        # ie. if the staff or superuser checkboxes were changed
+        if user and {"is_staff", "is_superuser"}.intersection(form.changed_data):
+            UserRules.drop_permissions(user)
+            UserRules.ensure_permissions(user)
+
     def save_form(self, request: Any, form: Any, change: Any):
         # This will call form.save()
         user: CustomUser = super().save_form(request, form, change)
@@ -161,6 +172,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         ro_fields = ["library_cards"]
         if request.user and not request.user.is_superuser:
             ro_fields.append("library")
+            ro_fields.append("is_superuser")
 
         return ro_fields
 
