@@ -254,7 +254,7 @@ html5lib = "*"
 
 [[package]]
 name = "django-localflavor"
-version = "3.0.1"
+version = "3.1"
 description = "Country-specific Django helpers"
 category = "main"
 optional = false
@@ -985,7 +985,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "739598ba3213df9d6e62eacdbdc2f33d68c4fda914935370ba31bc4728f88b4e"
+content-hash = "a3c2fa30599fa0ba4d8529a56ccd6f650f3662c62cfa13394d4cf4f199f7824b"
 
 [metadata.files]
 asgiref = [
@@ -1073,8 +1073,8 @@ django-htmlmin = [
     {file = "django-htmlmin-0.11.0.tar.gz", hash = "sha256:e41b2a2157570846645cc636a9bddde8aa3e03f6834a9211e61a17f2ed42b87e"},
 ]
 django-localflavor = [
-    {file = "django-localflavor-3.0.1.tar.gz", hash = "sha256:24e9a03bc11ced92365821d3cfdd96eb4e2f3e44a6f40e86c645d3e0ec65ec53"},
-    {file = "django_localflavor-3.0.1-py2.py3-none-any.whl", hash = "sha256:3c3034dc64a1f7e5efd9eb53d653af905c20482d438c0e8b825d02e3121b86fa"},
+    {file = "django-localflavor-3.1.tar.gz", hash = "sha256:ac2fa377bbcba4cae95e97077d9e77c7f22b3d93e4845e2e133ba7e664043a44"},
+    {file = "django_localflavor-3.1-py3-none-any.whl", hash = "sha256:6593865dc671333b3edc88e729e6d384d00b6db7891ef5d3a65db831a40050d2"},
 ]
 django-localflavor-us = [
     {file = "django-localflavor-us-1.1.tar.gz", hash = "sha256:f975c367e72449cd072371c1f91fa5c410940382e319832e80521d3bd46282c5"},
