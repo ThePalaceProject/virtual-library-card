@@ -14,7 +14,11 @@ ENV UWSGI_MASTER=1 \
     UWSGI_HTTP=:8000 \
     UWSGI_UID=999 \
     UWSGI_GID=999 \
-    UWSGI_DIE_ON_TERM=true
+    UWSGI_DIE_ON_TERM=true \
+    UWSGI_HARAKIRI=20 \
+    UWSGI_MAX_REQUESTS=5000 \
+    UWSGI_VACUUM=true \
+    UWSGI_POST_BUFFERING=1
 
 # Install system
 RUN apt-get update -y && \
