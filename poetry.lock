@@ -32,7 +32,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -114,7 +114,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "colorama"
@@ -277,7 +277,7 @@ Django = ">=1.4"
 
 [[package]]
 name = "django-material"
-version = "1.7.4"
+version = "1.11.3"
 description = "Material design for django forms and admin"
 category = "main"
 optional = false
@@ -790,7 +790,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "rjsmin"
@@ -999,7 +999,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "ebb48ae6f98837c347c14cd2d02a1d966327c147f95bb49f8c35d3637d8f8783"
+content-hash = "d4b3ac83dbad9f3c9051b9f6d07063abb48c88a23f68da42f71983c6ee79e9a2"
 
 [metadata.files]
 asgiref = [
@@ -1094,8 +1094,8 @@ django-localflavor-us = [
     {file = "django-localflavor-us-1.1.tar.gz", hash = "sha256:f975c367e72449cd072371c1f91fa5c410940382e319832e80521d3bd46282c5"},
 ]
 django-material = [
-    {file = "django-material-1.7.4.tar.gz", hash = "sha256:93af86e740b6db15a3b9df913c343217b198d7342a083db694acb319b49cb2dd"},
-    {file = "django_material-1.7.4-py2.py3-none-any.whl", hash = "sha256:70dcaa34b35dbc31fbdb7454c7a376358586d0f166abe15870e07e468d729425"},
+    {file = "django-material-1.11.3.tar.gz", hash = "sha256:022155be14e168a67392058a7fb11382b466973e2b5942d23220d5d0886b134a"},
+    {file = "django_material-1.11.3-py2.py3-none-any.whl", hash = "sha256:30a3a4fb4baaf3e6672f660197f5ac5a3c072d0bd7a8c6fa63b1cf46feb757a0"},
 ]
 django-materialize-css = [
     {file = "django_materialize_css-0.0.1-py2.py3-none-any.whl", hash = "sha256:21c9e999a5354f293bdd177281d90253a94074169a2f803c691cbae2b5961550"},
@@ -1365,6 +1365,8 @@ psycopg2-binary = [
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:e67b3c26e9b6d37b370c83aa790bbc121775c57bfb096c2e77eacca25fd0233b"},
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_ppc64le.whl", hash = "sha256:5fc447058d083b8c6ac076fc26b446d44f0145308465d745fba93a28c14c9e32"},
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d892bfa1d023c3781a3cab8dd5af76b626c483484d782e8bd047c180db590e4c"},
+    {file = "psycopg2_binary-2.9.5-cp311-cp311-win32.whl", hash = "sha256:2abccab84d057723d2ca8f99ff7b619285d40da6814d50366f61f0fc385c3903"},
+    {file = "psycopg2_binary-2.9.5-cp311-cp311-win_amd64.whl", hash = "sha256:bef7e3f9dc6f0c13afdd671008534be5744e0e682fb851584c8c3a025ec09720"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-macosx_10_14_x86_64.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:6e63814ec71db9bdb42905c925639f319c80e7909fb76c3b84edc79dadef8d60"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:212757ffcecb3e1a5338d4e6761bf9c04f750e7d027117e74aa3cd8a75bb6fbd"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6f8a9bcab7b6db2e3dbf65b214dfc795b4c6b3bb3af922901b6a67f7cb47d5f8"},
