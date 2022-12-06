@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% block submit_buttons_bottom %}
+    {% if reset_password_url %}
+        <a href="{{ reset_password_url }}"><input type="button" value="Change User Password"></a>
+    {% endif %}
+{{ block.super }}
+{% endblock %}

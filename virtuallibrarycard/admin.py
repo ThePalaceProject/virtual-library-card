@@ -1,5 +1,5 @@
 import csv
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
@@ -356,6 +356,21 @@ class LibraryCardAdmin(admin.ModelAdmin):
         return export_list_as_csv(self, request, queryset)
 
     export_as_csv.short_description = _("Export selected library cards")
+
+    def change_view(
+        self,
+        request: HttpRequest,
+        object_id: str,
+        form_url: str = "",
+        extra_context: Optional[Dict[str, bool]] = {},
+    ) -> HttpResponse:
+        """Overridden to add the password reset url extra context"""
+        user = LibraryCard.objects.get(id=object_id).user
+        if user:
+            extra_context[
+                "reset_password_url"
+            ] = f"../../../customuser/{user.id}/password"
+        return super().change_view(request, object_id, form_url, extra_context)
 
 
 class CustomSequenceAdmin(admin.ModelAdmin):

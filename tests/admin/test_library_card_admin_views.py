@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
@@ -8,7 +10,7 @@ from virtuallibrarycard.forms.forms import LibraryCardsUploadByCSVForm
 from virtuallibrarycard.models import LibraryCard
 
 
-class TestLibraryAdminViews(BaseAdminUnitTest):
+class TestLibraryCardAdminViews(BaseAdminUnitTest):
     MODEL = LibraryCard
     MODEL_ADMIN = LibraryCardAdmin
 
@@ -86,6 +88,23 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "number",
             ["This number already exists for this library"],
         )
+
+    @patch("virtuallibrarycard.admin.admin.ModelAdmin.change_view")
+    def test_change_view(self, mock_super):
+        # A card with a user gets a reset url for the template context
+        self.admin.change_view(None, str(self._default_card.id), "", dict())
+        assert mock_super.call_count == 1
+        assert mock_super.call_args_list[0][0][3] == dict(
+            reset_password_url=f"../../../customuser/{self._default_card.user.id}/password"
+        )
+
+        # Card without a user has no reset url
+        mock_super.reset_mock()
+        card = self.create_library_card(self._default_user, self._default_library)
+        card.user = None
+        card.save()
+        self.admin.change_view(None, str(card.id), "", dict())
+        assert mock_super.call_args_list[0][0][3] == dict()
 
 
 class TestLibraryCardUploadsCSV(BaseUnitTest):
