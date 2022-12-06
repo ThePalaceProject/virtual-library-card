@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import IO, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from VirtualLibraryCard.models import Place
+    from virtuallibrarycard.models import Place
 
 if "Place" in locals():
     raise RuntimeError("DO NOT IMPORT THE Place MODEL INTO THIS FILE")

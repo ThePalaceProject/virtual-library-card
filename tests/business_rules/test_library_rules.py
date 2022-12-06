@@ -1,13 +1,13 @@
 from unittest.mock import patch
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.business_rules.library import LibraryRules
+from virtuallibrarycard.business_rules.library import LibraryRules
 
 
 class TestLibraryRules(BaseUnitTest):
     def setup_method(self, request):
         self._mock_checker_patch = patch(
-            "VirtualLibraryCard.business_rules.library.AddressChecker"
+            "virtuallibrarycard.business_rules.library.AddressChecker"
         )
         self.mock_checker = self._mock_checker_patch.start()
         self.mock_checker.is_valid_zipcode.return_value = True

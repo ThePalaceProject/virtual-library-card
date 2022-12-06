@@ -7,8 +7,8 @@ from django.contrib.auth.forms import (
 )
 from django.utils.translation import gettext as _
 
-from VirtualLibraryCard.forms import ValidationError
-from VirtualLibraryCard.models import CustomUser
+from virtuallibrarycard.forms import ValidationError
+from virtuallibrarycard.models import CustomUser
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

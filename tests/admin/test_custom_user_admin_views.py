@@ -5,9 +5,9 @@ from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
 
 from tests.base import BaseAdminUnitTest
-from VirtualLibraryCard.admin import CustomUserAdmin
-from VirtualLibraryCard.forms.forms import CustomAdminUserChangeForm
-from VirtualLibraryCard.models import (
+from virtuallibrarycard.admin import CustomUserAdmin
+from virtuallibrarycard.forms.forms import CustomAdminUserChangeForm
+from virtuallibrarycard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
@@ -24,7 +24,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         request,
     ):
         self._mock_checker_patch = patch(
-            "VirtualLibraryCard.business_rules.library.AddressChecker"
+            "virtuallibrarycard.business_rules.library.AddressChecker"
         )
         self.mock_checker = self._mock_checker_patch.start()
         self.mock_checker.is_valid_zipcode.return_value = True

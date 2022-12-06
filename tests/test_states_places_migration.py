@@ -4,7 +4,7 @@ import pytest
 from django.apps import apps
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.models import LibraryStates
+from virtuallibrarycard.models import LibraryStates
 
 
 class TestPlaceMigration(BaseUnitTest):
@@ -24,7 +24,7 @@ class TestPlaceMigration(BaseUnitTest):
         self._associate_us_states(library, ["NY", "HI"])
         country_library = self.create_library(allow_all_us_states=True)
         migration = import_module(
-            "VirtualLibraryCard.migrations.0074_auto_20221018_0809"
+            "virtuallibrarycard.migrations.0074_auto_20221018_0809"
         )
         migration.migrate_states_to_places(apps, None)
 
@@ -53,7 +53,7 @@ class TestPlaceMigration(BaseUnitTest):
         assert user.place.abbreviation == "NY"
 
         migration = import_module(
-            "VirtualLibraryCard.migrations.0076_auto_20221019_1011"
+            "virtuallibrarycard.migrations.0076_auto_20221019_1011"
         )
         migration.migrate_user_state_to_place(apps, None)
 

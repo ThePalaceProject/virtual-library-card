@@ -4,8 +4,8 @@ from io import FileIO
 from unittest.mock import MagicMock
 
 from tests.base import BaseAdminUnitTest
-from VirtualLibraryCard.admin import LibraryAdmin
-from VirtualLibraryCard.models import Library, LibraryPlace, Place
+from virtuallibrarycard.admin import LibraryAdmin
+from virtuallibrarycard.models import Library, LibraryPlace, Place
 
 
 class TestLibraryAdminViews(BaseAdminUnitTest):

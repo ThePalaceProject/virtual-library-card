@@ -4,8 +4,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.test import RequestFactory
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.models import CustomUser, LibraryCard
-from VirtualLibraryCard.views.views_api import PinTestViewSet, UserLibraryCardViewSet
+from virtuallibrarycard.models import CustomUser, LibraryCard
+from virtuallibrarycard.views.views_api import PinTestViewSet, UserLibraryCardViewSet
 
 
 class TestPinTestViewSet(BaseUnitTest):

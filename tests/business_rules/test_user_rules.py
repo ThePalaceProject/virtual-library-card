@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Permission
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.business_rules.user import UserRules
+from virtuallibrarycard.business_rules.user import UserRules
 
 
 class TestUserRules(BaseUnitTest):

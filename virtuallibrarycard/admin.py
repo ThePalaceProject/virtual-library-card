@@ -12,14 +12,14 @@ from django.views.generic.base import TemplateView
 from sequences.models import Sequence
 
 from virtual_library_card.logging import LoggingMixin
-from VirtualLibraryCard.business_rules.library_card import (
+from virtuallibrarycard.business_rules.library_card import (
     BulkUploadBadHeadersException,
     BulkUploadDuplicatesException,
     BulkUploadLibraryException,
     LibraryCardBulkUpload,
 )
-from VirtualLibraryCard.business_rules.user import UserRules
-from VirtualLibraryCard.forms.forms import (
+from virtuallibrarycard.business_rules.user import UserRules
+from virtuallibrarycard.forms.forms import (
     CustomAdminUserChangeForm,
     CustomUserCreationForm,
     LibraryCardCreationForm,
@@ -27,7 +27,7 @@ from VirtualLibraryCard.forms.forms import (
     LibraryChangeForm,
     LibraryCreationForm,
 )
-from VirtualLibraryCard.models import (
+from virtuallibrarycard.models import (
     CustomUser,
     Library,
     LibraryAllowedEmailDomains,
@@ -35,7 +35,7 @@ from VirtualLibraryCard.models import (
     LibraryPlace,
     Place,
 )
-from VirtualLibraryCard.views.admin_email_customize import (
+from virtuallibrarycard.views.admin_email_customize import (
     AdminCustomizeWelcomeEmailView,
 )
 
@@ -463,7 +463,7 @@ class VLCAdminSite(admin.AdminSite):
         urls = [
             path("librarycard/upload_by_csv", LibraryCardsUploadCSV.as_view()),
             path(
-                "VirtualLibraryCard/library/<id>/welcome_email/update",
+                "virtuallibrarycard/library/<id>/welcome_email/update",
                 AdminCustomizeWelcomeEmailView.as_view(),
             ),
         ] + urls

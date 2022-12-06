@@ -5,8 +5,8 @@ from django.urls import reverse
 from django.views.generic import DeleteView, TemplateView, UpdateView
 
 from virtual_library_card.user_session import UserSessionManager
-from VirtualLibraryCard.forms.forms_profile import ProfileEditForm
-from VirtualLibraryCard.models import CustomUser, LibraryCard
+from virtuallibrarycard.forms.forms_profile import ProfileEditForm
+from virtuallibrarycard.models import CustomUser, LibraryCard
 
 
 class CustomLoginView(LoginView):

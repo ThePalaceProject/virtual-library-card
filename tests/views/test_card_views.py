@@ -7,17 +7,17 @@ from django.core import mail
 from django.test import Client, RequestFactory
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.forms.forms_library_card import RequestLibraryCardForm
-from VirtualLibraryCard.models import (
+from virtuallibrarycard.forms.forms_library_card import RequestLibraryCardForm
+from virtuallibrarycard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
 )
-from VirtualLibraryCard.views.views_library_card import LibraryCardRequestView
+from virtuallibrarycard.views.views_library_card import LibraryCardRequestView
 
 
 class TestCardSignup(BaseUnitTest):
-    @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect(self, mock_geolocalize: mock.MagicMock):
         library = self.create_library(places=["AL", "NC"])
 
@@ -76,7 +76,7 @@ class TestCardSignup(BaseUnitTest):
 
         assert c.session["zipcode"] == "998867-55"
 
-    @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect_negative(self, mock_geolocalize: mock.MagicMock):
         mock_geolocalize.get_user_location.return_value = {
             "results": [
@@ -130,7 +130,7 @@ class TestCardSignup(BaseUnitTest):
             in resp.content.decode()
         )
 
-    @mock.patch("VirtualLibraryCard.views.views_library_card.Geolocalize")
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_all_states_allowed(self, mock_geolocalize):
         library = self.create_library(places=["US"])
         mock_geolocalize.get_user_location.return_value = {
@@ -190,7 +190,7 @@ class TestCardRequest(BaseUnitTest):
         post.update(data)
         return post
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_card_request(self, mock_checker, with_captcha=True):
         c = Client()
 
@@ -218,7 +218,7 @@ class TestCardRequest(BaseUnitTest):
         assert mail.outbox[0].subject == f"{self._default_library.name} | Welcome"
         assert "Your account will not be activated until" in mail.outbox[0].body
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_card_request_bad_data(self, mock_checker):
         c = Client()
 
@@ -258,7 +258,7 @@ class TestCardRequest(BaseUnitTest):
         for field in expected_errors_fields:
             self.assertFormError(resp, "form", field, ["This field is required."])
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_card_request_no_patron_address(self, mock_checker):
         c = Client()
 
@@ -290,7 +290,7 @@ class TestCardRequest(BaseUnitTest):
             assert form.fields[name].required == False
             assert type(form.fields[name].widget) == forms.HiddenInput
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_card_request_email_no_duplicates(self, mock_checker):
         user = self.create_user(self._default_library, "TEST@t.co")
         c = Client()
@@ -331,7 +331,7 @@ class TestCardRequest(BaseUnitTest):
         self.test_card_request(with_captcha=False)
         apps.unset_installed_apps()
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_card_invalid_email_domain(self, mock_checker):
         library = self.create_library()
         LibraryAllowedEmailDomains(library=library, domain="example.org").save()
@@ -368,7 +368,7 @@ class TestCardRequest(BaseUnitTest):
             errors=["User must be part of allowed domains: ['example.org']"],
         )
 
-    @mock.patch("VirtualLibraryCard.business_rules.library.AddressChecker")
+    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
     def test_age_verification(self, mock_checker):
         """over13 form field should be hidden and default to false"""
         library = self.create_library(age_verification_mandatory=False)

@@ -11,7 +11,7 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from virtual_library_card.logging import log
-from VirtualLibraryCard.models import (
+from virtuallibrarycard.models import (
     CustomUser,
     Library,
     LibraryCard,
@@ -126,7 +126,7 @@ class BaseUnitTest(TestData, TestCase):
             library = self._default_library
 
         with mock.patch(
-            "VirtualLibraryCard.views.views_library_card.Geolocalize"
+            "virtuallibrarycard.views.views_library_card.Geolocalize"
         ) as mock_geolocalize:
             mock_geolocalize.get_user_location.return_value = {
                 "results": [
@@ -174,12 +174,12 @@ class BaseAdminUnitTest(BaseUnitTest):
 
     def get_change_url(self, obj):
         return reverse(
-            f"admin:VirtualLibraryCard_{self.MODEL.__name__.lower()}_change",
+            f"admin:virtuallibrarycard_{self.MODEL.__name__.lower()}_change",
             kwargs={"object_id": obj.id},
         )
 
     def get_add_url(self):
-        return reverse(f"admin:VirtualLibraryCard_{self.MODEL.__name__.lower()}_add")
+        return reverse(f"admin:virtuallibrarycard_{self.MODEL.__name__.lower()}_add")
 
     def _response_errors(self, response):
         """Helper function for debuging form submits"""

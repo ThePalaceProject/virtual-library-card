@@ -17,8 +17,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-from VirtualLibraryCard.admin import admin_site
-from VirtualLibraryCard.views import (
+from virtuallibrarycard.admin import admin_site
+from virtuallibrarycard.views import (
     CustomLoginView,
     LibraryCardDeleteView,
     PasswordChangeDoneView,
@@ -31,7 +31,7 @@ from VirtualLibraryCard.views import (
     views_password,
     views_profile,
 )
-from VirtualLibraryCard.views.views_verification import (
+from virtuallibrarycard.views.views_verification import (
     EmailVerificationErrorView,
     EmailVerificationResendToken,
     EmailVerificationTokenView,
@@ -172,6 +172,6 @@ if settings.HAS_WEBSITE:
         ]
         urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = "VirtualLibraryCard.views.handler404"
-handler400 = "VirtualLibraryCard.views.handler400"
-handler500 = "VirtualLibraryCard.views.handler500"
+handler404 = "virtuallibrarycard.views.handler404"
+handler400 = "virtuallibrarycard.views.handler400"
+handler500 = "virtuallibrarycard.views.handler500"

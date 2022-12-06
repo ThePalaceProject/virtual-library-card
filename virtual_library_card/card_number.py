@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import transaction
 from sequences import get_last_value, get_next_value
 
-import VirtualLibraryCard.models
+import virtuallibrarycard.models
 from virtual_library_card.logging import log
 from virtual_library_card.sender import Sender
 
@@ -28,10 +28,10 @@ class CardNumber:
         )
         if must_send_alert:
             try:
-                admin_users = VirtualLibraryCard.models.CustomUser.library_admins(
+                admin_users = virtuallibrarycard.models.CustomUser.library_admins(
                     library
                 )
-                super_users = VirtualLibraryCard.models.CustomUser.super_users()
+                super_users = virtuallibrarycard.models.CustomUser.super_users()
                 Sender.send_admin_card_numbers_alert(library, admin_users, super_users)
             except Exception as e:
                 log.error(f"send_admin_card_numbers_alert error {e}")
@@ -103,7 +103,7 @@ class CardNumber:
                 )
                 number = library_card.library.prefix + suffix_number
                 # Test the availability of this number, else retry
-                exists = VirtualLibraryCard.models.LibraryCard.objects.filter(
+                exists = virtuallibrarycard.models.LibraryCard.objects.filter(
                     library=library_card.library, number=number
                 ).exists()
                 if exists:

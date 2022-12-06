@@ -1,6 +1,6 @@
 from django.http import Http404
 
-from VirtualLibraryCard.models import *
+from virtuallibrarycard.models import *
 
 from .views import *
 from .views_api import *

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserChangeForm
 from django.forms import HiddenInput
 from django.utils.translation import gettext as _
 
-from VirtualLibraryCard.models import CustomUser
+from virtuallibrarycard.models import CustomUser
 
 
 class ProfileEditForm(UserChangeForm):

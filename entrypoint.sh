@@ -6,6 +6,12 @@ useradd -r -s /bin/false -g vlc -u $UWSGI_UID vlc
 
 # Collect static files
 python manage.py collectstatic --no-input
+
+# The 2 rename_app commands are idempotent, and can be run multiple times without consequence
+# Once all deployments have been updated with the renamed app, the commands should be removed from this file
+python manage.py rename_app "VirtualLibraryCard" "virtuallibrarycard"
+python manage.py rename_app_permissions "VirtualLibraryCard" "virtuallibrarycard"
+
 python manage.py migrate --no-input
 
 # Create the superuser

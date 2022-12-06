@@ -10,9 +10,9 @@ from django.utils.translation import gettext as _
 
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
-from VirtualLibraryCard.business_rules.library import LibraryRules
-from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from virtuallibrarycard.business_rules.library import LibraryRules
+from virtuallibrarycard.business_rules.library_card import LibraryCardRules
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard
 
 
 class RequestLibraryCardForm(UserCreationForm):

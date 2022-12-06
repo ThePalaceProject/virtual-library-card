@@ -32,7 +32,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -51,14 +51,14 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.26.22"
+version = "1.26.23"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.29.22,<1.30.0"
+botocore = ">=1.29.23,<1.30.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -67,7 +67,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.22"
+version = "1.29.23"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -114,7 +114,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode-backport = ["unicodedata2"]
+unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "colorama"
@@ -298,6 +298,17 @@ python-versions = "*"
 name = "django-recaptcha"
 version = "3.0.0"
 description = "Django recaptcha form field/widget app."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+django = "*"
+
+[[package]]
+name = "django-rename-app"
+version = "0.1.5"
+description = "A Django Management Command to rename existing Django Applications."
 category = "main"
 optional = false
 python-versions = "*"
@@ -779,7 +790,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "rjsmin"
@@ -927,7 +938,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "uwsgi"
-version = "2.0.21"
+version = "2.0.20"
 description = "The uWSGI server"
 category = "main"
 optional = false
@@ -988,7 +999,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "4f5ca1eea8850ce6ef86d1b0a5c4270d4b2f01e97841f2b84d389be9157b43b1"
+content-hash = "ebb48ae6f98837c347c14cd2d02a1d966327c147f95bb49f8c35d3637d8f8783"
 
 [metadata.files]
 asgiref = [
@@ -1008,12 +1019,12 @@ beautifulsoup4 = [
     {file = "beautifulsoup4-4.10.0.tar.gz", hash = "sha256:c23ad23c521d818955a4151a67d81580319d4bf548d3d49f4223ae041ff98891"},
 ]
 boto3 = [
-    {file = "boto3-1.26.22-py3-none-any.whl", hash = "sha256:a4cf7fe649b0202f2f2307eb982ca215edcf9c87b6e65f5b3405f66c289603f2"},
-    {file = "boto3-1.26.22.tar.gz", hash = "sha256:f16c3aef1432c5083a9e1c36ac08b70b9072e87205e970f8d7520b10b964858f"},
+    {file = "boto3-1.26.23-py3-none-any.whl", hash = "sha256:b466dd6e7b71babf145ae8c55b541bbcf5828df49ca022edb24657ae0b861e87"},
+    {file = "boto3-1.26.23.tar.gz", hash = "sha256:f478dde5a7e600e222c406bbf6cd2927371822d2b95a931c3ccb69eed18af83a"},
 ]
 botocore = [
-    {file = "botocore-1.29.22-py3-none-any.whl", hash = "sha256:d3029e81f0112a74e5c83c6eebcdcf8d221e996f062d5e2b715963976ae4895f"},
-    {file = "botocore-1.29.22.tar.gz", hash = "sha256:ce637e3537388200775d80c5a3170df4810ddf7afbd7883db5673279b2584f68"},
+    {file = "botocore-1.29.23-py3-none-any.whl", hash = "sha256:5ad03b4bedb5587fc75c7ecd29bf3477929791748cb533c8c57ab5289da84ac3"},
+    {file = "botocore-1.29.23.tar.gz", hash = "sha256:216400fa6736a335f5b5c643655cc7d69d0bf996eb4d21069373aa5aa84b5c10"},
 ]
 certifi = [
     {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
@@ -1092,6 +1103,10 @@ django-materialize-css = [
 django-recaptcha = [
     {file = "django-recaptcha-3.0.0.tar.gz", hash = "sha256:253197051288923cae675d7eff91b619e3775311292a5dbaf27a8a55ffebc670"},
     {file = "django_recaptcha-3.0.0-py3-none-any.whl", hash = "sha256:1aed69fd6ac8fd9e99e52665392ae6748f8b6339ace656fad779fe0c6c915a52"},
+]
+django-rename-app = [
+    {file = "django_rename_app-0.1.5-py2.py3-none-any.whl", hash = "sha256:2ad462d2cf2946ca25b633a9f671cfb71c6fa2ba9b7f7f261815a2f4681ca14c"},
+    {file = "django_rename_app-0.1.5.tar.gz", hash = "sha256:b827c6685c98c9ddaa272c0ce6d186edef706afd2f8824401d0151eb7d25a37d"},
 ]
 django-render-block = [
     {file = "django-render-block-0.9.2.tar.gz", hash = "sha256:3dde0d2abde9381685659d2ed0761b8bddf7741c48eaadec9e5b50a6c7850247"},
@@ -1350,8 +1365,6 @@ psycopg2-binary = [
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:e67b3c26e9b6d37b370c83aa790bbc121775c57bfb096c2e77eacca25fd0233b"},
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_ppc64le.whl", hash = "sha256:5fc447058d083b8c6ac076fc26b446d44f0145308465d745fba93a28c14c9e32"},
     {file = "psycopg2_binary-2.9.5-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d892bfa1d023c3781a3cab8dd5af76b626c483484d782e8bd047c180db590e4c"},
-    {file = "psycopg2_binary-2.9.5-cp311-cp311-win32.whl", hash = "sha256:2abccab84d057723d2ca8f99ff7b619285d40da6814d50366f61f0fc385c3903"},
-    {file = "psycopg2_binary-2.9.5-cp311-cp311-win_amd64.whl", hash = "sha256:bef7e3f9dc6f0c13afdd671008534be5744e0e682fb851584c8c3a025ec09720"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-macosx_10_14_x86_64.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:6e63814ec71db9bdb42905c925639f319c80e7909fb76c3b84edc79dadef8d60"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:212757ffcecb3e1a5338d4e6761bf9c04f750e7d027117e74aa3cd8a75bb6fbd"},
     {file = "psycopg2_binary-2.9.5-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6f8a9bcab7b6db2e3dbf65b214dfc795b4c6b3bb3af922901b6a67f7cb47d5f8"},
@@ -1563,7 +1576,7 @@ urllib3 = [
     {file = "urllib3-1.26.8.tar.gz", hash = "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"},
 ]
 uwsgi = [
-    {file = "uwsgi-2.0.21.tar.gz", hash = "sha256:35a30d83791329429bc04fe44183ce4ab512fcf6968070a7bfba42fc5a0552a9"},
+    {file = "uwsgi-2.0.20.tar.gz", hash = "sha256:88ab9867d8973d8ae84719cf233b7dafc54326fcaec89683c3f9f77c002cdff9"},
 ]
 virtualenv = [
     {file = "virtualenv-20.14.1-py2.py3-none-any.whl", hash = "sha256:e617f16e25b42eb4f6e74096b9c9e37713cf10bf30168fb4a739f3fa8f898a3a"},

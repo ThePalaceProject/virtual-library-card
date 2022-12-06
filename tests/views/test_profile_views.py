@@ -1,8 +1,8 @@
 from django.test import RequestFactory
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.models import CustomUser, LibraryCard
-from VirtualLibraryCard.views.views_profile import ProfileDeleteView
+from virtuallibrarycard.models import CustomUser, LibraryCard
+from virtuallibrarycard.views.views_profile import ProfileDeleteView
 
 
 class TestProfileView(BaseUnitTest):

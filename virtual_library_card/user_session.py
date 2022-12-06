@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from virtual_library_card.logging import log
-from VirtualLibraryCard.models import Library, LibraryCard
+from virtuallibrarycard.models import Library, LibraryCard
 
 
 class UserSessionManager:

@@ -15,7 +15,7 @@ from django.db.utils import IntegrityError
 
 from virtual_library_card.logging import log
 from virtual_library_card.sender import Sender
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, Place
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
 
 
 class LibraryCardRules:

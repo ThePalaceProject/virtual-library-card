@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.template import Context, Engine
 from django.views.generic import FormView
 
-from VirtualLibraryCard.models import Library
+from virtuallibrarycard.models import Library
 
 
 class CustomizeWelcomeEmailForm(forms.Form):

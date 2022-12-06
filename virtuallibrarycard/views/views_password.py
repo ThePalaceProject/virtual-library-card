@@ -4,11 +4,11 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
-from VirtualLibraryCard.forms.forms_password import (
+from virtuallibrarycard.forms.forms_password import (
     CustomPasswordChangeForm,
     CustomPasswordResetForm,
 )
-from VirtualLibraryCard.models import CustomUser
+from virtuallibrarycard.models import CustomUser
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):

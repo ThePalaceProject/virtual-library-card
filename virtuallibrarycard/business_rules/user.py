@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from django.contrib.auth.models import Permission
 
 if TYPE_CHECKING:
-    from VirtualLibraryCard.models import CustomUser
+    from virtuallibrarycard.models import CustomUser
 
 STAFF_PERMISSIONS = [
     "add_customuser",

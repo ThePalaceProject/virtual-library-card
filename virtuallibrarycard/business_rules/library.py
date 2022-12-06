@@ -1,7 +1,7 @@
 from attr import define
 
 from virtual_library_card.smarty_streets import AddressChecker
-from VirtualLibraryCard.models import Library, Place
+from virtuallibrarycard.models import Library, Place
 
 
 @define

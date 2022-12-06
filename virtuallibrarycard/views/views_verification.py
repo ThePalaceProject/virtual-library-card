@@ -17,7 +17,7 @@ from virtual_library_card.tokens import (
     Tokens,
     TokenTypes,
 )
-from VirtualLibraryCard.models import CustomUser
+from virtuallibrarycard.models import CustomUser
 
 
 class EmailVerificationTokenView(LoggingMixin, TemplateView):

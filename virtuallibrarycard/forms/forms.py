@@ -10,10 +10,10 @@ from django.utils.safestring import mark_safe
 from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
-from VirtualLibraryCard.business_rules.library import LibraryRules
-from VirtualLibraryCard.business_rules.library_card import LibraryCardRules
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard, Place
-from VirtualLibraryCard.widgets.buttons import LinkButtonField
+from virtuallibrarycard.business_rules.library import LibraryRules
+from virtuallibrarycard.business_rules.library_card import LibraryCardRules
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
+from virtuallibrarycard.widgets.buttons import LinkButtonField
 
 
 class LibraryCreationForm(forms.ModelForm):

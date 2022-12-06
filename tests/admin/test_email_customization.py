@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.views.admin_email_customize import (
+from virtuallibrarycard.views.admin_email_customize import (
     AdminCustomizeWelcomeEmailView,
 )
 

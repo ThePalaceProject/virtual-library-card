@@ -3,9 +3,9 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
 
 from tests.base import BaseAdminUnitTest, BaseUnitTest
-from VirtualLibraryCard.admin import LibraryCardAdmin, LibraryCardsUploadCSV
-from VirtualLibraryCard.forms.forms import LibraryCardsUploadByCSVForm
-from VirtualLibraryCard.models import LibraryCard
+from virtuallibrarycard.admin import LibraryCardAdmin, LibraryCardsUploadCSV
+from virtuallibrarycard.forms.forms import LibraryCardsUploadByCSVForm
+from virtuallibrarycard.models import LibraryCard
 
 
 class TestLibraryAdminViews(BaseAdminUnitTest):

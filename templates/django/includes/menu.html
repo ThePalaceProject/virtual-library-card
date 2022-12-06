@@ -48,25 +48,25 @@
                                     <a title="{% trans admin %}" aria-label="{% trans admin %}"
                                        href="/admin">{% trans admin %}</a>
                                     <ul class="dropdown">
-                                        {% if perms.VirtualLibraryCard.view_customuser %}
+                                        {% if perms.virtuallibrarycard.view_customuser %}
                                             <li><a title="{% trans users %}" aria-label="{% trans users %}"
-                                                   href="/admin/VirtualLibraryCard/customuser/">{% trans users %}</a>
+                                                   href="/admin/virtuallibrarycard/customuser/">{% trans users %}</a>
                                             </li>
                                         {% endif %}
-                                        {% if perms.VirtualLibraryCard.view_group %}
+                                        {% if perms.virtuallibrarycard.view_group %}
                                             <li><a title="{% trans groups %}" aria-label="{% trans groups %}"
                                                    href="/admin/auth/group/">{% trans groups %}</a></li>
                                         {% endif %}
-                                        {% if perms.VirtualLibraryCard.view_library %}
+                                        {% if perms.virtuallibrarycard.view_library %}
                                             <li><a title="{% trans libraries %}" aria-label="{% trans libraries %}"
-                                                   href="/admin/VirtualLibraryCard/library/">{% trans libraries %}</a>
+                                                   href="/admin/virtuallibrarycard/library/">{% trans libraries %}</a>
                                             </li>
                                         {% endif %}
-                                        {% if perms.VirtualLibraryCard.view_librarycard %}
+                                        {% if perms.virtuallibrarycard.view_librarycard %}
                                             <li>
                                                 <a title="{% trans library_cards %}"
                                                    aria-label="{% trans library_cards %}"
-                                                   href="/admin/VirtualLibraryCard/librarycard/">{% trans library_cards %}</a>
+                                                   href="/admin/virtuallibrarycard/librarycard/">{% trans library_cards %}</a>
                                             </li>
                                         {% endif %}
 

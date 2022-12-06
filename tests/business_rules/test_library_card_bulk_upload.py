@@ -5,14 +5,14 @@ import pytest
 from django.core import mail
 
 from tests.base import BaseUnitTest, MockThread
-from VirtualLibraryCard.business_rules.library_card import (
+from virtuallibrarycard.business_rules.library_card import (
     BulkUploadBadHeadersException,
     BulkUploadDuplicatesException,
     BulkUploadLibraryException,
     LibraryCardBulkUpload,
     iter_clean_lines,
 )
-from VirtualLibraryCard.models import CustomUser, LibraryCard
+from virtuallibrarycard.models import CustomUser, LibraryCard
 
 
 class TestLibraryCardBulkUpload(BaseUnitTest):
@@ -119,7 +119,7 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
         assert user.zip == "10001"
         assert len(mail.outbox) == 2
 
-    @patch("VirtualLibraryCard.business_rules.library_card.Thread", new=MockThread)
+    @patch("virtuallibrarycard.business_rules.library_card.Thread", new=MockThread)
     def test_async_mode(self):
         csv_bytes = b"""id,first_name,email
                         111,name111,111@example.org

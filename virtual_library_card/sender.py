@@ -13,7 +13,7 @@ from virtual_library_card.logging import log
 from virtual_library_card.tokens import Tokens, TokenTypes
 
 if TYPE_CHECKING:
-    from VirtualLibraryCard.models import CustomUser, Library
+    from virtuallibrarycard.models import CustomUser, Library
 
 
 class Sender:

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from virtual_library_card.logging import LoggingMixin
-from VirtualLibraryCard.models import CustomUser, LibraryCard
+from virtuallibrarycard.models import CustomUser, LibraryCard
 
 
 @permission_classes((permissions.AllowAny,))

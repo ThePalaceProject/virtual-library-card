@@ -4,11 +4,11 @@ from io import StringIO
 import pytest
 
 from tests.base import BaseUnitTest
-from VirtualLibraryCard.business_rules.place_import import (
+from virtuallibrarycard.business_rules.place_import import (
     PlaceImport,
     PlaceImportParentOrderException,
 )
-from VirtualLibraryCard.models import Place
+from virtuallibrarycard.models import Place
 
 
 class TestPlaceImport(BaseUnitTest):

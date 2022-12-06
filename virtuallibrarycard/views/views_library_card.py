@@ -8,13 +8,13 @@ from django.views.generic import CreateView, FormView, TemplateView, UpdateView
 from virtual_library_card.geoloc import Geolocalize
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.user_session import UserSessionManager
-from VirtualLibraryCard.business_rules.library import LibraryRules
-from VirtualLibraryCard.forms.forms_library_card import (
+from virtuallibrarycard.business_rules.library import LibraryRules
+from virtuallibrarycard.forms.forms_library_card import (
     LibraryCardDeleteForm,
     RequestLibraryCardForm,
     SignupCardForm,
 )
-from VirtualLibraryCard.models import CustomUser, Library, LibraryCard
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard
 
 
 class LibraryCardsView(LoginRequiredMixin, TemplateView):

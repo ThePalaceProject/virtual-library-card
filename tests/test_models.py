@@ -16,7 +16,7 @@ from sequences import get_last_value
 
 from tests.base import BaseUnitTest
 from virtual_library_card.card_number import CardNumber
-from VirtualLibraryCard.models import (
+from virtuallibrarycard.models import (
     CustomUser,
     Library,
     LibraryAllowedEmailDomains,
