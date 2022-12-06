@@ -115,7 +115,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
 
     # used by other admin forms that have search-fields on users
     # Eg. LibraryCard admin form
-    search_fields = ["email"]
+    search_fields = ["email", "first_name", "last_name"]
     ordering = ["email"]
 
     def state(self, obj):

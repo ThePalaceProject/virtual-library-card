@@ -435,6 +435,9 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+    def __str__(self) -> str:
+        return f"{self.email} ({self.first_name} {self.last_name or ''})"
+
     @staticmethod
     def create_card_for_library(library: Library, user, number=None):
         library_card: LibraryCard = LibraryCard()
