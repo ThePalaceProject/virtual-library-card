@@ -153,6 +153,11 @@ is installed via the `INSTALLED_APPS` setting.
 If the `captcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
 captcha to be present on that page.
 
+### Environment Variables
+
+**DJANGO_LOG_LEVEL**: Can be a python log level string. It defaults to `INFO`.
+All application logging occurs at this defined level.
+
 ### AWS S3 Setup
 
 An S3 bucket should be created out-of-band to store uploaded files and static files.

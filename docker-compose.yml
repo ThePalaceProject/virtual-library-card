@@ -13,6 +13,7 @@ services:
         condition: service_healthy
     environment:
       DJANGO_SETTINGS_MODULE: "virtual_library_card.settings.dev"
+      DJANGO_LOG_LEVEL: "DEBUG"
       VLC_DEV_DB_PORT: "5432"
       VLC_DEV_DB_HOST: "pg"
       VLC_DEV_AWS_S3_ENDPOINT_URL: "http://minio:9000"

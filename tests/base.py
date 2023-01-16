@@ -19,7 +19,8 @@ from virtuallibrarycard.models import (
     Place,
 )
 
-log._logger.addHandler(StreamHandler(stream=sys.stdout))
+log.removeHandler(log.handlers[0])
+log.addHandler(StreamHandler(stream=sys.stdout))
 
 
 class TestData:

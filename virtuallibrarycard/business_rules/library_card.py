@@ -181,7 +181,7 @@ class LibraryCardBulkUpload:
                 card, _ = LibraryCardRules.new_card(
                     user, self.library, number=prefix + user_id
                 )
-                log.log(f"Created user and card for {user.email}: {card.number}")
+                log.debug(f"Created user and card for {user.email}: {card.number}")
                 results.append({"card number": card.number, "error": "", **item})
             except Exception as ex:
                 log.error(f"Could not create card or user: {ex}")
