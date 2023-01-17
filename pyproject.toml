@@ -17,7 +17,7 @@ version = "0"  # Version number is managed with tags in git
 [tool.poetry.dependencies]
 attrs = "^22.1.0"
 boto3 = "^1.26.50"
-certifi = "2022.9.24"
+certifi = "2022.12.7"
 chardet = "^5.1.0"
 crispy-forms-materialize = "0.2"
 datedelta = "1.4"
