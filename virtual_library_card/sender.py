@@ -78,7 +78,7 @@ class Sender:
                     f"{host}{reverse('email_token_verify')}?token={token}"
                 )
 
-            subject = _("%(library_name)s | Welcome" % {"library_name": library.name})
+            subject = _(f"{library.name} | Welcome")
             html_message = render_to_string(
                 "email/welcome_user.html",
                 {

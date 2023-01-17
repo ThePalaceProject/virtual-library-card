@@ -278,7 +278,7 @@ class LibraryPlace(models.Model):
 
 
 def validate_domain(domain: str) -> bool:
-    matched = re.match("[a-z0-9-_]+\.[a-z0-9-_]{2,}", domain, flags=re.IGNORECASE)
+    matched = re.match(r"[a-z0-9-_]+\.[a-z0-9-_]{2,}", domain, flags=re.IGNORECASE)
     return matched is not None
 
 
@@ -530,7 +530,7 @@ class CustomUser(AbstractUser):
                 )
             )
 
-        super(CustomUser, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @staticmethod
     def get_or_create_default_library():

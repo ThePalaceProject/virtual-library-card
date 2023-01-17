@@ -72,7 +72,7 @@ class RequestLibraryCardForm(UserCreationForm):
             self.fields["first_name"].widget.attrs["autofocus"] = "autofocus"
 
     def get_form_kwargs(self):
-        kwargs = super(RequestLibraryCardForm, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
 
         return kwargs
 

@@ -109,8 +109,8 @@ class AddressChecker:
         log.debug("Address is valid. (There is at least one candidate)\n")
         log.debug("ZIP Code: " + first_candidate.components.zipcode)
         log.debug("County: " + first_candidate.metadata.county_name)
-        log.debug("Latitude: {}".format(first_candidate.metadata.latitude))
-        log.debug("Longitude: {}".format(first_candidate.metadata.longitude))
+        log.debug(f"Latitude: {first_candidate.metadata.latitude}")
+        log.debug(f"Longitude: {first_candidate.metadata.longitude}")
         return first_candidate
 
     @staticmethod

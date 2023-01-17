@@ -13,7 +13,7 @@ class CustomLoginView(LoginView):
     form_class = AuthenticationForm
 
     def get_form_kwargs(self):
-        kwargs = super(CustomLoginView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         url_parts = self.request.path.split("/")[:-1]
         identifier = str(url_parts.pop())
         UserSessionManager.set_session_identifier_info(self, identifier)

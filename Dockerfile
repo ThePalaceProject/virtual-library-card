@@ -24,7 +24,7 @@ ENV UWSGI_MASTER=1 \
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
     curl mime-support && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.2.1" && \
+    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.3.2" && \
     ln -s /opt/poetry/bin/poetry /bin/poetry && \
     apt-get remove curl -y && \
     apt-get autoremove -y && \

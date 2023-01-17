@@ -1,5 +1,5 @@
 import json
-import sys
+from unittest import mock
 
 from django.conf import settings
 from smartystreets_python_sdk.exceptions import SmartyException
@@ -7,12 +7,6 @@ from smartystreets_python_sdk.exceptions import SmartyException
 from tests.base import BaseUnitTest
 from virtual_library_card.geoloc import Geolocalize
 from virtual_library_card.smarty_streets import AddressChecker
-
-# TODO: we can drop this when we drop support for Python 3.7
-if sys.version_info < (3, 8):
-    import mock
-else:
-    from unittest import mock
 
 
 class TestGeolocalize(BaseUnitTest):

@@ -183,7 +183,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     export_as_csv.short_description = _("Export selected users")
 
     def get_queryset(self, request):
-        qs = super(CustomUserAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(library=request.user.library.id)
@@ -285,7 +285,7 @@ class LibraryAdmin(admin.ModelAdmin):
         return [lp.place.abbreviation for lp in obj.library_places.all()]
 
     def get_queryset(self, request):
-        qs = super(LibraryAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(id=request.user.library.id)
@@ -347,7 +347,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request):
-        qs = super(LibraryCardAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(library=request.user.library.id)
@@ -391,7 +391,7 @@ def export_list_as_csv(self, request, queryset):
     meta = self.model._meta
     field_names = [field.name for field in meta.fields]
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
+    response["Content-Disposition"] = f"attachment; filename={meta}.csv"
     writer = csv.writer(response)
 
     writer.writerow(field_names)

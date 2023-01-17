@@ -115,7 +115,7 @@ class TestLibraryModel(BaseUnitTest):
         # CustomUser unsavable in case of unmatched domain
         with pytest.raises(
             ValidationError,
-            match="User must be part of allowed domains: \['example.org'\]",
+            match=r"User must be part of allowed domains: \['example.org'\]",
         ):
             with django.db.transaction.atomic():
                 CustomUser(library=library, email="email@notexample.org").save()

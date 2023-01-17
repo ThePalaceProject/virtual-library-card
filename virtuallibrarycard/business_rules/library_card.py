@@ -7,7 +7,7 @@ from io import BytesIO, StringIO
 from os import linesep
 from random import random
 from threading import Thread
-from typing import IO, Any, Dict, Generator, List, Set, Tuple
+from typing import IO, Any, Generator
 
 import chardet
 from django.core.files.storage import FileSystemStorage
@@ -22,7 +22,7 @@ class LibraryCardRules:
     @classmethod
     def new_card(
         cls, user: CustomUser, library: Library, number: str = None
-    ) -> Tuple[LibraryCard, bool]:
+    ) -> tuple[LibraryCard, bool]:
         """Generate a new card only of a card does not exist for this user and library
         Also send the welcome email"""
         existing_library_card: LibraryCard = LibraryCard.objects.filter(
@@ -133,7 +133,7 @@ class LibraryCardBulkUpload:
             csv_lines = list(iter_clean_lines(csv_file))
 
         reader = csv.DictReader(csv_lines)
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         for item in reader:
             try:
                 is_new = False
@@ -192,7 +192,7 @@ class LibraryCardBulkUpload:
 
         self._send_results(results)
 
-    def _send_results(self, results: List[Dict[str, Any]]):
+    def _send_results(self, results: list[dict[str, Any]]):
         """Send the results of the upload to the responsible admin
         The results are sent as an attachment to the email
         due to the possibly large size of the report"""
@@ -289,4 +289,4 @@ class BulkUploadLibraryException(Exception):
 
 @dataclass
 class BulkUploadDuplicatesException(Exception):
-    duplicates: Dict[str, Set[str]]
+    duplicates: dict[str, set[str]]

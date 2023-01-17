@@ -105,7 +105,7 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
         return super().render_to_response(context, **response_kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(LibraryCardRequestView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         if "identifier" not in self.request.session:
             raise Http404(_("You are not allowed to access this page"))
 

@@ -12,7 +12,7 @@ homepage = "https://thepalaceproject.org"
 name = "Virtual Library Card"
 readme = "README.md"
 repository = "https://github.com/ThePalaceProject/ virtual-library-card"
-version = "0" # Version number is managed with tags in git
+version = "0"  # Version number is managed with tags in git
 
 [tool.poetry.dependencies]
 attrs = "^22.1.0"
@@ -45,7 +45,7 @@ Pillow = "9.3.0"
 psycopg2-binary = "2.9.5"
 PyJWT = "^2.6.0"
 PyMySQL = "1.0.2"
-python = ">=3.7,<4"
+python = ">=3.8,<4"
 python-stdnum = "1.15"
 pytz = "2022.6"
 rcssmin = "1.0.6"
@@ -62,10 +62,18 @@ tox-docker = "^3.1.0"
 tox-gh-actions = "^2.10.0"
 
 [tool.poetry.group.dev.dependencies]
-mock = { version = "~4.0", python = "< 3.8" }
 parameterized = "^0.8.1"
 pytest = "^7.1.1"
 pytest-django = "^4.5.2"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "virtual_library_card.settings.dev"
+
+[tool.tomlsort]
+ignore_case = true
+in_place = true
+sort_inline_arrays = true
+sort_table_keys = true
+spaces_before_inline_comment = 2
+spaces_indent_inline_array = 4
+trailing_comma_inline_array = true
