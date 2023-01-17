@@ -1132,14 +1132,14 @@ six = ">=1.5"
 
 [[package]]
 name = "python-stdnum"
-version = "1.15"
+version = "1.18"
 description = "Python module to handle standardized numbers and codes"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "python-stdnum-1.15.tar.gz", hash = "sha256:ff0e4d2b8731711cf2a73d22964139208088b4bd1a3e3b0c4f78d6e823dd8923"},
-    {file = "python_stdnum-1.15-py2.py3-none-any.whl", hash = "sha256:46c05dff2d5ff89b12cc63ab54cca1e4788e4e3087c163a1b7434a53fa926f28"},
+    {file = "python-stdnum-1.18.tar.gz", hash = "sha256:bcc763d9c49ae23da5d2b7a686d5fd1deec9d9051341160a10d1ac723a26bec0"},
+    {file = "python_stdnum-1.18-py2.py3-none-any.whl", hash = "sha256:d7f2a3c7ef4635c957b9cbdd9b1993d1f6ee3a2959f03e172c45440d99f296eb"},
 ]
 
 [package.extras]
@@ -1536,4 +1536,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "ff25fa81bda20d283ad7a036a508cf803bacc146a1fab0c2115a5fdab2d949fe"
+content-hash = "4a45c7b26ca79c04a30f4d2af0ead0842d6275737b262e2200b35657ef476b25"
