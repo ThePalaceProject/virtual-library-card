@@ -123,6 +123,24 @@ class TestSender(BaseUnitTest):
             },
         )
 
+    def test_send_user_welcome_none_custom_text(self):
+        """In case we have nonetype custom text
+        the email should not contain "None" strings
+        """
+        library = self._default_library
+        user = self._default_user
+        card = self._default_card
+
+        library.customization.welcome_email_top_text = None
+        library.customization.welcome_email_bottom_text = None
+
+        Sender.send_user_welcome(library, user, card.number)
+
+        assert len(mail.outbox) == 1
+        sent = mail.outbox[0]
+
+        assert "None" not in sent.body
+
     def test_get_absolute_login_url(self):
         url = Sender._get_absolute_login_url(self._default_library.identifier)
         assert (

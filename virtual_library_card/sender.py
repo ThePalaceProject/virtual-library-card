@@ -89,10 +89,12 @@ class Sender:
                     "has_welcome": has_welcome,
                     "has_verification": not user.email_verified,
                     "custom_top_text": Sender.text_whitespaces_to_html(
-                        strip_tags(library.customization.welcome_email_top_text)
+                        strip_tags(library.customization.welcome_email_top_text or "")
                     ),
                     "custom_bottom_text": Sender.text_whitespaces_to_html(
-                        strip_tags(library.customization.welcome_email_bottom_text)
+                        strip_tags(
+                            library.customization.welcome_email_bottom_text or ""
+                        )
                     ),
                 },
             )
