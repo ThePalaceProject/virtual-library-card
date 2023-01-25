@@ -14,6 +14,10 @@ runuser -u vlc -- python manage.py rename_app_permissions "VirtualLibraryCard" "
 
 runuser -u vlc -- python manage.py migrate --no-input
 
+# Ensure the uploadable folder (MEDiA_ROOT) is owned entirely by the vlc user
+mkdir -p compiled/media
+chown $UWSGI_UID:$UWSGI_GID -R compiled/media
+
 # Create the superuser
 if [[ -z "${SUPERUSER_EMAIL}" ]]; then
   echo "SUPERUSER_EMAIL env must be set." && exit 127
