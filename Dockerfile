@@ -35,12 +35,7 @@ RUN apt-get update -y && \
 # Install Python dependencies
 COPY pyproject.toml poetry.lock $APP_DIR
 WORKDIR $APP_DIR
-RUN apt-get update -y && \
-    apt-get install --no-install-recommends -y build-essential libpcre3-dev && \
-    POETRY_VIRTUALENVS_CREATE=false poetry install --only main --no-interaction && \
-    apt-get remove build-essential -y && \
-    apt-get autoremove -y && \
-    rm -Rf /var/lib/apt/lists/* && \
+RUN POETRY_VIRTUALENVS_CREATE=false poetry install --only main --no-interaction && \
     poetry cache clear -n --all pypi && \
     rm -Rf /root/.cache && \
     find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
