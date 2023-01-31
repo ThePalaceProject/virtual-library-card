@@ -1,5 +1,9 @@
 # Created by https://www.gitignore.io
 
+# Editors
+.vscode/
+.idea/
+
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -92,3 +96,6 @@ db.sqlite3
 compiled/
 venv/
 .vscode/
+
+# Dynamically generated version file, added by docker build
+virtual_library_card/_version.py

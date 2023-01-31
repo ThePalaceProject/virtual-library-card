@@ -36,6 +36,7 @@ from virtuallibrarycard.views.views_verification import (
     EmailVerificationResendToken,
     EmailVerificationTokenView,
 )
+from virtuallibrarycard.views.views_version import VersionView
 
 urlpatterns = []
 
@@ -171,6 +172,11 @@ if settings.HAS_WEBSITE:
             )
         ]
         urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Controller that returns information about the version of the deployed app
+urlpatterns += [
+    path("version.json", VersionView.as_view()),
+]
 
 handler404 = "virtuallibrarycard.views.handler404"
 handler400 = "virtuallibrarycard.views.handler400"
