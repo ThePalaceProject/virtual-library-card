@@ -29,7 +29,8 @@ class UserSessionManager:
         return identifier
 
     @staticmethod
-    def set_session_user_location(request, state, city, zipcode):
+    def set_session_user_location(request, country, state, city, zipcode):
+        request.session["country"] = country
         request.session["state"] = state
         request.session["city"] = city
         request.session["zipcode"] = zipcode

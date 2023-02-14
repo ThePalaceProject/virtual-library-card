@@ -10,12 +10,13 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.validators import RegexValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from localflavor.us.models import USStateField, USZipCodeField
+from localflavor.us.models import USStateField
 
 from virtual_library_card.card_number import CardNumber
 from virtual_library_card.logging import log
@@ -146,6 +147,11 @@ class Library(models.Model):
         related_name="library",
         default=default_customization,
     )
+
+    @property
+    def places(self):
+        """Get places related to this library"""
+        return [ls.place for ls in self.library_places.order_by("id").all()]
 
     def get_places(self):
         return [
@@ -398,7 +404,16 @@ class CustomUser(AbstractUser):
     country_code = models.CharField(
         max_length=255, null=True, blank=False, default="US"
     )
-    zip = USZipCodeField(_("Zip code"), null=True, blank=False)
+    zip = models.CharField(
+        validators=[
+            RegexValidator(
+                r"^([0-9A-Z]{3}(?: [A-Z0-9]{3})?)|(\d{5}(?:-\d{4})?)$",
+                message="Enter a zip code in the format [XXX or XXX XXX](Canada) or [XXXXX or XXXXX-XXXX](USA)",
+            )
+        ],
+        max_length=10,
+        null=True,
+    )
     library = models.ForeignKey(
         Library,
         on_delete=models.PROTECT,
@@ -640,6 +655,13 @@ class Place(models.Model):
     def by_abbreviation(cls, abbreviation: str) -> "Place":
         """Search for place with an exact match on the abbreviation"""
         return cls.objects.filter(abbreviation=abbreviation).first()
+
+    @classmethod
+    def get_states(cls, **filters) -> "Place":
+        """Get the states in the system, with optional query filters"""
+        return cls.objects.filter(
+            type__in=[cls.Types.STATE, cls.Types.PROVINCE], **filters
+        ).all()
 
     def __str__(self) -> str:
         return f"{self.name} | {self.abbreviation} | {self.type}"

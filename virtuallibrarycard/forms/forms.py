@@ -276,23 +276,18 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
                 place = Place.objects.get(id=place_id)
             else:
                 place = None
-            zip = self.data.get("zip")
             city = self.data.get("city")
 
-            validation = LibraryRules.validate_user_address_fields(
-                library, place=(place and place.abbreviation), zip=zip, city=city
+            valid = LibraryRules.validate_user_address_fields(
+                library, state=(place and place.abbreviation), city=city
             )
-            if not validation.state_valid:
+            if not valid:
                 self.add_error(
                     "place",
                     _(
                         f"The user must be within the library defined places: {','.join(library.get_places())}"
                     ),
                 )
-                return False
-
-            if not validation.zip_valid:
-                self.add_error("zip", _(f"The zip is not valid for this address"))
                 return False
 
         return super().is_valid()

@@ -71,7 +71,7 @@ class TestData:
         )
         obj.save()
 
-        for s in places or ["NY"]:
+        for s in places if places is not None else ["NY"]:
             LibraryPlace.associate(obj, s)
         obj.save()
 

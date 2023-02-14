@@ -1,36 +1,35 @@
-from attr import define
-
-from virtual_library_card.smarty_streets import AddressChecker
 from virtuallibrarycard.models import Library, Place
-
-
-@define
-class UserAddressValidationResult:
-    state_valid: bool = True
-    zip_valid: bool = True
 
 
 class LibraryRules:
     @classmethod
     def validate_user_address_fields(
-        cls, library: Library, zip: str = None, city: str = None, place: str = None
-    ) -> UserAddressValidationResult:
+        cls,
+        library: Library,
+        city: str = None,
+        state: str = None,
+        country: str = None,
+    ) -> bool:
         """Validate whether the given address fields are valid for a user that would signup for a given library
-        - State must be within the list of states allowed in the library
-        - Zipcode must be valid for the city provided, if provided"""
-        result = UserAddressValidationResult()
-        countries = map(
-            lambda p: p.abbreviation, Place.objects.filter(type=Place.Types.COUNTRY)
-        )
-        places = library.get_places()
-        # If the library place is a country then we don't validate the state
-        # When VLC will service more than the US, then change this to check parent country of the state
-        if set(countries).intersection(places):
-            pass  # state_valid is True by default
-        elif place and place not in places:
-            result.state_valid = False
+        - Country, State or City, atleast one must within the list of places of the library
+        """
 
-        if library.patron_address_mandatory and zip and city and place:
-            result.zip_valid = AddressChecker.is_valid_zipcode(city, place, zip)
+        places = library.places
+        match_types = {
+            Place.Types.COUNTRY: country,
+            Place.Types.STATE: state,
+            Place.Types.PROVINCE: state,
+            Place.Types.CITY: city,
+        }
 
-        return result
+        # For every place the library defines
+        # check to see if it fits with the address provided for the user
+        for place in places:
+            # Get the appropriate string to match against
+            match_abbr = match_types.get(place.type)
+            if not match_abbr:
+                continue
+            if match_abbr == place.abbreviation:
+                return True
+
+        return False

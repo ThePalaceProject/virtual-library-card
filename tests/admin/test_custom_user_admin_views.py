@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from django import forms
 from django.contrib.auth.models import Permission
@@ -18,20 +18,6 @@ from virtuallibrarycard.models import (
 class TestCustomUserAdminView(BaseAdminUnitTest):
     MODEL = CustomUser
     MODEL_ADMIN = CustomUserAdmin
-
-    def setup_method(
-        self,
-        request,
-    ):
-        self._mock_checker_patch = patch(
-            "virtuallibrarycard.business_rules.library.AddressChecker"
-        )
-        self.mock_checker = self._mock_checker_patch.start()
-        self.mock_checker.is_valid_zipcode.return_value = True
-        return super().setup_method(request)
-
-    def teardown_method(self, request):
-        self._mock_checker_patch.stop()
 
     def test_new_user_save(self):
         response = self.test_client.post(
@@ -263,7 +249,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             response,
             "adminform",
             "zip",
-            ["Enter a zip code in the format XXXXX or XXXXX-XXXX."],
+            [CustomUser.zip.field.validators[0].message],
         )
 
     def test_invalid_place_change(self):
@@ -279,7 +265,6 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
         data = self._get_user_change_data(user)
         data["place"] = Place.by_abbreviation("HI").id
-        self.mock_checker.is_valid_zipcode.return_value = True
 
         response = self.test_client.post(self.get_change_url(user), data)
         assert response.status_code == 200

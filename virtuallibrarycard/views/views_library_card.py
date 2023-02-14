@@ -14,7 +14,7 @@ from virtuallibrarycard.forms.forms_library_card import (
     RequestLibraryCardForm,
     SignupCardForm,
 )
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
 
 
 class LibraryCardsView(LoginRequiredMixin, TemplateView):
@@ -112,6 +112,7 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
         identifier = self.request.session["identifier"]
         if identifier:
             identifier = self.request.session["identifier"]
+            country = self.request.session["country"]
             state = self.request.session["state"]
             city = self.request.session["city"]
             zipcode = self.request.session["zipcode"]
@@ -125,9 +126,12 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
             try:
                 self.model = CustomUser()
                 library = Library.objects.filter(identifier=identifier).first()
+                states = Place.get_states(abbreviation=state)
+                place = states[0] if len(states) else None
                 self.model.library = library
-                self.model.us_state = state
+                self.model.place = place
                 self.model.city = city
+                self.model.country_code = country
                 self.model.zip = zipcode
                 self.model.username = ""
                 self.model.first_name = ""
@@ -204,17 +208,11 @@ class CardSignupView(FormView):
                 }
             )
 
-            if country != "US":
-                return render(
-                    self.request,
-                    "library_card/library_card_request_denied_country.html",
-                    context,
-                )
-
             valid_address = LibraryRules.validate_user_address_fields(
-                library, place=state
+                library, state=state, country=country
             )
-            if not valid_address.state_valid:
+
+            if not valid_address:
                 return render(
                     self.request,
                     "library_card/library_card_request_denied.html",
@@ -224,7 +222,7 @@ class CardSignupView(FormView):
             # We put the informations into the session only after checking the access is allowed
             UserSessionManager.set_session_library(self, library)
             UserSessionManager.set_session_user_location(
-                self.request, state, city, zipcode
+                self.request, country, state, city, zipcode
             )
 
             # We add the library identifier to the URL in order to allow comapring it with the one which can

@@ -78,30 +78,6 @@ class TestCardSignup(BaseUnitTest):
 
     @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect_negative(self, mock_geolocalize: mock.MagicMock):
-        mock_geolocalize.get_user_location.return_value = {
-            "results": [
-                {
-                    "locations": [
-                        {
-                            "adminArea1": "Not US",
-                            "adminArea3": self._default_library.get_first_place(),
-                            "adminArea5": "city",
-                            "postalCode": "998867",
-                        }
-                    ]
-                }
-            ]
-        }
-        c = Client()
-        resp = c.post(
-            f"/account/library_card_signup/{self._default_library.identifier}/",
-            dict(lat=10, long=10, identifier=self._default_library.identifier),
-        )
-        assert resp.status_code == 200
-        assert (
-            b"You must be in <strong>USA</strong> to request your library card"
-            in resp.content
-        )
 
         mock_geolocalize.get_user_location.return_value = {
             "results": [
@@ -161,7 +137,7 @@ class TestCardSignup(BaseUnitTest):
 
 class TestCardRequest(BaseUnitTest):
     def _assert_card_request_success(self, resp, email, library):
-        assert resp.status_code == 302
+        assert resp.status_code == 302, resp.context["form"].errors
         assert f"/account/library_card_request_success/{email}/" in resp.url
         # New user has been created
         assert CustomUser.objects.filter(email=email).exists()
@@ -180,7 +156,7 @@ class TestCardRequest(BaseUnitTest):
             street_address_line1="Some street",
             street_address_line2="",
             city="city",
-            us_state=library.get_first_place(),
+            place=library.places[0].id,
             zip="99887",
             over13="on",
             password1="xx123456789",
@@ -190,15 +166,11 @@ class TestCardRequest(BaseUnitTest):
         post.update(data)
         return post
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_card_request(self, mock_checker, with_captcha=True):
+    def test_card_request(self, with_captcha=True):
         c = Client()
 
         # Prime the session
         self.do_library_card_signup_flow(c)
-
-        # Mock the address check
-        mock_checker.is_valid_zipcode.return_value = True
 
         identifier = self._default_library.identifier
         captcha = {"g-recaptcha-response": "xxxcaptcha"} if with_captcha else {}
@@ -212,21 +184,19 @@ class TestCardRequest(BaseUnitTest):
         self._assert_card_request_success(
             resp, "test@example.com", self._default_library
         )
+        user = CustomUser.objects.get(email="test@example.com")
+        assert user.place == self._default_library.places[0]
 
         # welcome email sent
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == f"{self._default_library.name} | Welcome"
         assert "Your account will not be activated until" in mail.outbox[0].body
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_card_request_bad_data(self, mock_checker):
+    def test_card_request_bad_data(self):
         c = Client()
 
         # Prime the session
         self.do_library_card_signup_flow(c)
-
-        # Mock the address check
-        mock_checker.is_valid_zipcode.return_value = True
 
         identifier = self._default_library.identifier
         resp = c.post(
@@ -240,7 +210,7 @@ class TestCardRequest(BaseUnitTest):
                 # street_address_line1="Some street", # No street address
                 street_address_line2="",
                 city="city",
-                us_state=self._default_library.get_first_place(),
+                place=12,  # A random place id
                 # zip="99887",
                 over13="on",
                 password1="xx123456789",
@@ -258,16 +228,12 @@ class TestCardRequest(BaseUnitTest):
         for field in expected_errors_fields:
             self.assertFormError(resp, "form", field, ["This field is required."])
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_card_request_no_patron_address(self, mock_checker):
+    def test_card_request_no_patron_address(self):
         c = Client()
 
         library = self.create_library(patron_address_mandatory=False)
         # Prime the session
         self.do_library_card_signup_flow(c, library=library)
-
-        # Mock the address checker as Nonetype, but it shouldn't matter
-        mock_checker.is_valid_zipcode = None
 
         identifier = library.identifier
         resp = c.post(
@@ -290,17 +256,13 @@ class TestCardRequest(BaseUnitTest):
             assert form.fields[name].required == False
             assert type(form.fields[name].widget) == forms.HiddenInput
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_card_request_email_no_duplicates(self, mock_checker):
+    def test_card_request_email_no_duplicates(self):
         user = self.create_user(self._default_library, "TEST@t.co")
         c = Client()
 
         library = self.create_library(patron_address_mandatory=False)
         # Prime the session
         self.do_library_card_signup_flow(c, library=library)
-
-        # Mock the address checker as Nonetype, but it shouldn't matter
-        mock_checker.is_valid_zipcode = None
 
         error_args = ("form", "email", ["Email address already in use"])
 
@@ -331,8 +293,7 @@ class TestCardRequest(BaseUnitTest):
         self.test_card_request(with_captcha=False)
         apps.unset_installed_apps()
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_card_invalid_email_domain(self, mock_checker):
+    def test_card_invalid_email_domain(self):
         library = self.create_library()
         LibraryAllowedEmailDomains(library=library, domain="example.org").save()
 
@@ -348,7 +309,7 @@ class TestCardRequest(BaseUnitTest):
             street_address_line1="Some street",
             street_address_line2="",
             city="city",
-            us_state=library.get_first_place(),
+            place=12,  # a random places id
             zip="99887",
             over13="on",
             password1="xx123456789",
@@ -368,8 +329,7 @@ class TestCardRequest(BaseUnitTest):
             errors=["User must be part of allowed domains: ['example.org']"],
         )
 
-    @mock.patch("virtuallibrarycard.business_rules.library.AddressChecker")
-    def test_age_verification(self, mock_checker):
+    def test_age_verification(self):
         """over13 form field should be hidden and default to false"""
         library = self.create_library(age_verification_mandatory=False)
         client = Client()
