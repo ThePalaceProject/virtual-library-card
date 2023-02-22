@@ -57,7 +57,7 @@ dunamai = "^1.15.0"
 pre-commit = "~2.17"
 tox = "^3.28.0"
 tox-docker = "^3.1.0"
-tox-gh-actions = "^2.10.0"
+tox-gh-actions = "^2.12.0"
 
 [tool.poetry.group.dev.dependencies]
 parameterized = "^0.8.1"
