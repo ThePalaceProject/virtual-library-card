@@ -1401,20 +1401,6 @@ files = [
 ]
 
 [[package]]
-name = "smartystreets-python-sdk"
-version = "4.11.9"
-description = "An official library to help Python developers easily access the SmartyStreets APIs"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "smartystreets_python_sdk-4.11.9.tar.gz", hash = "sha256:02bf3763c792dd812ddc38ad2492804c662054537cf4e134f713db49054a0be2"},
-]
-
-[package.dependencies]
-requests = "*"
-
-[[package]]
 name = "soupsieve"
 version = "2.3.1"
 description = "A modern CSS selector implementation for Beautiful Soup."
@@ -1610,4 +1596,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "84d85fa8f87de5ab0f1aceb014f37dc349c01c70bd27d9ea534ff888cd997a3d"
+content-hash = "dedd3ed25f59388670c0339cf99db6ebd9ab47aae1a6f33d0f49c110eb11a74d"
