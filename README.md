@@ -36,17 +36,33 @@ Python 3.8+ must be installed, and a SQL database must be available.
 
 Note: activate the virtual env before installing the requirements.
 
-### 3. Collect the static files
+### 3. Set up public MinIO bucket (or public AWS S3 bucket)
+
+VLC puts static files into public AWS S3 bucket so to run the VLC locally the easiest will be to run the MinIO locally in
+a Docker container. You can read more about MinIO [here](https://min.io/docs/minio/container/index.html).
+
+To run the MinIO in Docker container run:
+
+    docker run -d -p 9000:9000 -p 9001:9001 --name minio \
+      -e "MINIO_ROOT_USER=vlc-minio" -e "MINIO_ROOT_PASSWORD=123456789" \
+      quay.io/minio/minio server /data --console-address ":9001"
+
+After you have MinIO container running, you will need to create the public bucket to put the static files in.
+Log into `http://localhost:9001` with username `vlc-minio` and password `123456789`.
+Create bucket named `vlc-test` and make it public. The name for the bucket can be changed inside the settings file by
+means of the variable `AWS_STORAGE_BUCKET_NAME`.
+
+### 4. Collect the static files
 
 The static files must be "collected":
 
-    python ./manage.py collectstatic --settings=virtual_library_card.settings.prod
+    python ./manage.py collectstatic --settings=virtual_library_card.settings.dev
 
 Our default configuration puts these files into a public s3 bucket.
 
 See [django documentation](https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/modwsgi/#serving-files).
 
-### 4. Create a database and adjust the database connection parameters`
+### 5. Create a database and adjust the database connection parameters`
 
 The database connection parameters for a development (resp. production) environment are located in the `settings/dev.py`
 (resp.`settings/prod.py`) files:
@@ -62,15 +78,15 @@ The database connection parameters for a development (resp. production) environm
         }
     }
 
-### 5. Create / update the database schema
+### 6. Create / update the database schema
 
 The database schema must be initialized and updated with:
 
-    python3 manage.py migrate --settings=virtual_library_card.settings.prod
+    python3 manage.py migrate --settings=virtual_library_card.settings.dev
 
-### 6. Create the superuser
+### 7. Create the superuser
 
-    python manage.py createsuperuser --settings=virtual_library_card.settings.prod
+    python manage.py createsuperuser --settings=virtual_library_card.settings.dev
 
 Notes:
 
@@ -85,19 +101,19 @@ Notes:
 
         DEFAULT_SUPERUSER_FIRST_NAME = "superuser"
 
-### 7. Select what (website or/and API) will be deployed
+### 8. Select what (website or/and API) will be deployed
 
 The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags allow to control
 what is deployed.
-You can adjust these values in the `settings/prod.py` file.
+You can adjust these values in the `settings/dev.py` file.
 
-### 8. Run webserver
+### 9. Run webserver
 
 #### Development
 
 For development, you can use the Django `runserver` command.
 
-    python manage.py runserver --settings=virtual_library_card.settings.prod
+    python manage.py runserver --settings=virtual_library_card.settings.dev
 
 #### UWSGI
 
