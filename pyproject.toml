@@ -60,7 +60,7 @@ tox-gh-actions = "^2.12.0"
 
 [tool.poetry.group.dev.dependencies]
 parameterized = "^0.8.1"
-pytest = "^7.2.1"
+pytest = "^7.2.2"
 pytest-django = "^4.5.2"
 
 [tool.pytest.ini_options]
