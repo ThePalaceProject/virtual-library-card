@@ -155,7 +155,8 @@ class Library(models.Model):
 
     def get_places(self):
         return [
-            ls.place.abbreviation for ls in self.library_places.order_by("id").all()
+            (ls.place.abbreviation or ls.place.name)
+            for ls in self.library_places.order_by("id").all()
         ]
 
     def get_first_place(self):
@@ -651,6 +652,18 @@ class Place(models.Model):
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
 
+    @property
+    def check_str(self) -> str:
+        """Cities and Counties do not have abrreviations
+        So we must check against their names
+        This is a convenience function to provice the value to check against
+        """
+        return (
+            self.abbreviation
+            if self.type in (self.Types.COUNTRY, self.Types.STATE, self.Types.PROVINCE)
+            else self.name
+        )
+
     @classmethod
     def by_abbreviation(cls, abbreviation: str) -> "Place":
         """Search for place with an exact match on the abbreviation"""
@@ -664,4 +677,4 @@ class Place(models.Model):
         ).all()
 
     def __str__(self) -> str:
-        return f"{self.name} | {self.abbreviation} | {self.type}"
+        return f"{self.name} | {self.check_str} | {self.type}"

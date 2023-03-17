@@ -136,6 +136,7 @@ class BaseUnitTest(TestData, TestCase):
                             {
                                 "adminArea1": "US",
                                 "adminArea3": self._default_library.get_first_place(),
+                                "adminArea4": "county",
                                 "adminArea5": "city",
                                 "postalCode": "998867",
                             }

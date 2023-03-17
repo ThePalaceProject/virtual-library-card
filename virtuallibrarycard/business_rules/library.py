@@ -7,6 +7,7 @@ class LibraryRules:
         cls,
         library: Library,
         city: str = None,
+        county: str = None,
         state: str = None,
         country: str = None,
     ) -> bool:
@@ -20,6 +21,7 @@ class LibraryRules:
             Place.Types.STATE: state,
             Place.Types.PROVINCE: state,
             Place.Types.CITY: city,
+            Place.Types.COUNTY: county,
         }
 
         # For every place the library defines
@@ -29,7 +31,7 @@ class LibraryRules:
             match_abbr = match_types.get(place.type)
             if not match_abbr:
                 continue
-            if match_abbr == place.abbreviation:
+            if match_abbr == place.check_str:
                 return True
 
         return False

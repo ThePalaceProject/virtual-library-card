@@ -46,7 +46,7 @@ class TestLibraryRules(BaseUnitTest):
         ).save()
         library: Library = self.create_library(places=["_TO"])
         result = LibraryRules.validate_user_address_fields(
-            library, state="Anything", city="_TO"
+            library, state="Anything", city="Toronto"
         )
         assert result is True
 

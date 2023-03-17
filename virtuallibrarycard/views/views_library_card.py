@@ -197,6 +197,7 @@ class CardSignupView(FormView):
             location = first_result[0]["locations"][0]
             state = location["adminArea3"]
             country = location["adminArea1"]
+            county = location["adminArea4"]
             city = location["adminArea5"]
             zipcode = location["postalCode"]
 
@@ -209,7 +210,7 @@ class CardSignupView(FormView):
             )
 
             valid_address = LibraryRules.validate_user_address_fields(
-                library, state=state, country=country
+                library, state=state, county=county, city=city, country=country
             )
 
             if not valid_address:

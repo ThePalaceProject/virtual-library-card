@@ -12,30 +12,40 @@ from virtuallibrarycard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
+    LibraryPlace,
+    Place,
 )
 from virtuallibrarycard.views.views_library_card import LibraryCardRequestView
 
 
 class TestCardSignup(BaseUnitTest):
-    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
-    def test_signup_redirect(self, mock_geolocalize: mock.MagicMock):
-        library = self.create_library(places=["AL", "NC"])
-
-        # US State 1
-        mock_geolocalize.get_user_location.return_value = {
+    def _get_mock_geolocalize_value(
+        self, country=None, state=None, county=None, city=None
+    ):
+        return {
             "results": [
                 {
                     "locations": [
                         {
-                            "adminArea1": "US",
-                            "adminArea3": "AL",
-                            "adminArea5": "city",
+                            "adminArea1": country or "US",
+                            "adminArea3": state or "AL",
+                            "adminArea4": county or "ALC",
+                            "adminArea5": city or "city",
                             "postalCode": "998867",
                         }
                     ]
                 }
             ]
         }
+
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
+    def test_signup_redirect(self, mock_geolocalize: mock.MagicMock):
+        library = self.create_library(places=["AL", "NC"])
+
+        # US State 1
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="AL")
+        )
 
         c = Client()
         resp = c.post(
@@ -49,20 +59,9 @@ class TestCardSignup(BaseUnitTest):
         )
 
         # US State 2
-        mock_geolocalize.get_user_location.return_value = {
-            "results": [
-                {
-                    "locations": [
-                        {
-                            "adminArea1": "US",
-                            "adminArea3": "NC",
-                            "adminArea5": "city",
-                            "postalCode": "998867-55",
-                        }
-                    ]
-                }
-            ]
-        }
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="NC")
+        )
 
         resp = c.post(
             f"/account/library_card_signup/{library.identifier}/",
@@ -74,25 +73,90 @@ class TestCardSignup(BaseUnitTest):
             == f"/account/library_card_request/?identifier={library.identifier}"
         )
 
-        assert c.session["zipcode"] == "998867-55"
+        assert c.session["zipcode"] == "998867"
+
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
+    def test_signup_redirect_admin_levels(self, mock_geolocalize: mock.MagicMock):
+        """Test all allowed adminarea levels against the address validation"""
+        country = Place(
+            name="Country",
+            abbreviation="cntry",
+            type=Place.Types.COUNTRY,
+            parent=None,
+            external_id="1",
+        )
+        state = Place(
+            name="State",
+            abbreviation="stt",
+            type=Place.Types.STATE,
+            parent=country,
+            external_id="2",
+        )
+        province = Place(
+            name="Province",
+            abbreviation="prvnc",
+            type=Place.Types.PROVINCE,
+            parent=country,
+            external_id="3",
+        )
+        county = Place(
+            name="County",
+            abbreviation="cnty",
+            type=Place.Types.COUNTY,
+            parent=state,
+            external_id="4",
+        )
+        city = Place(
+            name="City",
+            abbreviation="cty",
+            type=Place.Types.CITY,
+            parent=county,
+            external_id="5",
+        )
+
+        country.save(), state.save(), province.save(), county.save(), city.save()
+
+        library = self.create_library(name="Test", identifier="Test", places=["NY"])
+
+        locations = [
+            ("country", country),
+            ("state", state),
+            ("state", province),
+            ("county", county),
+            ("city", city),
+        ]
+
+        c = Client()
+
+        for type, place in locations:
+            # Run through all location types and ensure the form post is a success
+            mock_geolocalize.get_user_location.return_value = (
+                self._get_mock_geolocalize_value(**{type: place.check_str})
+            )
+
+            # Associate the library to this place
+            lp = LibraryPlace(library=library, place=place)
+            lp.save()
+
+            resp = c.post(
+                f"/account/library_card_signup/{library.identifier}/",
+                dict(lat=10, long=10, identifier=library.identifier),
+            )
+            assert resp.status_code == 302, resp.context["form"].errors
+            assert (
+                resp.url
+                == f"/account/library_card_request/?identifier={library.identifier}"
+            )
+
+            # Remove the association, so the next loop is not tainted
+            lp.delete()
 
     @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect_negative(self, mock_geolocalize: mock.MagicMock):
 
-        mock_geolocalize.get_user_location.return_value = {
-            "results": [
-                {
-                    "locations": [
-                        {
-                            "adminArea1": "US",
-                            "adminArea3": "No state",
-                            "adminArea5": "city",
-                            "postalCode": "998867",
-                        }
-                    ]
-                }
-            ]
-        }
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="No State")
+        )
 
         library = self.create_library("MultiState", places=["NY", "WA"])
         c = Client()
@@ -109,20 +173,9 @@ class TestCardSignup(BaseUnitTest):
     @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_all_states_allowed(self, mock_geolocalize):
         library = self.create_library(places=["US"])
-        mock_geolocalize.get_user_location.return_value = {
-            "results": [
-                {
-                    "locations": [
-                        {
-                            "adminArea1": "US",
-                            "adminArea3": "Any State",
-                            "adminArea5": "city",
-                            "postalCode": "998867",
-                        }
-                    ]
-                }
-            ]
-        }
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(country="US")
+        )
         c = Client()
         resp = c.post(
             f"/account/library_card_signup/{library.identifier}/",
