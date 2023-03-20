@@ -394,21 +394,6 @@ files = [
 django = "*"
 
 [[package]]
-name = "django-rename-app"
-version = "0.1.5"
-description = "A Django Management Command to rename existing Django Applications."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "django_rename_app-0.1.5-py2.py3-none-any.whl", hash = "sha256:2ad462d2cf2946ca25b633a9f671cfb71c6fa2ba9b7f7f261815a2f4681ca14c"},
-    {file = "django_rename_app-0.1.5.tar.gz", hash = "sha256:b827c6685c98c9ddaa272c0ce6d186edef706afd2f8824401d0151eb7d25a37d"},
-]
-
-[package.dependencies]
-django = "*"
-
-[[package]]
 name = "django-render-block"
 version = "0.9.2"
 description = "Render a particular block from a template to a string."
@@ -1568,4 +1553,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "0a983b481faec90f969537e0862a981dee676592dc01ff11f74029c64cc59d8d"
+content-hash = "21b1a93eff33df9b33cc1244be46aa5447a24c10205aaeaaf8be4ccec8bbb76a"

@@ -7,11 +7,6 @@ useradd -r -s /bin/false -g vlc -u $UWSGI_UID vlc
 # Collect static files
 runuser -u vlc -- python manage.py collectstatic --no-input
 
-# The 2 rename_app commands are idempotent, and can be run multiple times without consequence
-# Once all deployments have been updated with the renamed app, the commands should be removed from this file
-runuser -u vlc -- python manage.py rename_app "VirtualLibraryCard" "virtuallibrarycard"
-runuser -u vlc -- python manage.py rename_app_permissions "VirtualLibraryCard" "virtuallibrarycard"
-
 runuser -u vlc -- python manage.py migrate --no-input
 
 # Ensure the uploadable folder (MEDiA_ROOT) is owned entirely by the vlc user
