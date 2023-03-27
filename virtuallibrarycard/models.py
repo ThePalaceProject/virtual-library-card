@@ -16,7 +16,6 @@ from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from localflavor.us.models import USStateField
 
 from virtual_library_card.card_number import CardNumber
 from virtual_library_card.logging import log
@@ -82,15 +81,6 @@ class Library(models.Model):
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)
 
-    ## Deprecated - do not use this field, use only the LibraryState association
-    us_state = USStateField(_("State"), blank=False)
-    us_state.system_check_deprecated_details = dict(
-        msg="Library.us_state is a deprecated field",
-        hint="Use the LibraryPlace associations only",
-        id="fields.us_state_001",
-    )
-    ######
-
     logo = models.ImageField(upload_to=generate_filename, null=True, blank=False)
     phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)
@@ -115,12 +105,6 @@ class Library(models.Model):
         blank=False,
         default=True,
         verbose_name="Require Patron Address",
-    )
-    allow_all_us_states = models.BooleanField(
-        choices=((True, _("Yes")), (False, _("No"))),
-        blank=False,
-        default=False,
-        verbose_name="Allow All US States",
     )
     barcode_text = models.CharField(
         max_length=255, default="barcode", verbose_name="Barcode Text"
@@ -229,19 +213,6 @@ class Library(models.Model):
 
     def get_allowed_email_domains(self) -> List[str]:
         return [e.domain for e in self.library_email_domains.all()]
-
-
-class LibraryStates(models.Model):
-    """Library to state relations"""
-
-    library = models.ForeignKey(
-        Library,
-        on_delete=models.CASCADE,
-        null=False,
-        blank=False,
-        related_name="library_states",
-    )
-    us_state = USStateField(_("State"), blank=False)
 
 
 class LibraryPlace(models.Model):
@@ -385,15 +356,6 @@ class CustomUser(AbstractUser):
         _("Street address line 2"), max_length=255, null=True, blank=True
     )
     city = models.CharField(max_length=255, null=True, blank=False)
-
-    ## Deprecated - do not use this field, use the place field
-    us_state = USStateField(_("State"), null=True)
-    us_state.system_check_deprecated_details = dict(
-        msg="CustomUser.us_state is a deprecated field",
-        hint="Use the Place association only",
-        id="fields.us_state_002",
-    )
-    ######
 
     place = models.ForeignKey(
         "Place",
