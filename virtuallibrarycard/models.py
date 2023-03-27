@@ -611,8 +611,8 @@ class Place(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     type = models.CharField(max_length=20, choices=AREA_TYPES)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
-    latitude = models.FloatField(null=True)
-    longitude = models.FloatField(null=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     @property
     def check_str(self) -> str:
