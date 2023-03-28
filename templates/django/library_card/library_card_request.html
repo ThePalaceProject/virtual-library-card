@@ -83,6 +83,7 @@
             var cityEle = $("#id_city"), zipEle = $("#id_zip");
             var city = cityEle.val();
             var zip = zipEle.val();
+            var addressMandatory = {% if patron_address_mandatory %} true {% else %} false {% endif %};
 
             // clear out values
             cityEle.val("");
@@ -104,8 +105,8 @@
             $("#location-autofill-yes").on("click", function () { modalCallback(true) })
             $("#location-autofill-no").on("click", function () { modalCallback(false) })
 
-            // display the modal
-            if (city || zip) {
+            // display the modal only if the address is mandatory and we have valid data
+            if (addressMandatory && (city || zip)) {
                 $("#location-autofill-modal").modal("open")
             }
         });
