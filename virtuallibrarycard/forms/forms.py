@@ -10,7 +10,6 @@ from django.utils.safestring import mark_safe
 from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
-from virtuallibrarycard.business_rules.library import LibraryRules
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
 from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
 from virtuallibrarycard.widgets.buttons import LinkButtonField
@@ -246,6 +245,12 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         self.fields["city"].required = False
         self.fields["zip"].required = False
 
+        if "place" in self.fields:
+            self.fields["place"].label = "State"
+            self.fields["place"].queryset = Place.objects.filter(
+                type__in=(Place.Types.STATE, Place.Types.PROVINCE)
+            )
+
     def save(self, commit=True):
         user: CustomUser = super().save(commit)
         library = user.library
@@ -264,30 +269,6 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             user = CustomUser(email=email, library=Library.objects.get(id=library_id))
             if not user.is_valid_email_domain():
                 self.add_error("email", _("Invalid email domain"))
-                return False
-
-            # validate the zip/state fields on user edit
-            current_user = self.instance
-            library: Library = current_user.library
-
-            # If the state was edited, the user must reside within the library defined states
-            place_id = self.data.get("place")
-            if place_id:
-                place = Place.objects.get(id=place_id)
-            else:
-                place = None
-            city = self.data.get("city")
-
-            valid = LibraryRules.validate_user_address_fields(
-                library, state=(place and place.abbreviation), city=city
-            )
-            if not valid:
-                self.add_error(
-                    "place",
-                    _(
-                        f"The user must be within the library defined places: {','.join(library.get_places())}"
-                    ),
-                )
                 return False
 
         return super().is_valid()
