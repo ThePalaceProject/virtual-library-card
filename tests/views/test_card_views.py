@@ -119,21 +119,22 @@ class TestCardSignup(BaseUnitTest):
         library = self.create_library(name="Test", identifier="Test", places=["NY"])
 
         locations = [
-            ("country", country),
-            ("state", state),
-            ("state", province),
-            ("county", county),
-            ("city", city),
+            ("country", dict(country=country)),
+            ("state", dict(state=province, country=country)),
+            ("state", dict(state=state, country=country)),
+            ("county", dict(county=county, state=state, country=country)),
+            ("city", dict(city=city, county=county, state=state, country=country)),
         ]
 
         c = Client()
 
-        for type, place in locations:
+        for type, places in locations:
             # Run through all location types and ensure the form post is a success
+            check_strs = {name: p.check_str for name, p in places.items()}
             mock_geolocalize.get_user_location.return_value = (
-                self._get_mock_geolocalize_value(**{type: place.check_str})
+                self._get_mock_geolocalize_value(**check_strs)
             )
-
+            place = places[type]
             # Associate the library to this place
             lp = LibraryPlace(library=library, place=place)
             lp.save()
