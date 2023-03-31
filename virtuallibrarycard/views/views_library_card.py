@@ -1,6 +1,8 @@
+from typing import Any
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView
@@ -178,8 +180,26 @@ class CardSignupView(FormView):
         UserSessionManager.clean_session_data(request)
         return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args: str, **kwargs: Any):
+        """In case of a GET request we try to validate coordinates if present
+        OR we render the location form"""
+        lat, long = self.request.GET.get("lat"), self.request.GET.get("long")
+        identifier = kwargs.get("identifier")
+
+        # If we have been provided the latitude and longitude
+        # we can verify the information on the server-side
+        # and redirect to the card request form page
+        if lat and long and identifier:
+            library = Library.objects.filter(identifier=identifier).first()
+            try:
+                self._validate_location(library, lat, long)
+                return redirect(self.success_url)
+            except InvalidUserLocation as ex:
+                return ex.response_str
+
+        return super().get(request, *args, **kwargs)
+
     def form_valid(self, form):
-        context = self.get_context_data()
         identifier = form.cleaned_data.get("identifier")
         if not identifier:
             raise Http404(_("Identifier parameter is mandatory"))
@@ -189,10 +209,18 @@ class CardSignupView(FormView):
         lat = form.cleaned_data.get("lat")
         long = form.cleaned_data.get("long")
 
-        # FOR TESTING FROM FRANCE
-        # lat = "40.7539033"
-        # long = "-73.9757635"
+        try:
+            self._validate_location(library, lat, long)
+        except InvalidUserLocation as ex:
+            return ex.response_str
 
+        return super().form_valid(form)
+
+    def _validate_location(self, library, lat, long) -> None:
+        """Assert the users location with the library.
+        Raise an exception with the response data if there is a failure.
+        Set the User session data and redirect url on a success."""
+        context = self.get_context_data()
         result = Geolocalize.get_user_location(lat, long)
 
         if result:
@@ -217,10 +245,12 @@ class CardSignupView(FormView):
             )
 
             if not valid_address:
-                return render(
-                    self.request,
-                    "library_card/library_card_request_denied.html",
-                    context,
+                raise InvalidUserLocation(
+                    render(
+                        self.request,
+                        "library_card/library_card_request_denied.html",
+                        context,
+                    )
                 )
 
             # We put the informations into the session only after checking the access is allowed
@@ -232,6 +262,10 @@ class CardSignupView(FormView):
             # We add the library identifier to the URL in order to allow comapring it with the one which can
             # be present in the session. This allows preventing circumventing the geolocation barrier by
             # first logging into a local library
-            self.success_url += "?identifier=" + identifier
+            self.success_url += "?identifier=" + library.identifier
 
-        return super().form_valid(form)
+
+class InvalidUserLocation(Exception):
+    def __init__(self, response_str, *args: object) -> None:
+        self.response_str = response_str
+        super().__init__(*args)

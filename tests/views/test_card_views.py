@@ -1,13 +1,17 @@
 from datetime import datetime
 from unittest import mock
 
+import pytest
 from django import forms
 from django.apps import apps
 from django.core import mail
 from django.test import Client, RequestFactory
 
 from tests.base import BaseUnitTest
-from virtuallibrarycard.forms.forms_library_card import RequestLibraryCardForm
+from virtuallibrarycard.forms.forms_library_card import (
+    RequestLibraryCardForm,
+    SignupCardForm,
+)
 from virtuallibrarycard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
@@ -15,7 +19,11 @@ from virtuallibrarycard.models import (
     LibraryPlace,
     Place,
 )
-from virtuallibrarycard.views.views_library_card import LibraryCardRequestView
+from virtuallibrarycard.views.views_library_card import (
+    CardSignupView,
+    InvalidUserLocation,
+    LibraryCardRequestView,
+)
 
 
 class TestCardSignup(BaseUnitTest):
@@ -37,6 +45,71 @@ class TestCardSignup(BaseUnitTest):
                 }
             ]
         }
+
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
+    @mock.patch("virtuallibrarycard.views.views_library_card.UserSessionManager")
+    def test_validate_location(
+        self, mock_manager: mock.MagicMock, mock_geolocalize: mock.MagicMock
+    ):
+        library = self.create_library(places=["AL", "NC"])
+        rf = RequestFactory()
+        view = CardSignupView()
+
+        # Valid request sets the session data and success url
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="AL")
+        )
+        view.request = rf.get("/")
+        assert view._validate_location(library, 99, 99) == None
+        assert (
+            view.success_url
+            == f"/account/library_card_request/?identifier={library.identifier}"
+        )
+        assert mock_manager.set_session_library.call_count == 1
+        assert mock_manager.set_session_user_location.call_count == 1
+        assert mock_manager.set_session_user_location.call_args == mock.call(
+            view.request, "US", "AL", "city", "998867"
+        )
+
+        # An invalid request raise an error
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="NY")
+        )
+        with pytest.raises(InvalidUserLocation):
+            view._validate_location(library, 99, 99)
+
+    @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
+    def test_signup_with_location_parameters(self, mock_geolocalize: mock.MagicMock):
+        library = self.create_library(places=["AL", "NC"])
+        c = Client()
+
+        # Correct location parameters should redirect to the card request form
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="AL")
+        )
+        resp = c.get(
+            f"/account/library_card_signup/{library.identifier}/?lat=99&long=99"
+        )
+        assert resp.status_code == 302
+        assert (
+            resp.url
+            == f"/account/library_card_request/?identifier={library.identifier}"
+        )
+
+        # An incorrect location should render the error page
+        mock_geolocalize.get_user_location.return_value = (
+            self._get_mock_geolocalize_value(state="NY")
+        )
+        resp = c.get(
+            f"/account/library_card_signup/{library.identifier}/?lat=99&long=99"
+        )
+        assert resp.status_code == 200
+        assert "AL, NC" in str(resp.content)
+
+        # No latitude and longitude information should just render the location form
+        resp = c.get(f"/account/library_card_signup/{library.identifier}/")
+        assert resp.status_code == 200
+        assert type(resp.context["form"]) == SignupCardForm
 
     @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect(self, mock_geolocalize: mock.MagicMock):
