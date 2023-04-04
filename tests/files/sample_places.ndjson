@@ -1,3 +1,3 @@
-{ "id": 1, "type": "country", "name": "United States", "abbreviation": "US", "longitude": 10, "latitude": 10.00000000000004 }
+{ "id": 1, "type": "country", "name": "United States", "abbreviation": "US"}
 { "id": 101, "type": "state", "name": "Iowa", "abbreviation": "IO", "parent_id": 1}
 { "id": "des moines", "type": "city", "name": "Des Moines", "parent_id": "101"}

@@ -24,13 +24,10 @@ class TestPlaceImport(BaseUnitTest):
         assert usa.parent == None
         assert usa.type == Place.Types.COUNTRY
         assert usa.abbreviation == "US"
-        assert usa.longitude == 10
-        assert usa.latitude == 10.00000000000004
 
         iowa = Place.objects.get(external_id="101")
         assert iowa.parent == usa
         assert iowa.type == Place.Types.STATE
-        assert iowa.longitude == None
 
         des_moines = Place.objects.get(external_id="des moines")
         assert des_moines.parent == iowa
@@ -53,7 +50,6 @@ class TestPlaceImport(BaseUnitTest):
                 id="des moines",
                 name="Des Moines City",
                 abbreviation="DMC",
-                latitude=11,
                 parent_id=1,
                 type="county",
             )
@@ -66,7 +62,6 @@ class TestPlaceImport(BaseUnitTest):
         assert usa.abbreviation == ""  # missing data WAS deleted
         assert des_moines.name == "Des Moines City"
         assert des_moines.type == Place.Types.COUNTY
-        assert des_moines.latitude == 11
         assert des_moines.abbreviation == "DMC"
         assert des_moines.parent == usa
 

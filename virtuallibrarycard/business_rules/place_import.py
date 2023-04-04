@@ -26,8 +26,6 @@ class PlaceObject:
     name: str
     type: str
     abbreviation: str = ""
-    latitude: float = None
-    longitude: float = None
     # This is not a DB id, this should refer to any ndjson id that exists prior in the file
     parent_id: str = None
 
@@ -44,8 +42,6 @@ class PlaceObject:
             name=self.name,
             type=self.type,
             abbreviation=self.abbreviation,
-            longitude=self.longitude,
-            latitude=self.latitude,
         )
 
 
