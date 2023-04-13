@@ -1,0 +1,85 @@
+{"name":"Anchorage","id":"anchorage-ak-us","parent_id":"US_AK","type":"city"}
+{"name":"Anderson","id":"anderson-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Berks","id":"berks-county-pa-us","parent_id":"US_PA","type":"county"}
+{"name":"Birdville","id":"birdville-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"Blount","id":"blount-county-tn-us","parent_id":"US_TN","type":"county"}
+{"name":"Bowie","id":"bowie-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Brevard","id":"brevard-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Camp","id":"camp-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Cass","id":"cass-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Cherokee","id":"cherokee-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Chester","id":"chester-county-pa-us","parent_id":"US_PA","type":"county"}
+{"name":"Clay","id":"clay-county-mo-us","parent_id":"US_MO","type":"county"}
+{"name":"Clay","id":"clay-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Collin","id":"collin-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Creek","id":"creek-county-ok-us","parent_id":"US_OK","type":"county"}
+{"name":"Delta","id":"delta-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Denton","id":"denton-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"Dutchess","id":"dutchess-county-ny-us","parent_id":"US_NY","type":"county"}
+{"name":"Edmond","id":"edmond-ok-us","parent_id":"US_OK","type":"city"}
+{"name":"El Paso","id":"el-paso-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Elkhart","id":"elkhart-county-in-us","parent_id":"US_IN","type":"county"}
+{"name":"Fairfax","id":"fairfax-county-va-us","parent_id":"US_VA","type":"county"}
+{"name":"Flagler","id":"flagler-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Forsyth","id":"forsyth-county-ga-us","parent_id":"US_GA","type":"county"}
+{"name":"Fort Bend","id":"fort-bend-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Fort Mill","id":"fort-mill-sc-us","parent_id":"US_SC","type":"city"}
+{"name":"Franklin","id":"franklin-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Gillespie","id":"gillespie-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Gregg","id":"gregg-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Hamilton","id":"hamilton-county-tn-us","parent_id":"US_TN","type":"county"}
+{"name":"Harris","id":"harris-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Harrison","id":"harrison-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Harrisonburg","id":"harrisonburg-va-us","parent_id":"US_VA","type":"city"}
+{"name":"Henderson","id":"henderson-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Hennepin","id":"hennepin-county-mn-us","parent_id":"US_MN","type":"county"}
+{"name":"Hood","id":"hood-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Hopkins","id":"hopkins-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Hudson","id":"nudson-oh-us","parent_id":"US_OH","type":"city"}
+{"name":"Indian River","id":"indian-river-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Katy","id":"katy-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"Keller","id":"keller-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"King","id":"king-county-wa-us","parent_id":"US_WA","type":"county"}
+{"name":"Kitsap","id":"kitsap-county-wa-us","parent_id":"US_WA","type":"county"}
+{"name":"Knox","id":"knox-county-il-us","parent_id":"US_IL","type":"county"}
+{"name":"Lake","id":"lake-county-il-us","parent_id":"US_IL","type":"county"}
+{"name":"Lamar","id":"lamar-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Leander","id":"leander-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"Loudoun","id":"loundon-county-va-us","parent_id":"US_VA","type":"county"}
+{"name":"Marion","id":"marion-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Monroe","id":"monroe-county-pa-us","parent_id":"US_PA","type":"county"}
+{"name":"Montgomery","id":"montgomery-county-pa-us","parent_id":"US_PA","type":"county"}
+{"name":"Morris","id":"morris-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"New Kent","id":"new-kent-county-va-us","parent_id":"US_VA","type":"county"}
+{"name":"Novi","id":"novi-mi-us","parent_id":"US_MI","type":"city"}
+{"name":"Orange","id":"orange-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Panola","id":"panola-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Pinellas","id":"pinellas-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Pitt","id":"pitt-county-nc-us","parent_id":"US_NC","type":"county"}
+{"name":"Polk","id":"polk-county-ia-us","parent_id":"US_IA","type":"county"}
+{"name":"Polk","id":"polk-county-fl-us","parent_id":"US_FL","type":"county"}
+{"name":"Providence","id":"providence-county-ri-us","parent_id":"US_RI","type":"county"}
+{"name":"Rains","id":"rains-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Red River","id":"red-river-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Rusk","id":"rusk-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Salt Lake","id":"salt-lake-county-ut-us","parent_id":"US_UT","type":"county"}
+{"name":"Sedgwick","id":"sedgwick-county-ks-us","parent_id":"US_KS","type":"county"}
+{"name":"Smith","id":"smith-county-ks-us","parent_id":"US_KS","type":"county"}
+{"name":"St. Louis","id":"st-louis-county-mo-us","parent_id":"US_MO","type":"county"}
+{"name":"Titus","id":"titus-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Travis","id":"travis-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Ulster","id":"ulster-county-ny-us","parent_id":"US_NY","type":"county"}
+{"name":"Upshur","id":"upshur-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Van Zandt","id":"van-zandt-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"Virginia Beach","id":"virginia-beach-va-us","parent_id":"US_VA","type":"city"}
+{"name":"Walla Walla","id":"walla-walla-county-wa-us","parent_id":"US_WA","type":"county"}
+{"name":"Waller","id":"waller-tx-us","parent_id":"US_TX","type":"city"}
+{"name":"Washington","id":"washington-county-ut-us","parent_id":"US_UT","type":"county"}
+{"name":"Waukee","id":"waukee-ia-us","parent_id":"US_IA","type":"city"}
+{"name":"Wentzville","id":"wentzville-mo-us","parent_id":"US_MO","type":"city"}
+{"name":"Westchester","id":"westchester-county-ny-us","parent_id":"US_NY","type":"county"}
+{"name":"Wicomico","id":"wicomico-county-md-us","parent_id":"US_MD","type":"county"}
+{"name":"Williamson","id":"williamson-county-tn-us","parent_id":"US_TN","type":"county"}
+{"name":"Wissahickon","id":"wissahickon-pa-us","parent_id":"US_PA","type":"city"}
+{"name":"Wood","id":"wood-county-tx-us","parent_id":"US_TX","type":"county"}
+{"name":"York","id":"york-county-pa-us","parent_id":"US_PA","type":"county"}

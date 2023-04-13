@@ -603,7 +603,7 @@ class Place(models.Model):
     )
 
     # The external identifier from the datasource, this cannot change
-    external_id = models.CharField(max_length=20, null=False, blank=False, unique=True)
+    external_id = models.CharField(max_length=128, null=False, blank=False, unique=True)
 
     # cities and counties have blank abbreviations
     abbreviation = models.CharField(max_length=5, null=False, blank=True)

@@ -47,7 +47,7 @@ class PlaceObject:
 
 class PlaceImport:
     def __init__(self, place_model: Place):
-        self.place_model = place_model
+        self.place_model: Place = place_model
 
     def import_ndjson(self, io: IO):
         """Import Place model data from an ndjson file
@@ -57,6 +57,12 @@ class PlaceImport:
         # We depend on the order of presented places
         imported = OrderedDict()
         places = {}
+
+        # Load all current places also
+        all_places = self.place_model.objects.all()
+        for p in all_places:
+            places[p.external_id] = p
+
         for line in io.readlines():
             data = json.loads(line)
             obj = PlaceObject(**data)
