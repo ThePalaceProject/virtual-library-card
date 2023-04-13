@@ -18,7 +18,8 @@ ENV UWSGI_MASTER=1 \
     UWSGI_HARAKIRI=20 \
     UWSGI_MAX_REQUESTS=5000 \
     UWSGI_VACUUM=true \
-    UWSGI_POST_BUFFERING=1
+    UWSGI_POST_BUFFERING=1 \
+    UWSGI_LOGFORMAT="[pid: %(pid)|app: -|req: -/-] %(addr) (%(user)) {%(vars) vars in %(pktsize) bytes} [%(ctime)] %(method) %(clean_uri) => generated %(rsize) bytes in %(msecs) msecs (%(proto) %(status)) %(headers) headers in %(hsize) bytes (%(switches) switches on core %(core))"
 
 # Install system
 RUN apt-get update -y && \
