@@ -128,6 +128,7 @@ class Library(models.Model):
         on_delete=models.PROTECT,
         null=False,
         blank=False,
+        unique=True,
         related_name="library",
         default=default_customization,
     )

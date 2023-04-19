@@ -140,6 +140,16 @@ class TestLibraryModel(BaseUnitTest):
         assert last_value == prev_start_number
         assert new_last_value == prev_start_number + 20
 
+    def test_unique_customization(self):
+        l1 = self.create_library()
+        l2 = self.create_library()
+        # Both libraries have unique customizations
+        assert l1.customization.id != l2.customization.id
+
+        l1.customization = l2.customization
+        # Saving the same customization id to different libraries should raise an error
+        pytest.raises(IntegrityError, l1.save)
+
 
 class TestCustomUserModel(BaseUnitTest):
     def test_manager_create_user(self):
