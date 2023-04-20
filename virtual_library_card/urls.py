@@ -22,6 +22,7 @@ from virtuallibrarycard.views import (
     CustomLoginView,
     LibraryCardDeleteView,
     PasswordChangeDoneView,
+    PinTestPOSTViewSet,
     PinTestViewSet,
     ProfileView,
     TemplateView,
@@ -47,6 +48,8 @@ if settings.HAS_API:
         path("<number>/dump", UserLibraryCardViewSet.as_view()),
         # / PATRONAPI / {barcode} / {pin} / pintest
         path("<number>/<pin>/pintest", PinTestViewSet.as_view()),
+        # / PATRONAPI / pintest
+        path("pintest", PinTestPOSTViewSet.as_view()),
     ]
 
     urlpatterns += [

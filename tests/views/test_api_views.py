@@ -5,7 +5,107 @@ from django.test import RequestFactory
 
 from tests.base import BaseUnitTest
 from virtuallibrarycard.models import CustomUser, LibraryCard
-from virtuallibrarycard.views.views_api import PinTestViewSet, UserLibraryCardViewSet
+from virtuallibrarycard.views.views_api import (
+    PinTestPOSTViewSet,
+    PinTestViewSet,
+    UserLibraryCardViewSet,
+)
+
+
+class TestPinTestPOSTViewSet(BaseUnitTest):
+    def _setup_view(
+        self, card: LibraryCard, user: CustomUser, password: str
+    ) -> PinTestPOSTViewSet:
+        user.set_password(password)
+        user.save()
+        request: WSGIRequest = RequestFactory().post(
+            "/pintest", data=dict(number="1234", pin="1234")
+        )
+        view = PinTestPOSTViewSet()
+        view.setup(request)
+        return view
+
+    def test_bad_pin(self):
+        password = "apassword"
+        view = self._setup_view(self._default_card, self._default_user, password)
+        view.request.data = {
+            "number": self._default_card.number,
+            "pin": f"{password}NOT",
+        }
+        response = view.post(view.request)
+
+        assert response.data["RETCOD"] == 1
+        assert response.data["ERRNUM"] == 4
+        assert response.data["ERRMSG"] == "Invalid patron PIN"
+
+    def test_bad_card(self):
+        password = "apassword"
+        view = self._setup_view(self._default_card, self._default_user, password)
+        view.request.data = {
+            "number": f"{self._default_card.number}xx",
+            "pin": password,
+        }
+        response = view.post(view.request)
+
+        assert response.data["RETCOD"] == 1
+        assert response.data["ERRNUM"] == 1
+        assert response.data["ERRMSG"] == "Requested record not found"
+
+    def test_missing_card(self):
+        password = "apassword"
+        view = self._setup_view(self._default_card, self._default_user, password)
+        view.request.data = {"pin": password}
+        response = view.post(view.request)
+
+        assert response.data["RETCOD"] == 1
+        assert response.data["ERRNUM"] == 100000
+        assert (
+            response.data["ERRMSG"]
+            == "Missing required parameter(s): 'number' and 'pin'"
+        )
+
+    def test_missing_pin(self):
+        password = "apassword"
+        view = self._setup_view(self._default_card, self._default_user, password)
+        view.request.data = {"number": f"{self._default_card.number}"}
+        response = view.post(view.request)
+
+        assert response.data["RETCOD"] == 1
+        assert response.data["ERRNUM"] == 100000
+        assert (
+            response.data["ERRMSG"]
+            == "Missing required parameter(s): 'number' and 'pin'"
+        )
+
+    def test_api(self):
+        password = "apassword"
+        self._default_user.set_password(password)
+        self._default_user.save()
+        card = self._default_card
+
+        response = self.client.post(
+            f"/api/pintest", data={"number": card.number, "pin": password}
+        )
+        assert response.content == b"<HTML>\n<BODY>\nRETCOD=0<BR>\n</BODY>\n</HTML>"
+
+        response = self.client.post(
+            f"/PATRONAPI/pintest", data={"number": card.number, "pin": password}
+        )
+        assert response.content == b"<HTML>\n<BODY>\nRETCOD=0<BR>\n</BODY>\n</HTML>"
+
+    def test_unverified_user(self):
+        user = self.create_user(self._default_library, email_verified=False)
+        card = self.create_library_card(user, self._default_library)
+        password = "apassword"
+        user.set_password(password)
+        user.save()
+
+        response = self.client.post(
+            "/api/pintest", data={"number": card.number, "pin": password}
+        )
+        content = response.content.decode()
+        assert "RETCOD=1" in content
+        assert "ERRNUM=5" in content
 
 
 class TestPinTestViewSet(BaseUnitTest):
@@ -69,6 +169,17 @@ class TestPinTestViewSet(BaseUnitTest):
         content = response.content.decode()
         assert "RETCOD=1" in content
         assert "ERRNUM=5" in content
+
+    def test_post_method(self):
+        user = self.create_user(self._default_library, email_verified=False)
+        card = self.create_library_card(user, self._default_library)
+        password = "apassword"
+        user.set_password(password)
+        user.save()
+
+        response = self.client.post(f"/api/{card.number}/{password}/pintest")
+        content = response.content.decode()
+        assert "405 Method Not Allowed" in content
 
 
 class TestUserLibraryCardViewSet(BaseUnitTest):

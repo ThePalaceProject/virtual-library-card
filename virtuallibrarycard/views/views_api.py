@@ -12,18 +12,17 @@ from virtuallibrarycard.models import CustomUser, LibraryCard
 
 @permission_classes((permissions.AllowAny,))
 class PinTestViewSet(LoggingMixin, APIView):
-    # serializer_class = LibraryCardSerializer
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "api/pin_test.html"
 
-    # / PATRONAPI / {barcode} / {pin} / pintest
-    def get(self, request, number, pin):
+    @staticmethod
+    def execute(log, number, pin):
         library_card: LibraryCard = LibraryCard.objects.filter(number=number).first()
         if library_card:
 
             user: CustomUser = library_card.user
             authenticated_user = authenticate(email=user.email, password=pin)
-            self.log.debug(f"authenticated_user {authenticated_user}")
+            log.debug(f"authenticated_user {authenticated_user}")
             if authenticated_user:
                 if not user.email_verified:
                     return Response(
@@ -42,6 +41,32 @@ class PinTestViewSet(LoggingMixin, APIView):
         else:
             return Response(
                 {"RETCOD": 1, "ERRNUM": 1, "ERRMSG": _("Requested record not found")}
+            )
+
+    # / PATRONAPI / {barcode} / {pin} / pintest
+    def get(self, request, number, pin):
+        return PinTestViewSet.execute(self.log, number, pin)
+
+
+@permission_classes((permissions.AllowAny,))
+class PinTestPOSTViewSet(LoggingMixin, APIView):
+    """A separate controller for handling POST requests."""
+
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "api/pin_test.html"
+
+    def post(self, request):
+        if "number" in request.data and "pin" in request.data:
+            number = request.data["number"]
+            pin = request.data["pin"]
+            return PinTestViewSet.execute(self.log, number, pin)
+        else:
+            return Response(
+                {
+                    "RETCOD": 1,
+                    "ERRNUM": 100000,
+                    "ERRMSG": _("Missing required parameter(s): 'number' and 'pin'"),
+                }
             )
 
 
