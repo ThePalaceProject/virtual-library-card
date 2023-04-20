@@ -470,6 +470,13 @@ class LibraryCardsUploadCSV(PermissionRequiredMixin, TemplateView):
         return self.render_to_response(ctx)
 
 
+class PlaceAdmin(admin.ModelAdmin):
+    list_display = ["name", "type", "parent"]
+    ordering = ["name"]
+    list_filter = ["type"]
+    search_fields = ["name", "abbreviation__exact", "parent__name"]
+
+
 class VLCAdminSite(admin.AdminSite):
     """The admin site configuration"""
 
@@ -491,4 +498,4 @@ admin_site.register(CustomUser, CustomUserAdmin)
 admin_site.register(Library, LibraryAdmin)
 admin_site.register(LibraryCard, LibraryCardAdmin)
 admin_site.register(Sequence, CustomSequenceAdmin)
-admin_site.register(Place, admin.ModelAdmin)
+admin_site.register(Place, PlaceAdmin)
