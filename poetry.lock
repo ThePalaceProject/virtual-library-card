@@ -324,18 +324,18 @@ html5lib = "*"
 
 [[package]]
 name = "django-localflavor"
-version = "3.1"
+version = "4.0"
 description = "Country-specific Django helpers"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-localflavor-3.1.tar.gz", hash = "sha256:ac2fa377bbcba4cae95e97077d9e77c7f22b3d93e4845e2e133ba7e664043a44"},
-    {file = "django_localflavor-3.1-py3-none-any.whl", hash = "sha256:6593865dc671333b3edc88e729e6d384d00b6db7891ef5d3a65db831a40050d2"},
+    {file = "django-localflavor-4.0.tar.gz", hash = "sha256:11859e522dba74aa6dde5a659242b1fbc5efb4dea08e9b77315402bdeca5194e"},
+    {file = "django_localflavor-4.0-py3-none-any.whl", hash = "sha256:7a5b1df03ca8e10df9d1b3c2e4314e43383067868183cdf41ab4e7a973694a8b"},
 ]
 
 [package.dependencies]
-django = ">=2.2"
+django = ">=3.2"
 python-stdnum = ">=1.6"
 
 [[package]]
@@ -1537,4 +1537,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "cb197f39c59d1df6e9f74fd0eab06c01ee5ec550b7571d8cf51fec5d68cc0f7e"
+content-hash = "acc83a9c670d872b5f0d3fb3e7b86d152bb18584d93049003a3332f00c6e9a5a"
