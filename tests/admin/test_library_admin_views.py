@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 from tests.base import BaseAdminUnitTest
 from virtuallibrarycard.admin import LibraryAdmin
-from virtuallibrarycard.models import Library, LibraryPlace, Place
+from virtuallibrarycard.models import Library, Place
 
 
 class TestLibraryAdminViews(BaseAdminUnitTest):
@@ -47,9 +47,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         """Helper function for change form data, for the inline library form"""
         places = places or []
         place_ids = [p.id for p in Place.objects.filter(abbreviation__in=places).all()]
-        prev_places = list(LibraryPlace.objects.filter(library=library).all())
-        total_prev_places = len(prev_places)
-        total_forms = len(places + prev_places)
+        data["places_filter"] = place_ids
 
         data.update(
             {
@@ -62,43 +60,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
                 else "",
             }
         )
-
-        data.update(
-            {
-                "library_places-TOTAL_FORMS": total_forms,
-                "library_places-INITIAL_FORMS": total_prev_places,
-                "library_places-MIN_NUM_FORMS": 0,
-                "library_places-MAX_NUM_FORMS": 1000,
-            }
-        )
-
-        for ix, place in enumerate(prev_places):
-            data.update(
-                {
-                    f"library_places-{ix}-id": place.id,
-                    f"library_places-{ix}-library": library.id,
-                    f"library_places-{ix}-place": place.place.id,
-                }
-            )
-
-        for ix, place_id in enumerate(place_ids):
-            idx = ix + total_prev_places
-            data.update(
-                {
-                    f"library_places-{idx}-id": "",
-                    f"library_places-{idx}-library": library.id,
-                    f"library_places-{idx}-place": place_id,
-                }
-            )
-
-        if library:
-            data.update(
-                {
-                    f"library_places-__prefix__-id": "",
-                    f"library_places-__prefix__-library": library.id,
-                    f"library_places-__prefix__-place": "",
-                }
-            )
 
         return data
 
@@ -196,7 +157,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
 
         assert response.status_code == 302
         saved = Library.objects.get(id=library.id)
-        assert saved.get_places() == ["FL", "NY"]
+        assert saved.get_places() == ["NY"]
 
     def test_read_only_fields(self):
         self.mock_request.user = MagicMock()

@@ -638,4 +638,7 @@ class Place(models.Model):
         ).all()
 
     def __str__(self) -> str:
-        return f"{self.name} | {self.check_str} | {self.type}"
+        s = f"{self.name} | {self.type}"
+        if self.parent:
+            s += f" ({self.parent.check_str})"
+        return s

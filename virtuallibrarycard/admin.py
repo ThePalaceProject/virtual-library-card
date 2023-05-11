@@ -32,7 +32,6 @@ from virtuallibrarycard.models import (
     Library,
     LibraryAllowedEmailDomains,
     LibraryCard,
-    LibraryPlace,
     Place,
 )
 from virtuallibrarycard.views.admin_email_customize import (
@@ -189,12 +188,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         return qs.filter(library=request.user.library.id)
 
 
-class LibraryPlacesInline(admin.StackedInline):
-    model = LibraryPlace
-    extra = 0
-    verbose_name_plural = "Library Places"
-
-
 class LibraryAllowedDomainsInline(admin.StackedInline):
     model = LibraryAllowedEmailDomains
     extra = 0
@@ -269,13 +262,13 @@ class LibraryAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        (_("Places"), {"fields": ("places_filter",)}),
     )
     readonly_fields = ["logo_thumbnail"]
 
     actions = ["export_as_csv"]
 
     inlines = [
-        LibraryPlacesInline,
         LibraryAllowedDomainsInline,
     ]
 

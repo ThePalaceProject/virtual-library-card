@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
@@ -11,7 +12,13 @@ from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
+from virtuallibrarycard.models import (
+    CustomUser,
+    Library,
+    LibraryCard,
+    LibraryPlace,
+    Place,
+)
 from virtuallibrarycard.widgets.buttons import LinkButtonField
 
 
@@ -61,8 +68,13 @@ class LibraryCardCreationForm(forms.ModelForm):
 
 
 class LibraryChangeForm(forms.ModelForm):
-
     Customize_emails_field = LinkButtonField("../welcome_email/update")
+    places_filter = forms.ModelMultipleChoiceField(
+        queryset=Place.objects.all(),
+        widget=FilteredSelectMultiple("Library Places", False),
+        required=False,
+        label="",
+    )
 
     class Meta:
         model = Library
@@ -119,6 +131,9 @@ class LibraryChangeForm(forms.ModelForm):
             "This field is only required when Bulk Card Uploads are enabled."
         )
 
+        # The initial set of library places
+        self.fields["places_filter"].initial = self.instance.places
+
     def is_valid(self) -> bool:
         valid = super().is_valid()
 
@@ -132,6 +147,25 @@ class LibraryChangeForm(forms.ModelForm):
                 )
 
         return valid
+
+    def save(self, commit: bool = ...) -> Any:
+        # Add new places selected and remove anything unselected.
+        # We have to do this because we created a relation table manually
+        # and not a ManyToMany field in the Library model.
+        # Changing this now would lead to loss of data so we'll manage this widget manually.
+        prev = self.instance.places
+        for p in self.cleaned_data["places_filter"]:
+            if p not in prev:
+                # A new place was added
+                LibraryPlace(library=self.instance, place=p).save()
+            else:
+                # This was in the list and selected, remove this from the list
+                prev.remove(p)
+        # Anything left over should get deleted
+        for p in prev:
+            LibraryPlace.objects.filter(library=self.instance, place=p).delete()
+
+        return super().save(commit)
 
 
 class LibraryCardChangeForm(forms.ModelForm):
@@ -275,7 +309,6 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
 
 
 class LibraryCardsUploadByCSVForm(forms.Form):
-
     library = forms.ChoiceField()
     csv_file = forms.FileField()
 
