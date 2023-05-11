@@ -246,22 +246,19 @@ django = "*"
 
 [[package]]
 name = "django-bootstrap4"
-version = "2.3.1"
-description = "Bootstrap support for Django projects"
+version = "23.1"
+description = "Bootstrap 4 for Django"
 category = "main"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">=3.7"
 files = [
-    {file = "django-bootstrap4-2.3.1.tar.gz", hash = "sha256:2c199020ac38866cdf8d1c5561ce7468116b9685b455a29843c0225ef8568879"},
-    {file = "django_bootstrap4-2.3.1-py3-none-any.whl", hash = "sha256:b68f073b647b20ec7894a252a0ca4e06b7b8dafdbad995cb0cdc783d0bb4629d"},
+    {file = "django-bootstrap4-23.1.tar.gz", hash = "sha256:2c1ad756b44b17093d9b49d8840f5ad8537ec30cb4412834d9bf3c59e0d976ad"},
+    {file = "django_bootstrap4-23.1-py3-none-any.whl", hash = "sha256:e324f40e2dda69725982cf6b5ac6004f29c55ac492aabd880ed57693d3c4c93c"},
 ]
 
 [package.dependencies]
-beautifulsoup4 = ">=4.8.0,<5.0.0"
-django = ">=2.2,<4.0"
-
-[package.extras]
-docs = ["m2r2 (>=0.2.5,<0.3.0)", "sphinx (>=2.4,<3.0)", "sphinx_rtd_theme (>=0.4.3,<0.5.0)"]
+beautifulsoup4 = ">=4.8.0"
+Django = ">=3.2"
 
 [[package]]
 name = "django-compressor"
@@ -1537,4 +1534,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "fead1558d82f0dc0236d8c36ca4f2486c4e54f43a3fca6a3312d7c7cf3c3a224"
+content-hash = "45b7a01211ec1aad5b981811bee270189d550f62af7ee4f4d9c84711376fbb0a"
