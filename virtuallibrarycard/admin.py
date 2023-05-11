@@ -21,6 +21,7 @@ from virtuallibrarycard.business_rules.library_card import (
 from virtuallibrarycard.business_rules.user import UserRules
 from virtuallibrarycard.forms.forms import (
     CustomAdminUserChangeForm,
+    CustomPlaceChangeForm,
     CustomUserCreationForm,
     LibraryCardCreationForm,
     LibraryCardsUploadByCSVForm,
@@ -464,10 +465,15 @@ class LibraryCardsUploadCSV(PermissionRequiredMixin, TemplateView):
 
 
 class PlaceAdmin(admin.ModelAdmin):
+    model = Place
     list_display = ["name", "type", "parent"]
     ordering = ["name"]
     list_filter = ["type"]
     search_fields = ["name", "abbreviation__exact", "parent__name"]
+    form = CustomPlaceChangeForm
+
+    class Media:
+        js = ["js/admin/place.js"]
 
 
 class VLCAdminSite(admin.AdminSite):

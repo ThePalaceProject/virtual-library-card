@@ -52,7 +52,7 @@ class PlaceImport:
     def import_ndjson(self, io: IO):
         """Import Place model data from an ndjson file
         The json lines should have the format as specified in the `PlaceObject` class
-        Any refrenced parent_id must always be present before the row that refrences it
+        Any referenced parent_id must always be present before the row that references it
         Eg. sample_places.ndjson"""
         # We depend on the order of presented places
         imported = OrderedDict()

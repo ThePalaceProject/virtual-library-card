@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from dal import autocomplete
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
@@ -329,3 +330,31 @@ class LibraryCardsUploadByCSVForm(forms.Form):
         self.helper.add_input(
             Submit("Start the CSV Upload job", "Start the CSV Upload job")
         )
+
+
+class CustomPlaceChangeForm(forms.ModelForm):
+    name = autocomplete.Select2ListCreateChoiceField(
+        widget=autocomplete.ListSelect2(
+            url="place_typeahead",
+            attrs={
+                "data-minimum-input-length": 2,
+                "data-placeholder": "Search for a place",
+            },
+        )
+    )
+
+    class Meta:
+        model = Place
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # DAL doesn't have the ability to prepopulate the Select2ListCreateChoiceField when editing Place
+        # so we need to do it manually.
+        if self.instance:
+            # If we already have instance of the form i.e. we are editing the Place.
+            place_name = self.instance.name
+
+            self.fields["name"].initial = place_name
+            self.fields["name"].choices = [(place_name, place_name)]

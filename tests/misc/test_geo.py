@@ -36,3 +36,18 @@ class TestGeolocalize(BaseUnitTest):
         )  # called once when setting up urlopen().read mock object
         assert mock_urllib.request.urlopen.call_args[0][0] == expected_url
         assert response == return_value
+
+    @mock.patch("virtual_library_card.geoloc.urllib")
+    def test_search_for_places(self, mock_urllib):
+        return_value = {"results": [{"name": "New Mexico", "recordType": "state"}]}
+
+        mock_urllib.request.urlopen().read = mock.MagicMock(
+            return_value=json.dumps(return_value)
+        )
+        mock_urllib.request.urlopen().status = 200
+
+        query = "new mex"
+        response, status = Geolocalize.search_for_places(query)
+
+        assert status == 200
+        assert response == return_value

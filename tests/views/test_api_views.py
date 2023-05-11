@@ -1,4 +1,6 @@
+import json
 from datetime import datetime, timedelta
+from unittest import mock
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.test import RequestFactory
@@ -8,6 +10,7 @@ from virtuallibrarycard.models import CustomUser, LibraryCard
 from virtuallibrarycard.views.views_api import (
     PinTestPOSTViewSet,
     PinTestViewSet,
+    PlaceSearchAheadView,
     UserLibraryCardViewSet,
 )
 
@@ -227,3 +230,225 @@ class TestUserLibraryCardViewSet(BaseUnitTest):
 
         response = self.client.get(f"/api/{card.number}/dump")
         assert response.content == expected.encode()
+
+
+class TestPlaceSearchAheadView(BaseUnitTest):
+    EXAMPLE_GEOLOC_SEARCH_RESPONSE_VALUE = {
+        "results": [
+            {
+                "collection": ["adminArea"],
+                "displayString": "New York, NY, United States",
+                "language": "en",
+                "id": "mqId:282040974",
+                "name": "New York",
+                "place": {
+                    "geometry": {"coordinates": [-74.00712, 40.71453], "type": "Point"},
+                    "properties": {
+                        "country": "United States",
+                        "countryCode": "US",
+                        "state": "New York",
+                        "stateCode": "NY",
+                        "county": "New York",
+                        "city": "New York",
+                        "type": "city",
+                    },
+                    "type": "Feature",
+                },
+                "recordType": "city",
+                "slug": "/us/ny/new-york",
+            },
+            {
+                "collection": ["adminArea"],
+                "displayString": "NJ, United States",
+                "language": "en",
+                "id": "mqId:282094985",
+                "name": "New Jersey",
+                "place": {
+                    "geometry": {"coordinates": [-74.75942, 40.21789], "type": "Point"},
+                    "properties": {
+                        "country": "United States",
+                        "countryCode": "US",
+                        "state": "New Jersey",
+                        "stateCode": "NJ",
+                        "type": "state",
+                    },
+                    "type": "Feature",
+                },
+                "recordType": "state",
+                "slug": "/us/nj",
+            },
+        ],
+        "request": {
+            "q": "new",
+            "collection": ["adminArea"],
+            "limit": 2,
+            "countryCode": ["US", "CA"],
+        },
+    }
+
+    def test_get_list_edge_cases(self):
+        view = PlaceSearchAheadView()
+
+        # If there is no q (query) we get an empty list back.
+        view.q = None
+        assert [] == view.get_list()
+
+        # Length of query item must be between 2 and 100 chars.
+        view.q = "a"
+        assert [] == view.get_list()
+
+        view.q = "a" * 101
+        assert [] == view.get_list()
+
+    @mock.patch("virtual_library_card.geoloc.urllib")
+    def test_get_list(self, mock_urllib):
+        view = PlaceSearchAheadView()
+        view.q = "new"
+
+        mock_urllib.request.urlopen().read = mock.MagicMock(
+            return_value=json.dumps(self.EXAMPLE_GEOLOC_SEARCH_RESPONSE_VALUE)
+        )
+        mock_urllib.request.urlopen().status = 200
+
+        expected_output = [
+            {
+                "id": "New Jersey|mqId:282094985",
+                "name": "New Jersey",
+                "text": "NJ, United States",
+                "type": "state",
+                "parents": [{"type": "country", "value": "United States"}],
+            },
+            {
+                "id": "New York|mqId:282040974",
+                "name": "New York",
+                "text": "New York, NY, United States",
+                "type": "city",
+                "parents": [
+                    {"type": "county", "value": "New York"},
+                    {"type": "state", "value": "New York"},
+                    {"type": "country", "value": "United States"},
+                ],
+            },
+        ]
+
+        assert expected_output == sorted(
+            view.get_list(), key=lambda place: place["name"]
+        )
+
+    @mock.patch("virtual_library_card.geoloc.urllib")
+    def test_get(self, mock_urllib):
+        mock_urllib.request.urlopen().read = mock.MagicMock(
+            return_value=json.dumps(self.EXAMPLE_GEOLOC_SEARCH_RESPONSE_VALUE)
+        )
+        mock_urllib.request.urlopen().status = 200
+
+        # Only admins can access this endpoint.
+        response = self.client.get(f"/place/search", data={"q": "new"})
+        assert response.status_code == 403
+
+        self.super_user = CustomUser.objects.create_superuser(
+            "test@admin.com", "password"
+        )
+        self.client.force_login(self.super_user)
+
+        response = self.client.get(f"/place/search", data={"q": "new"})
+        response_data = json.loads(response.content.decode())
+
+        assert response.status_code == 200
+        assert "results" in response_data
+
+        results = response_data["results"]
+
+        # Results contain 2 items returned by Mapquest API plus additional one that is used for 'create' option in the
+        # dropdown in the admin UI. That 'create' option makes it possible to add Place that is not found by the API.
+        assert len(results) == 3
+
+        text_results = sorted([result["text"] for result in results])
+        assert [
+            'Create "new"',
+            "NJ, United States",
+            "New York, NY, United States",
+        ] == text_results
+
+    def test_extract_places_to_list(self):
+        # No results leads to an empty list.
+        no_results = {"results": []}
+        assert [] == PlaceSearchAheadView.extract_places_to_list(no_results)
+
+        # Place types that are not supported are removed from the list.
+        city_and_a_neighborhood = {
+            "results": [
+                {
+                    "name": "Bronzeville",
+                    "recordType": "neighborhood",
+                    "id": "mqId:352584189",
+                    "displayString": "Bronzeville, Chicago, IL, United States",
+                    "place": {
+                        "properties": {
+                            "country": "United States",
+                            "type": "neighborhood",
+                        }
+                    },
+                },
+                {
+                    "name": "Bronson",
+                    "recordType": "city",
+                    "id": "mqId:282028197",
+                    "displayString": "Bronson, FL, United States",
+                    "place": {
+                        "properties": {"country": "United States", "type": "city"}
+                    },
+                },
+            ]
+        }
+
+        extracted_places = PlaceSearchAheadView.extract_places_to_list(
+            city_and_a_neighborhood
+        )
+
+        # We are left with only Bronson.
+        assert len(extracted_places) == 1
+        assert extracted_places[0]["type"] == "city"
+        assert extracted_places[0]["name"] == "Bronson"
+
+    def test_create_parents_list(self):
+        vancouver_place_properties = {
+            "country": "Canada",
+            "countryCode": "CA",
+            "state": "British Columbia",
+            "stateCode": "BC",
+            "county": "Metro Vancouver",
+            "city": "Vancouver",
+            "type": "city",
+        }
+        expected_vancouver_parents = [
+            {"type": "county", "value": "Metro Vancouver"},
+            {"type": "province", "value": "British Columbia"},
+            {"type": "country", "value": "Canada"},
+        ]
+        assert expected_vancouver_parents == PlaceSearchAheadView.create_parents_list(
+            vancouver_place_properties
+        )
+
+        dallas_place_properties = {
+            "country": "United States",
+            "countryCode": "US",
+            "state": "Texas",
+            "stateCode": "TX",
+            "county": "Dallas",
+            "city": "Dallas",
+            "type": "city",
+        }
+        expected_dallas_parents = [
+            {"type": "county", "value": "Dallas"},
+            {"type": "state", "value": "Texas"},
+            {"type": "country", "value": "United States"},
+        ]
+        assert expected_dallas_parents == PlaceSearchAheadView.create_parents_list(
+            dallas_place_properties
+        )
+
+    def test_create(self):
+        # Method just returns the input variable.
+        view = PlaceSearchAheadView()
+        assert "string" == view.create("string")

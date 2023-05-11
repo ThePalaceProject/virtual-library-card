@@ -8,8 +8,8 @@
 {"name": "Colorado", "abbreviation": "CO", "id": "US_CO", "parent_id": "US", "type": "state" }
 {"name": "Connecticut", "abbreviation": "CT", "id": "US_CT", "parent_id": "US", "type": "state" }
 {"name": "Delaware", "abbreviation": "DE", "id": "US_DE", "parent_id": "US", "type": "state" }
-{"name": "District Of Columbia", "abbreviation": "DC", "id": "US_DC", "parent_id": "US", "type": "state" }
-{"name": "Federated States Of Micronesia", "abbreviation": "FM", "id": "US_FM", "parent_id": "US", "type": "state" }
+{"name": "District of Columbia", "abbreviation": "DC", "id": "US_DC", "parent_id": "US", "type": "state" }
+{"name": "Federated States of Micronesia", "abbreviation": "FM", "id": "US_FM", "parent_id": "US", "type": "state" }
 {"name": "Florida", "abbreviation": "FL", "id": "US_FL", "parent_id": "US", "type": "state" }
 {"name": "Georgia", "abbreviation": "GA", "id": "US_GA", "parent_id": "US", "type": "state" }
 {"name": "Guam", "abbreviation": "GU", "id": "US_GU", "parent_id": "US", "type": "state" }

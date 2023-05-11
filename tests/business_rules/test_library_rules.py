@@ -92,7 +92,7 @@ class TestLibraryRules(BaseUnitTest):
         )
         ny_county.save(), ny_city.save()
 
-        fn = LibraryRules._place_heirarchy_match
+        fn = LibraryRules._place_hierarchy_match
         assert True == fn(
             ny_city, city="NYCity", county="NYCounty", state="NY", country="US"
         )

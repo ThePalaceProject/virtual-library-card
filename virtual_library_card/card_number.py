@@ -116,7 +116,7 @@ class CardNumber:
                     f"Could not create a unique card number. Last tried: {suffix_number}"
                 )
 
-        # Raise an error taht we failed, after exiting the atomic transaction
+        # Raise an error that we failed, after exiting the atomic transaction.
         if exists:
             raise RuntimeError("Could not create a unique card number")
 

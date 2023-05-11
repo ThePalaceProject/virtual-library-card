@@ -245,6 +245,26 @@ files = [
 django = "*"
 
 [[package]]
+name = "django-autocomplete-light"
+version = "3.9.4"
+description = "Fresh autocompletes for Django"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-autocomplete-light-3.9.4.tar.gz", hash = "sha256:0f6da75c1c7186698b867a467a8cdb359f0513fdd8e09288a0c2fb018ae3d94e"},
+]
+
+[package.dependencies]
+six = "*"
+
+[package.extras]
+genericm2m = ["django-generic-m2m"]
+gfk = ["django-querysetsequence (>=0.11)"]
+nested = ["django-nested-admin (>=3.0.21)"]
+tags = ["django-taggit"]
+
+[[package]]
 name = "django-bootstrap4"
 version = "23.1"
 description = "Bootstrap 4 for Django"
@@ -1534,4 +1554,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "88d1123951d1942ab80eb0229ce4e7731d257fab076419ab79c061a29ca65a60"
+content-hash = "2cb50ffa30b279d14deb37b401209a79ea4dd308806212edc5813aff4a3fb20c"

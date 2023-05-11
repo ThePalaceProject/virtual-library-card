@@ -24,6 +24,7 @@ from virtuallibrarycard.views import (
     PasswordChangeDoneView,
     PinTestPOSTViewSet,
     PinTestViewSet,
+    PlaceSearchAheadView,
     ProfileView,
     TemplateView,
     UserLibraryCardViewSet,
@@ -66,6 +67,7 @@ if settings.HAS_WEBSITE:
         path("", views_profile.ProfileView.as_view()),
         # ADMIN
         path("admin/", admin_site.urls),
+        path("place/search", PlaceSearchAheadView.as_view(), name="place_typeahead"),
         path("accounts/", include("django.contrib.auth.urls")),
         # APPLY FOR LIBRARY CARD
         path(

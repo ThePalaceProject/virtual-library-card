@@ -615,9 +615,9 @@ class Place(models.Model):
 
     @property
     def check_str(self) -> str:
-        """Cities and Counties do not have abrreviations
+        """Cities and Counties do not have abbreviations
         So we must check against their names
-        This is a convenience function to provice the value to check against
+        This is a convenience function to provide the value to check against
         """
         return (
             self.abbreviation
