@@ -11,10 +11,18 @@ from django.utils.translation import gettext as _
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard, UserConsent
 
 
-class RequestLibraryCardForm(UserCreationForm):
+class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
+    CONSENT_TYPE = UserConsent.ConsentType.SURVEY
+    CONSENT_METHOD = UserConsent.ConsentMethod.WEB_CARD_REQUEST
+    consent = forms.fields.BooleanField(
+        required=False,
+        label=_(UserConsent.consent_text[CONSENT_TYPE]),
+        initial="on",
+    )
+
     class Meta(UserCreationForm):
         model = CustomUser
         fields = [
@@ -51,6 +59,14 @@ class RequestLibraryCardForm(UserCreationForm):
 
         user = kwargs["instance"]
         library: Library = user.library
+
+        # Disable consent field if the library does not need it
+        if library and not library.has_survey_consent:
+            consent: forms.BooleanField = self.fields["consent"]
+            consent.initial = None
+            consent.disabled = True
+            consent.widget = consent.hidden_widget()
+
         # Country code is taken from the users lat/lon location
         self.fields["country_code"].value = user.country_code
         if library.patron_address_mandatory == False:
@@ -98,6 +114,8 @@ class RequestLibraryCardForm(UserCreationForm):
         form_email = self.cleaned_data.get("email")
         library = self.cleaned_data.get("library")
         existing_user: CustomUser = CustomUser.objects.filter(email=form_email).first()
+        # User consent
+        consent = self.cleaned_data.get("consent")
 
         try:
             if existing_user:
@@ -113,6 +131,17 @@ class RequestLibraryCardForm(UserCreationForm):
                 user: CustomUser = super().save(commit=True)
 
             if user:
+                if consent is True:
+                    try:
+                        UserConsent.record_consent(
+                            user, self.CONSENT_TYPE, self.CONSENT_METHOD
+                        )
+                    except ValueError as ex:
+                        # Log error and continue with the sign up
+                        self.log.error(
+                            f"Could not record user consent for {user.email} ({self.CONSENT_TYPE}, {self.CONSENT_METHOD}): {ex}"
+                        )
+
                 existing_library_card: LibraryCard = LibraryCard.objects.filter(
                     user=existing_user, library=library
                 ).first()
@@ -146,13 +175,13 @@ class RequestLibraryCardForm(UserCreationForm):
                             code="ALREADY_EXISTS",
                             params={"custom_message": message},
                         )
-
                 else:
                     card, _ = LibraryCardRules.new_card(user, library)
                     card.save()
                     return user
             else:
                 raise forms.ValidationError(_("Error creating your library card"))
+
         except ValidationError as e:
             self._update_errors(e)
 

@@ -18,6 +18,7 @@ from virtuallibrarycard.models import (
     LibraryCard,
     LibraryPlace,
     Place,
+    UserConsent,
 )
 from virtuallibrarycard.views.views_library_card import (
     CardSignupView,
@@ -288,6 +289,7 @@ class TestCardRequest(BaseUnitTest):
             over13="on",
             password1="xx123456789",
             password2="xx123456789",
+            consent="on",
             **{"g-recaptcha-response": "xxxcaptcha"},
         )
         post.update(data)
@@ -483,6 +485,76 @@ class TestCardRequest(BaseUnitTest):
         self._assert_card_request_success(resp, "user@example.org", library)
         user = CustomUser.objects.filter(email="user@example.org").first()
         assert user.over13 == False
+
+    def test_survey_consent(self):
+        library = self._default_library
+        library.has_survey_consent = True
+        library.save()
+
+        client = Client()
+        self.do_library_card_signup_flow(client, library)
+
+        post_dict = self._get_card_request_data(library, "test@test.test")
+
+        resp = client.post(
+            f"/account/library_card_request/?identifier={library.identifier}",
+            post_dict,
+        )
+        user = CustomUser.objects.filter(email="test@test.test").first()
+        consents = UserConsent.objects.filter(user=user).all()
+
+        assert resp.status_code == 302
+        assert len(consents) == 1
+        consent = consents[0]
+        assert consent.type == RequestLibraryCardForm.CONSENT_TYPE.value
+        assert consent.method == RequestLibraryCardForm.CONSENT_METHOD.value
+        assert consent.timestamp.date() == datetime.today().date()
+
+    def test_survey_no_consent(self):
+        library = self._default_library
+        library.has_survey_consent = True
+        library.save()
+
+        client = Client()
+        self.do_library_card_signup_flow(client, library)
+        post_dict = self._get_card_request_data(library, "test@test.test")
+        del post_dict["consent"]
+
+        resp = client.post(
+            f"/account/library_card_request/?identifier={library.identifier}",
+            post_dict,
+        )
+
+        assert resp.status_code == 302
+        user = CustomUser.objects.filter(email="test@test.test").first()
+        # no consent was recorded
+        assert UserConsent.objects.filter(user=user).count() == 0
+
+    def test_form_survey_presence(self):
+        library = self.create_library(age_verification_mandatory=False)
+        client = Client()
+
+        self.do_library_card_signup_flow(client, library)
+        # We want to test the form_kwargs method specifically
+        request = RequestFactory().get(
+            f"/account/library_card_request/?identifier={library.identifier}"
+        )
+        request.session = client.session
+        view = LibraryCardRequestView(request=request)
+        view.get_form_kwargs()
+
+        form = RequestLibraryCardForm(instance=view.model)
+        consent = form.fields["consent"]
+        assert consent.disabled == True
+        assert consent.initial == None
+        assert type(consent.widget) == consent.hidden_widget
+
+        view.model.library.has_survey_consent = True
+        form = RequestLibraryCardForm(instance=view.model)
+        consent = form.fields["consent"]
+        assert consent.disabled == False
+        assert consent.initial == "on"
+        assert type(consent.widget) != consent.hidden_widget
 
 
 class TestLibraryCardDelete(BaseUnitTest):

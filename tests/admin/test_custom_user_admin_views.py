@@ -1,16 +1,19 @@
+import csv
 from unittest.mock import MagicMock
 
 from django import forms
 from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
+from django.test import RequestFactory
 
 from tests.base import BaseAdminUnitTest
-from virtuallibrarycard.admin import CustomUserAdmin
+from virtuallibrarycard.admin import CustomUserAdmin, export_users_by_consent
 from virtuallibrarycard.forms.forms import CustomAdminUserChangeForm
 from virtuallibrarycard.models import (
     CustomUser,
     LibraryAllowedEmailDomains,
     LibraryCard,
+    UserConsent,
 )
 
 
@@ -86,7 +89,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             response, "adminform", "email", ["Enter a valid email address."]
         )
 
-    def _get_user_change_data(self, user, **kwargs):
+    def _get_user_change_data(self, user, consents=None, **kwargs):
         changes = {
             "first_name": kwargs.get("first_name") or user.first_name,
             "last_name": kwargs.get("last_name") or user.last_name or "",
@@ -109,6 +112,9 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         for key in ("is_staff", "is_superuser"):
             if key in kwargs:
                 changes[key] = kwargs[key]
+
+        inline = self.inline_post_data("consents", consents or [])
+        changes.update(inline)
 
         return changes
 
@@ -340,3 +346,46 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         assert response.status_code == 302
         user.refresh_from_db()
         assert user.user_permissions.count() == 8
+
+    def test_export_users_by_consent(self):
+
+        user1 = self.create_user(self._default_library)
+        user2 = self.create_user(self._default_library)
+        UserConsent.record_consent(
+            user1,
+            UserConsent.ConsentType.SURVEY,
+            UserConsent.ConsentMethod.WEB_CARD_REQUEST,
+        )
+        UserConsent.record_consent(
+            user2,
+            UserConsent.ConsentType.SURVEY,
+            UserConsent.ConsentMethod.WEB_CARD_REQUEST,
+        )
+
+        factory = RequestFactory()
+
+        # Respond with all users with the given consent type
+        request = factory.get("/", data=dict(type="SURVEY"))
+        request.user = self.super_user
+        response = export_users_by_consent(request)
+
+        assert response.status_code == 200
+        content = map(lambda x: x.decode(), response.streaming_content)
+        reader = csv.DictReader(content)
+        assert {r["email"] for r in reader} == {user1.email, user2.email}
+
+        # An unknown type has no users
+        request = factory.get("/", data=dict(type="NOTSURVEY"))
+        request.user = self.super_user
+        response = export_users_by_consent(request)
+
+        assert response.status_code == 200
+        content = map(lambda x: x.decode(), response.streaming_content)
+        reader = csv.DictReader(content)
+        assert {r["email"] for r in reader} == set()
+
+        # Unauthorized
+        request = factory.get("/", data=dict(type="SURVEY"))
+        request.user = user1
+        response = export_users_by_consent(request)
+        assert response.status_code == 403

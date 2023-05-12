@@ -1,10 +1,19 @@
+from __future__ import annotations
+
 import csv
-from typing import Any, Dict, List, Optional, Tuple, Union
+import datetime
+from io import StringIO
+from typing import Any
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpRequest, HttpResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseForbidden,
+    StreamingHttpResponse,
+)
 from django.urls import URLPattern, URLResolver, path, reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
@@ -34,10 +43,25 @@ from virtuallibrarycard.models import (
     LibraryAllowedEmailDomains,
     LibraryCard,
     Place,
+    UserConsent,
 )
 from virtuallibrarycard.views.admin_email_customize import (
     AdminCustomizeWelcomeEmailView,
 )
+
+
+class UserConsentInline(admin.StackedInline):
+    model = UserConsent
+    extra = 0
+    verbose_name = "User Consent"
+
+    def has_add_permission(self, request: HttpRequest, obj) -> bool:
+        return False
+
+    def has_change_permission(
+        self, request: HttpRequest, obj: Any | None = ...
+    ) -> bool:
+        return False
 
 
 class CustomUserAdmin(LoggingMixin, UserAdmin):
@@ -118,10 +142,16 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     search_fields = ["email", "first_name", "last_name"]
     ordering = ["email"]
 
+    def get_inlines(self, request, obj):
+        # Only want to display consents when we are editing a current user
+        if obj:
+            return [UserConsentInline]
+        return []
+
     def state(self, obj):
         return obj.place and str(obj.place.name)
 
-    def get_list_filter(self, request: Any) -> List[Any]:
+    def get_list_filter(self, request: Any) -> list[Any]:
         list_filter = super().get_list_filter(request)
         if request.user.is_superuser:
             list_filter = list_filter + ("library",)
@@ -256,6 +286,7 @@ class LibraryAdmin(admin.ModelAdmin):
             _("Configurations"),
             {
                 "fields": (
+                    "has_survey_consent",
                     "barcode_text",
                     "pin_text",
                     "allow_bulk_card_uploads",
@@ -333,7 +364,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
         else:
             return ["canceled_date", "canceled_by_user", "created"]
 
-    def get_list_filter(self, request: Any) -> Tuple[Any]:
+    def get_list_filter(self, request: Any) -> tuple[Any]:
         return (
             ("library", "expiration_date")
             if request.user.is_superuser
@@ -356,7 +387,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
         request: HttpRequest,
         object_id: str,
         form_url: str = "",
-        extra_context: Optional[Dict[str, bool]] = {},
+        extra_context: dict[str, bool] | None = {},
     ) -> HttpResponse:
         """Overridden to add the password reset url extra context"""
         user = LibraryCard.objects.get(id=object_id).user
@@ -400,7 +431,7 @@ class LibraryCardsUploadCSV(PermissionRequiredMixin, TemplateView):
 
     template_name: str = "library_card/upload_by_csv.html"
 
-    http_method_names: List[str] = ["get", "post"]
+    http_method_names: list[str] = ["get", "post"]
 
     def has_permission(self) -> bool:
         """Only allow superusers or staff members that are of the same library"""
@@ -419,13 +450,13 @@ class LibraryCardsUploadCSV(PermissionRequiredMixin, TemplateView):
 
         return False
 
-    def _get_columns_ctx(self) -> Dict[str, Any]:
+    def _get_columns_ctx(self) -> dict[str, Any]:
         return dict(
             required_columns=", ".join(LibraryCardBulkUpload.REQUIRED_CSV_HEADERS),
             optional_columns=", ".join(LibraryCardBulkUpload.OPTIONAL_CSV_HEADERS),
         )
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
         ctx["form"] = LibraryCardsUploadByCSVForm(self.request.user)
         ctx.update(self._get_columns_ctx())
@@ -476,10 +507,44 @@ class PlaceAdmin(admin.ModelAdmin):
         js = ["js/admin/place.js"]
 
 
+def export_users_by_consent(request: HttpRequest):
+    """Export users by consent type in a csv format.
+    The method expects a GET parameter 'type'.
+    """
+    # Only staff and admin users
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+
+    consent_type = request.GET["type"]
+    content = StringIO()
+    consents = UserConsent.objects.filter(type=consent_type).all()
+    headers = ["name", "email", "type", "method", "version", "time"]
+    csv_content = csv.DictWriter(content, fieldnames=headers)
+    csv_content.writeheader()
+
+    for consent in consents:
+        item = dict(
+            name=consent.user.get_full_name(),
+            email=consent.user.email,
+            type=consent.type,
+            method=consent.method,
+            version=consent.version,
+            time=consent.timestamp,
+        )
+        csv_content.writerow(item)
+
+    content.seek(0)
+    response = StreamingHttpResponse(content, content_type="text/csv")
+    response[
+        "Content-Disposition"
+    ] = f"attachment; filename=consented_users_{consent_type}_{datetime.datetime.now()}.csv"
+    return response
+
+
 class VLCAdminSite(admin.AdminSite):
     """The admin site configuration"""
 
-    def get_urls(self) -> List[Union[URLResolver, URLPattern]]:
+    def get_urls(self) -> list[URLResolver | URLPattern]:
         urls = super().get_urls()
         urls = [
             path("librarycard/upload_by_csv", LibraryCardsUploadCSV.as_view()),
@@ -487,6 +552,7 @@ class VLCAdminSite(admin.AdminSite):
                 "virtuallibrarycard/library/<id>/welcome_email/update",
                 AdminCustomizeWelcomeEmailView.as_view(),
             ),
+            path("customuser/export_by_consent", export_users_by_consent),
         ] + urls
         return urls
 

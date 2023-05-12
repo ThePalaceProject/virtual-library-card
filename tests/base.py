@@ -1,6 +1,7 @@
 import sys
 from logging import StreamHandler
 from random import choice
+from typing import Dict, List
 from unittest import mock
 
 import pytest
@@ -101,6 +102,20 @@ class TestData:
         card = LibraryCard(user=user, library=library, **kwargs)
         card.save()
         return card
+
+    def inline_post_data(self, name, data: List[Dict]):
+        """Generic inline form data creation"""
+        inline = {
+            f"{name}-TOTAL_FORMS": len(data),
+            f"{name}-INITIAL_FORMS": len(data),
+            f"{name}-MIN_NUM_FORMS": 0,
+            f"{name}-MAX_NUM_FORMS": 100,
+        }
+        for ix, d in enumerate(data):
+            for k, v in d.items():
+                inline.update({f"{name}-{ix}-{k}": v})
+
+        return inline
 
 
 @pytest.mark.django_db

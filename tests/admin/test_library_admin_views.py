@@ -30,6 +30,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "pin_text": "pin",
             "barcode_text": "barcode",
             "allow_bulk_card_uploads": False,
+            "has_survey_consent": False,
         }
 
         data = {}
@@ -80,6 +81,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             pin_text="pin",
             barcode_text="barcode",
             allow_bulk_card_uploads=False,
+            has_survey_consent=False,
         )
         self._add_library_states_data(data)
 

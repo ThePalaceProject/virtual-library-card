@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import re
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
-from typing import List
 
 import datedelta
 import django.utils.timezone
@@ -19,6 +21,10 @@ from django.utils.translation import gettext as _
 
 from virtual_library_card.card_number import CardNumber
 from virtual_library_card.logging import log
+
+
+def boolean_choices():
+    return ((True, _("Yes")), (False, _("No")))
 
 
 def value_to_link(_value, _display_label):
@@ -101,7 +107,7 @@ class Library(models.Model):
 
     # Configurables
     patron_address_mandatory = models.BooleanField(
-        choices=((True, _("Yes")), (False, _("No"))),
+        choices=boolean_choices(),
         blank=False,
         default=True,
         verbose_name="Require Patron Address",
@@ -111,13 +117,13 @@ class Library(models.Model):
     )
     pin_text = models.CharField(max_length=255, default="pin", verbose_name="Pin Text")
     age_verification_mandatory = models.BooleanField(
-        choices=((True, _("Yes")), (False, _("No"))),
+        choices=boolean_choices(),
         blank=False,
         default=True,
         verbose_name="Require Patron Age Verification",
     )
     allow_bulk_card_uploads = models.BooleanField(
-        choices=((True, _("Yes")), (False, _("No"))),
+        choices=boolean_choices(),
         blank=False,
         default=False,
         verbose_name="Allow Bulk Upload For Library Cards",
@@ -131,6 +137,10 @@ class Library(models.Model):
         unique=True,
         related_name="library",
         default=default_customization,
+    )
+
+    has_survey_consent = models.BooleanField(
+        verbose_name="Marketing Consent", default=False, choices=boolean_choices()
     )
 
     @property
@@ -212,7 +222,7 @@ class Library(models.Model):
             log.exception("******** saving library exception")
         super().save(force_insert, force_update, using, update_fields)
 
-    def get_allowed_email_domains(self) -> List[str]:
+    def get_allowed_email_domains(self) -> list[str]:
         return [e.domain for e in self.library_email_domains.all()]
 
 
@@ -242,7 +252,7 @@ class LibraryPlace(models.Model):
     )
 
     @classmethod
-    def associate(cls, library: Library, place_abbreviation: str) -> "LibraryPlace":
+    def associate(cls, library: Library, place_abbreviation: str) -> LibraryPlace:
         """Associate a library with a 'place' via abbreviation notation
         Only if it does not exist already"""
         place = Place.objects.get(abbreviation=place_abbreviation)
@@ -626,12 +636,12 @@ class Place(models.Model):
         )
 
     @classmethod
-    def by_abbreviation(cls, abbreviation: str) -> "Place":
+    def by_abbreviation(cls, abbreviation: str) -> Place:
         """Search for place with an exact match on the abbreviation"""
         return cls.objects.filter(abbreviation=abbreviation).first()
 
     @classmethod
-    def get_states(cls, **filters) -> "Place":
+    def get_states(cls, **filters) -> Place:
         """Get the states in the system, with optional query filters"""
         return cls.objects.filter(
             type__in=[cls.Types.STATE, cls.Types.PROVINCE], **filters
@@ -642,3 +652,88 @@ class Place(models.Model):
         if self.parent:
             s += f" ({self.parent.check_str})"
         return s
+
+
+def default_timestamp():
+    """Default value for a timestamp attribute"""
+    return timezone.now()
+
+
+class UserConsent(models.Model):
+    ## Constants and types
+    class ConsentType(Enum):
+        SURVEY = "SURVEY"
+
+    class ConsentMethod(Enum):
+        WEB_CARD_REQUEST = "WEB_CARD_REQUEST"
+
+    # The wording of what the user is consenting to
+    consent_text = {
+        ConsentType.SURVEY: "By checking this box, I agree to receive emails for surveys, newsletters, and other promotional information from The Palace Project."
+    }
+
+    # The current version of the consent types above
+    # In case the wording of a consent changes, this should be updated
+    # so the version of what the user has consented to is known
+    VERSIONS = {ConsentType.SURVEY: "20230408"}
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "type"], name="%(app_label)s_unique_type_user"
+            )
+        ]
+
+    ## Column attributes
+    user = models.ForeignKey(
+        CustomUser, related_name="consents", on_delete=models.CASCADE
+    )
+    timestamp = models.DateTimeField(default=default_timestamp)
+    method = models.CharField(
+        max_length=50,
+        help_text="What method was used by the user for the signup.",
+        choices=[(c.name, c.value) for c in ConsentMethod],
+    )
+    type = models.CharField(
+        max_length=50,
+        help_text="The type of consent.",
+        choices=[(c.name, c.value) for c in ConsentType],
+    )
+    version = models.CharField(
+        max_length=10,
+        help_text="The version of the document/requirement the user consented to.",
+    )
+
+    @classmethod
+    def record_consent(
+        cls, user: CustomUser, typ: ConsentType, method: ConsentMethod
+    ) -> UserConsent:
+        """Record the user consent.
+        :param user: The target user
+        :param typ: The document or wording being consented to, must be part of `ConsentType`
+                    A version must be available for this consent type in `UserConsent.versions`
+        :param method: The method of the consent, must be part of `ConsentMethod`
+        """
+        if typ not in cls.ConsentType:
+            raise ValueError(f"Unknown consent type {typ}")
+        if typ not in cls.VERSIONS:
+            raise ValueError(f"No consent version for {typ}")
+        if method not in cls.ConsentMethod:
+            raise ValueError(f"Unknown consent method {method}")
+
+        # If we already have a consent simply update the data
+        consent = cls.objects.filter(user=user, type=typ.value).first()
+        # Else create a new consent entry
+        if not consent:
+            consent = cls(user=user, type=typ.value)
+
+        # Update the content
+        consent.version = cls.VERSIONS[typ]
+        consent.method = method.value
+        consent.timestamp = default_timestamp()
+        consent.save()
+
+        return consent
+
+    def __str__(self) -> str:
+        return f"[{self.user}]: {self.type}({self.version}) | {self.method}"
