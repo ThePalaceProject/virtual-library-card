@@ -1,5 +1,7 @@
 from types import LambdaType
+from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm
 from django.core import mail
 from django.urls import reverse
@@ -125,3 +127,48 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
 
         user.refresh_from_db()
         assert user.check_password("test123456")
+
+    def test_app_link_redirect(self):
+        user = self.create_user(self._default_library)
+        card = self.create_library_card(user, user.library)
+        token = Tokens.generate(
+            TokenTypes.EMAIL_VERIFICATION, expires_in_days=1, email=user.email
+        )
+        with patch(
+            "virtuallibrarycard.views.views_verification.FirebaseDynamicLinksAPI"
+        ) as api:
+            api().create_signup_short_link.return_value = "test-short-link"
+
+            # Happy path
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" in response.context_data
+            assert "test-short-link" == response.context_data["redirect_link"]
+
+            # Remove the link settings
+            dl_settings = settings.DYNAMIC_LINKS
+            delattr(settings, "DYNAMIC_LINKS")
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" not in response.context_data
+
+            # Reset the config
+            settings.DYNAMIC_LINKS = dl_settings
+
+            # User without a password still needs some setup
+            user.password = ""
+            user.save()
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" not in response.context_data
+
+            # reset password
+            user.set_password("password")
+            user.save()
+
+            # No card available for the redirect
+            card.delete()
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" not in response.context_data
+
+            # Recreate the card, we should still be working
+            card = self.create_library_card(user, user.library)
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" in response.context_data

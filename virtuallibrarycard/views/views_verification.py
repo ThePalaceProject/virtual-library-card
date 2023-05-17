@@ -4,11 +4,16 @@ from urllib.request import Request
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
+from virtual_library_card.api.dynamic_links import (
+    DynamicLinksSetting,
+    FirebaseDynamicLinksAPI,
+)
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from virtual_library_card.tokens import (
@@ -17,11 +22,10 @@ from virtual_library_card.tokens import (
     Tokens,
     TokenTypes,
 )
-from virtuallibrarycard.models import CustomUser
+from virtuallibrarycard.models import CustomUser, LibraryCard
 
 
 class EmailVerificationTokenView(LoggingMixin, TemplateView):
-
     template_name: str = "verification/email_success.html"
 
     def __init__(self, *args, **kwargs):
@@ -36,6 +40,29 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
             # Should the user set their password?
             if not self.user.password:
                 context["form"] = self._password_form(self.user)
+            else:
+                # If the user has been setup completely, redirect to the App link
+                # Fetch the library card for this user
+                card = LibraryCard.objects.filter(
+                    user=self.user, library=self.user.library
+                ).first()
+
+                if (
+                    card
+                    and (dl_settings := getattr(settings, "DYNAMIC_LINKS", None))
+                    and (
+                        signup_url := getattr(
+                            settings, "DYNAMIC_LINKS_SIGNUP_URL", None
+                        )
+                    )
+                ):
+                    api = FirebaseDynamicLinksAPI(DynamicLinksSetting(**dl_settings))
+                    link = api.create_signup_short_link(
+                        signup_url,
+                        card.number,
+                        self.user.library.identifier,
+                    )
+                    context["redirect_link"] = link
         return context
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -134,7 +161,6 @@ class EmailVerificationResendToken(FormView):
         if not email:
             success = False
         else:
-
             user: CustomUser = CustomUser.objects.filter(
                 email__iexact=email.lower()
             ).first()
