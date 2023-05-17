@@ -314,14 +314,14 @@ class TestPlaceSearchAheadView(BaseUnitTest):
             {
                 "id": "New Jersey|mqId:282094985",
                 "name": "New Jersey",
-                "text": "NJ, United States",
+                "text": "NJ, United States | state",
                 "type": "state",
                 "parents": [{"type": "country", "value": "United States"}],
             },
             {
                 "id": "New York|mqId:282040974",
                 "name": "New York",
-                "text": "New York, NY, United States",
+                "text": "New York, NY, United States | city",
                 "type": "city",
                 "parents": [
                     {"type": "county", "value": "New York"},
@@ -366,8 +366,8 @@ class TestPlaceSearchAheadView(BaseUnitTest):
         text_results = sorted([result["text"] for result in results])
         assert [
             'Create "new"',
-            "NJ, United States",
-            "New York, NY, United States",
+            "NJ, United States | state",
+            "New York, NY, United States | city",
         ] == text_results
 
     def test_extract_places_to_list(self):

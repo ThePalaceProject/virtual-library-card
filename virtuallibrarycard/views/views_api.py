@@ -119,23 +119,25 @@ class PlaceSearchAheadView(autocomplete.Select2ListView, APIView):
 
         results = []
         for record in api_response["results"]:
-            if record["recordType"] not in place_types:
+            record_type = record["recordType"]
+
+            if record_type not in place_types:
                 continue
+
+            if (
+                record_type == "state"
+                and record["place"]["properties"]["country"] == "Canada"
+            ):
+                record_type = Place.Types.PROVINCE
 
             # For the id we are using place name and API's id so it is unique, because it is needed for the select2
             # library. In the form we are sending only the place name back to the backend to be saved.
             place_record = {
                 "id": f"{record['name']}|{record['id']}",
                 "name": record["name"],
-                "text": record["displayString"],
+                "text": f"{record['displayString']} | {record_type}",
                 "type": record["recordType"],
             }
-
-            if (
-                place_record["type"] == "state"
-                and record["place"]["properties"]["country"] == "Canada"
-            ):
-                place_record["type"] = Place.Types.PROVINCE
 
             place_record["parents"] = PlaceSearchAheadView.create_parents_list(
                 record["place"]["properties"]
