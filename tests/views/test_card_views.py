@@ -354,8 +354,15 @@ class TestCardRequest(BaseUnitTest):
             "zip",
             "captcha",
         ]
+        errors = ["This field is required."]
         for field in expected_errors_fields:
-            self.assertFormError(resp, "form", field, ["This field is required."])
+            self.assertFormError(
+                resp.context["form"],
+                field,
+                errors + ["First name is mandatory"]
+                if field == "first_name"
+                else errors,
+            )
 
     def test_card_request_no_patron_address(self):
         c = Client()

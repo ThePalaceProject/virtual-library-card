@@ -133,7 +133,8 @@ class LibraryChangeForm(forms.ModelForm):
         )
 
         # The initial set of library places
-        self.fields["places_filter"].initial = self.instance.places
+        if self.instance.pk:
+            self.fields["places_filter"].initial = self.instance.places
 
     def is_valid(self) -> bool:
         valid = super().is_valid()
@@ -154,7 +155,10 @@ class LibraryChangeForm(forms.ModelForm):
         # We have to do this because we created a relation table manually
         # and not a ManyToMany field in the Library model.
         # Changing this now would lead to loss of data so we'll manage this widget manually.
-        prev = self.instance.places
+        prev = []
+        if self.instance.pk:
+            prev = self.instance.places
+
         for p in self.cleaned_data["places_filter"]:
             if p not in prev:
                 # A new place was added

@@ -164,49 +164,34 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             response, "adminform", "first_name", ["This field is required."]
         )
 
-        # not required fields
-        self.assertRaises(
-            AttributeError,
-            self.assertFormError,
-            response,
-            "adminform",
+        self.assertFormError(
+            response.context["adminform"],
             "last_name",
-            ["This field is required."],
+            [],
         )
 
-        self.assertRaises(
-            AttributeError,
-            self.assertFormError,
-            response,
-            "adminform",
+        self.assertFormError(
+            response.context["adminform"],
             "street_address_line1",
-            ["This field is required."],
+            [],
         )
-        self.assertRaises(
-            AttributeError,
-            self.assertFormError,
-            response,
-            "adminform",
+
+        self.assertFormError(
+            response.context["adminform"],
             "city",
-            ["This field is required."],
+            [],
         )
 
-        self.assertRaises(
-            AttributeError,
-            self.assertFormError,
-            response,
-            "adminform",
+        self.assertFormError(
+            response.context["adminform"],
             "zip",
-            ["This field is required."],
+            [],
         )
 
-        self.assertRaises(
-            AttributeError,
-            self.assertFormError,
-            response,
-            "adminform",
+        self.assertFormError(
+            response.context["adminform"],
             "street_address_line2",
-            ["This field is required."],
+            [],
         )
 
     def test_valid_save_generates_card(self):
@@ -282,7 +267,10 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             response,
             "adminform",
             "email",
-            ["Invalid email domain"],
+            [
+                "User must be part of allowed domains: ['example.org']",
+                "Invalid email domain",
+            ],
         )
 
         data = self._get_user_change_data(
