@@ -47,7 +47,7 @@ python = ">=3.8,<4"
 python-stdnum = "1.18"
 pytz = "^2023.2"
 pyuwsgi = ">=2.0,<2.1"
-requests = "2.30.0"
+requests = "^2.31"
 
 [tool.poetry.group.ci.dependencies]
 dunamai = "^1.16.0"
