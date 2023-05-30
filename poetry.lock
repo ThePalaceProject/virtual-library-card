@@ -276,16 +276,17 @@ django = "*"
 
 [[package]]
 name = "django-autocomplete-light"
-version = "3.9.4"
+version = "3.9.7"
 description = "Fresh autocompletes for Django"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-autocomplete-light-3.9.4.tar.gz", hash = "sha256:0f6da75c1c7186698b867a467a8cdb359f0513fdd8e09288a0c2fb018ae3d94e"},
+    {file = "django-autocomplete-light-3.9.7.tar.gz", hash = "sha256:a34f192ac438c4df056dbfd399550799ddc631c4661960134ded924648770373"},
 ]
 
 [package.dependencies]
+django = ">=3.2"
 six = "*"
 
 [package.extras]
