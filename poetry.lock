@@ -402,14 +402,14 @@ Django = ">=1.4"
 
 [[package]]
 name = "django-material"
-version = "1.11.3"
+version = "1.12.0"
 description = "Material design for django forms and admin"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-material-1.11.3.tar.gz", hash = "sha256:022155be14e168a67392058a7fb11382b466973e2b5942d23220d5d0886b134a"},
-    {file = "django_material-1.11.3-py2.py3-none-any.whl", hash = "sha256:30a3a4fb4baaf3e6672f660197f5ac5a3c072d0bd7a8c6fa63b1cf46feb757a0"},
+    {file = "django-material-1.12.0.tar.gz", hash = "sha256:5e3b9b6c67bd7013d08c879d1a18729015d826109d498c8079cb220e3d96de8e"},
+    {file = "django_material-1.12.0-py2.py3-none-any.whl", hash = "sha256:0914ff60dbff375624c4e9434a6a92fb51f022e957e0b3b1974f88a9287a5946"},
 ]
 
 [package.dependencies]
@@ -1597,4 +1597,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "075a2da231f6d746c046ae382f1a5c8d3e0cadb6bf9bb2f91a9d2d1bb690eb8f"
+content-hash = "7764d7bce6011fa066f6e8607852ed60814fc157fffd68c64227e78acd21f215"
