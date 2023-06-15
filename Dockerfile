@@ -21,11 +21,13 @@ ENV UWSGI_MASTER=1 \
     UWSGI_POST_BUFFERING=1 \
     UWSGI_LOGFORMAT="[pid: %(pid)|app: -|req: -/-] %(addr) (%(user)) {%(vars) vars in %(pktsize) bytes} [%(ctime)] %(method) %(clean_uri) => generated %(rsize) bytes in %(msecs) msecs (%(proto) %(status)) %(headers) headers in %(hsize) bytes (%(switches) switches on core %(core))"
 
+ARG POETRY_VERSION=1.5.1
+
 # Install system
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
     curl mime-support && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "1.3.2" && \
+    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "$POETRY_VERSION" && \
     ln -s /opt/poetry/bin/poetry /bin/poetry && \
     apt-get remove curl -y && \
     apt-get autoremove -y && \
