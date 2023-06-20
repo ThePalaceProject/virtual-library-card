@@ -1,5 +1,6 @@
 import json
 import urllib
+from typing import List
 
 from django.conf import settings
 
@@ -11,7 +12,9 @@ class Geolocalize:
     def get_user_location(latitude, longitude):
         try:
             result = Geolocalize._lookup_position(latitude, longitude)
-            return json.loads(result)
+            result = json.loads(result)
+            PostProcess.mapquest_reverse_geocode(result)
+            return result
         except Exception as err:
             log.error(f"Get user location error: {err}")
         return None
@@ -56,3 +59,35 @@ class Geolocalize:
         status = response.status
 
         return contents, status
+
+
+class PostProcess:
+    @classmethod
+    def mapquest_reverse_geocode(cls, data: dict) -> None:
+        """Some mapquest data is different than what we expect the hierarchy to be.
+        Eg. US territories are treated as countries on their own, they should be under the US Country."""
+        if (
+            len(data.get("results", [])) < 1
+            or len(locations := data["results"][0].get("locations", [])) < 1
+        ):
+            return
+
+        # List[dict, dict]: [What should we match against, What should we change]
+        changes: List[List[dict, dict]] = [
+            [dict(adminArea1="AS"), dict(adminArea1="US", adminArea3="AS")],
+            [dict(adminArea1="GU"), dict(adminArea1="US", adminArea3="GU")],
+            [dict(adminArea1="PR"), dict(adminArea1="US", adminArea3="PR")],
+            [dict(adminArea1="VI"), dict(adminArea1="US", adminArea3="VI")],
+            [dict(adminArea1="MP"), dict(adminArea1="US", adminArea3="MP")],
+        ]
+
+        location: dict = locations[0]
+        for [query, change] in changes:
+            for key, value in query.items():
+                # All items must match else we break out of the loop
+                if location[key] != value:
+                    break
+            else:
+                # All matched! We can update the data and break out
+                location.update(change)
+                break

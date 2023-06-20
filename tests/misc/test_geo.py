@@ -4,7 +4,7 @@ from unittest import mock
 from django.conf import settings
 
 from tests.base import BaseUnitTest
-from virtual_library_card.geoloc import Geolocalize
+from virtual_library_card.geoloc import Geolocalize, PostProcess
 
 
 class TestGeolocalize(BaseUnitTest):
@@ -51,3 +51,69 @@ class TestGeolocalize(BaseUnitTest):
 
         assert status == 200
         assert response == return_value
+
+
+class TestPostProcess(BaseUnitTest):
+    def test_mapquest_reverse_geocode(self):
+        datas = [
+            ## [input, expected]
+            [
+                {
+                    "locations": [
+                        {
+                            "street": "street",
+                            "adminArea4": "city",
+                            "adminArea3": "",
+                            "adminArea1": "AS",
+                        }
+                    ]
+                },
+                {
+                    "street": "street",
+                    "adminArea4": "city",
+                    "adminArea3": "AS",
+                    "adminArea1": "US",
+                },
+            ],
+            [
+                {
+                    "locations": [
+                        {
+                            "street": "street",
+                            "adminArea4": "city",
+                            "adminArea3": "",
+                            "adminArea1": "PR",
+                        }
+                    ]
+                },
+                {
+                    "street": "street",
+                    "adminArea4": "city",
+                    "adminArea3": "PR",
+                    "adminArea1": "US",
+                },
+            ],
+            [
+                {
+                    "locations": [
+                        {
+                            "street": "street",
+                            "adminArea4": "city",
+                            "adminArea3": "",
+                            "adminArea1": "GU",
+                        }
+                    ]
+                },
+                {
+                    "street": "street",
+                    "adminArea4": "city",
+                    "adminArea3": "GU",
+                    "adminArea1": "US",
+                },
+            ],
+        ]
+
+        for [data, result] in datas:
+            data = {"results": [data]}
+            PostProcess.mapquest_reverse_geocode(data)
+            assert data["results"][0]["locations"][0] == result
