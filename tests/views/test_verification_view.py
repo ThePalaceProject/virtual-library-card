@@ -138,6 +138,8 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
             "virtuallibrarycard.views.views_verification.FirebaseDynamicLinksAPI"
         ) as api:
             api().create_signup_short_link.return_value = "test-short-link"
+            self._default_library.uuid = "test-uuid"
+            self._default_library.save()
 
             # Happy path
             response = self.client.get("/verify/email", dict(token=token))
@@ -172,3 +174,9 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
             card = self.create_library_card(user, user.library)
             response = self.client.get("/verify/email", dict(token=token))
             assert "redirect_link" in response.context_data
+
+            # No UUID provided, no link possible
+            self._default_library.uuid = ""
+            self._default_library.save()
+            response = self.client.get("/verify/email", dict(token=token))
+            assert "redirect_link" not in response.context_data

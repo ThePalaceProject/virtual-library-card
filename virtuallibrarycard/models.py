@@ -86,6 +86,7 @@ class Library(models.Model):
 
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)
+    uuid = models.CharField(max_length=255, null=True, blank=True, unique=True)
 
     logo = models.ImageField(upload_to=generate_filename, null=True, blank=False)
     phone = models.CharField(max_length=50, null=True, blank=True)

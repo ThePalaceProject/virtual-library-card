@@ -23,12 +23,6 @@ from virtuallibrarycard.models import (
 from virtuallibrarycard.widgets.buttons import LinkButtonField
 
 
-class LibraryCreationForm(forms.ModelForm):
-    class Meta:
-        model = Library
-        exclude = []
-
-
 class LibraryCardCreationForm(forms.ModelForm):
     class Meta:
         model = LibraryCard
@@ -130,6 +124,11 @@ class LibraryChangeForm(forms.ModelForm):
         self.fields["bulk_upload_prefix"].required = False
         self.fields["bulk_upload_prefix"].help_text = _(
             "This field is only required when Bulk Card Uploads are enabled."
+        )
+
+        self.fields["uuid"].help_text = _(
+            "The Library UUID should be a globally unique UUID provided by the Library Registry."
+            "<br>If not provided, on email verification, the user will not be redirected to the Mobile Apps."
         )
 
         # The initial set of library places

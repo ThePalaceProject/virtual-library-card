@@ -49,6 +49,7 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
 
                 if (
                     card
+                    and card.library.uuid
                     and (dl_settings := getattr(settings, "DYNAMIC_LINKS", None))
                     and (
                         signup_url := getattr(
@@ -60,7 +61,7 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
                     link = api.create_signup_short_link(
                         signup_url,
                         card.number,
-                        self.user.library.identifier,
+                        card.library.uuid,
                     )
                     context["redirect_link"] = link
         return context

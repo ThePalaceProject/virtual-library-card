@@ -35,7 +35,6 @@ from virtuallibrarycard.forms.forms import (
     LibraryCardCreationForm,
     LibraryCardsUploadByCSVForm,
     LibraryChangeForm,
-    LibraryCreationForm,
 )
 from virtuallibrarycard.models import (
     CustomUser,
@@ -226,7 +225,6 @@ class LibraryAllowedDomainsInline(admin.StackedInline):
 
 
 class LibraryAdmin(admin.ModelAdmin):
-    add_form = LibraryCreationForm
     form = LibraryChangeForm
     model = Library
 
@@ -250,6 +248,7 @@ class LibraryAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "identifier",
+                    "uuid",
                     "name",
                     "patron_address_mandatory",
                     "age_verification_mandatory",
