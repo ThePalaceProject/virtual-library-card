@@ -305,13 +305,13 @@ django = ">=3.2"
 
 [[package]]
 name = "django-compressor"
-version = "4.3.1"
+version = "4.4"
 description = "('Compresses linked and inline JavaScript or CSS into single cached files.',)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django_compressor-4.3.1-py2.py3-none-any.whl", hash = "sha256:2c451174acb6f083054af7c8089376599b22d6380bd60311f78ec3fed79acc8e"},
-    {file = "django_compressor-4.3.1.tar.gz", hash = "sha256:68858c0da6cc099cc29a022d86c3ba8aed114da9d709eeceb0d7b8181b5f8942"},
+    {file = "django_compressor-4.4-py2.py3-none-any.whl", hash = "sha256:6e2b0c0becb9607f5099c2546a824c5b84a6918a34bc37a8a622ffa250313596"},
+    {file = "django_compressor-4.4.tar.gz", hash = "sha256:1b0acc9cfba9f69bc38e7c41da9b0d70a20bc95587b643ffef9609cf46064f67"},
 ]
 
 [package.dependencies]
@@ -1485,4 +1485,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "fdbc93741cadacfe70579ec6cf49a6337ec42381720fc90cf63cd8e4db2863be"
+content-hash = "576d5c6bdb83d758a28b3a339c9fb400b32bf7f9305e8a141128e2cc1faab0f8"
