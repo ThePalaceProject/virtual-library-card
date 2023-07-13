@@ -149,14 +149,13 @@ class LibraryChangeForm(forms.ModelForm):
 
         return valid
 
-    def save(self, commit: bool = ...) -> Any:
+    def _save_m2m(self) -> Any:
         # Add new places selected and remove anything unselected.
         # We have to do this because we created a relation table manually
         # and not a ManyToMany field in the Library model.
         # Changing this now would lead to loss of data so we'll manage this widget manually.
-        prev = []
-        if self.instance.pk:
-            prev = self.instance.places
+        # At this point we can assume the model has been saved.
+        prev = self.instance.places
 
         for p in self.cleaned_data["places_filter"]:
             if p not in prev:
@@ -169,7 +168,7 @@ class LibraryChangeForm(forms.ModelForm):
         for p in prev:
             LibraryPlace.objects.filter(library=self.instance, place=p).delete()
 
-        return super().save(commit)
+        return super()._save_m2m()
 
 
 class LibraryCardChangeForm(forms.ModelForm):

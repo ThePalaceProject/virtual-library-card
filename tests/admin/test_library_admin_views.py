@@ -131,6 +131,24 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             response, "adminform", "pin_text", ["This field is required."]
         )
 
+    def test_create_library_with_places(self):
+        library = self.create_library(places=[])
+        data = self._get_library_change_data(library)
+        # Change the data to create a new library
+        data.update(
+            {
+                "identifier": "newWithPlace",
+                "logo": FileIO("tests/files/logo.png"),
+            }
+        )
+        data = self._add_library_states_data(data, ["NY", "AK"])
+        response = self.test_client.post(self.get_add_url(), data)
+
+        assert response.status_code == 302, response.context["adminform"].errors
+        assert sorted(
+            Library.objects.get(identifier=data["identifier"]).get_places()
+        ) == ["AK", "NY"]
+
     def test_change_library_valid(self):
         changes = {
             "identifier": "newid",
