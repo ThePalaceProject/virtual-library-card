@@ -443,13 +443,13 @@ dev = ["Jinja2 (>=2.8)"]
 
 [[package]]
 name = "django-sequences"
-version = "2.7"
+version = "2.8"
 description = "Generate gapless sequences of integer values."
 optional = false
 python-versions = ">=3.6.2"
 files = [
-    {file = "django-sequences-2.7.tar.gz", hash = "sha256:cb5409feff30c7a35542e4a89eb438c58b91a457ad95c126e8c6e5edf01f6287"},
-    {file = "django_sequences-2.7-py3-none-any.whl", hash = "sha256:253b238668c5318f45dc0281187b303ce98af2fdb853431ae59e5e516fa41679"},
+    {file = "django_sequences-2.8-py3-none-any.whl", hash = "sha256:3e3418a080bc71e708419dc7b2c2c07cb8c2aca757e284587cac6f56e45f9518"},
+    {file = "django_sequences-2.8.tar.gz", hash = "sha256:91f4b222ac8fc102ae76abef76ff1291684b4dec0d38d97f189b64b26c2a1b56"},
 ]
 
 [package.dependencies]
@@ -1475,4 +1475,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "ae50dc294838b9d9455a488c71f0e283dfd2d850301368c0f53e26c11a72ba03"
+content-hash = "066a4590d322b6344e8f6182ce6f04b78d3c65e8fe0aaa1fb5a27ea30abf6ac7"
