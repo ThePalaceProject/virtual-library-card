@@ -13,10 +13,8 @@ from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError
 from django.templatetags.static import static
 from django.utils import timezone
-from sequences import get_last_value
 
 from tests.base import BaseUnitTest
-from virtual_library_card.card_number import CardNumber
 from virtuallibrarycard.models import (
     CustomUser,
     Library,
@@ -126,22 +124,6 @@ class TestLibraryModel(BaseUnitTest):
         # Same domain must work, case-insensitive
         CustomUser(library=library, email="email@EXample.org").save()
         assert CustomUser.objects.filter(email="email@EXample.org").count() == 1
-
-    def test_save(self):
-        # test the reset sequence is called
-        prev_start_number = self._default_library.sequence_start_number
-        last_value = get_last_value(
-            CardNumber._card_number_sequence_name(self._default_library)
-        )
-
-        self._default_library.sequence_start_number += 20
-        self._default_library.save()
-        new_last_value = get_last_value(
-            CardNumber._card_number_sequence_name(self._default_library)
-        )
-
-        assert last_value == prev_start_number
-        assert new_last_value == prev_start_number + 20
 
     def test_unique_customization(self):
         l1 = self.create_library()

@@ -1,84 +1,23 @@
-from django.conf import settings
+import random
+
 from django.db import transaction
-from sequences import get_last_value, get_next_value
 
 import virtuallibrarycard.models
 from virtual_library_card.logging import log
-from virtual_library_card.sender import Sender
 
 
 class CardNumber:
     NUMBER_GENERATION_RETRIES = 100
+    # Length of the entire card number
+    CARD_NUMBER_LENGTH = 14
+    # Minimum length the numeric part should be
+    MIN_NUMERIC_LENGTH = 4
 
     @staticmethod
-    def _generate_number_from_sequence(library):
-        next_val = get_next_value(
-            CardNumber._card_number_sequence_name(library),
-            CardNumber._get_sequence_init_value(library, library.sequence_start_number),
-        )
-
-        if library.sequence_down:
-            next_val = library.sequence_start_number - next_val
-            if library.sequence_end_number is not None:
-                next_val += library.sequence_end_number
-
-        must_send_alert = (
-            abs(next_val - library.sequence_start_number)
-            >= settings.CARD_NUMBERS_LIMIT_ALERT
-        )
-        if must_send_alert:
-            try:
-                admin_users = virtuallibrarycard.models.CustomUser.library_admins(
-                    library
-                )
-                super_users = virtuallibrarycard.models.CustomUser.super_users()
-                Sender.send_admin_card_numbers_alert(library, admin_users, super_users)
-            except Exception as e:
-                log.error(f"send_admin_card_numbers_alert error {e}")
-
-        return next_val
-
-    # @staticmethod
-    # def _get_sequence_max(library):
-    #     if library.sequence_end_number is None:
-    #         return sys.maxsize
-    #     return library.sequence_end_number
-
-    @staticmethod
-    def reset_sequence(library):
-        with transaction.atomic():
-            last_value: int = get_last_value(
-                CardNumber._card_number_sequence_name(library)
-            )
-            if last_value is None:
-                return
-
-            sequence_start_number: int = library.sequence_start_number
-
-            if library.sequence_down is False and last_value < sequence_start_number:
-                while last_value < sequence_start_number:
-                    last_value = get_next_value(
-                        CardNumber._card_number_sequence_name(library)
-                    )
-                return
-
-            init_val = CardNumber._get_sequence_init_value(
-                library, sequence_start_number
-            )
-            get_next_value(
-                CardNumber._card_number_sequence_name(library), init_val, last_value
-            )
-
-    @staticmethod
-    def _get_sequence_init_value(library, sequence_start_number):
-        init_val = sequence_start_number
-        if library.sequence_down:
-            init_val = (
-                0
-                if library.sequence_end_number is None
-                else library.sequence_end_number
-            )
-        return init_val
+    def _generate_random_number(length: int, min_length=1) -> int:
+        max_int = int("9" * length)
+        min_int = pow(10, min_length - 1)
+        return random.randint(min_int, max_int)
 
     @staticmethod
     def generate_card_number(library_card):
@@ -91,7 +30,13 @@ class CardNumber:
                                The second part I serialized.
                                The total barcode length (prefix and serialized part) is 14 digits)
                                    """
-        serialized_length = 14 - len(library_card.library.prefix)
+        serialized_length = CardNumber.CARD_NUMBER_LENGTH - len(
+            library_card.library.prefix
+        )
+        if serialized_length < CardNumber.MIN_NUMERIC_LENGTH:
+            raise ValueError(
+                f"Card number length cannot be < {CardNumber.MIN_NUMERIC_LENGTH}, your library prefix is too long."
+            )
 
         exists = False
         with transaction.atomic():
@@ -99,14 +44,25 @@ class CardNumber:
             for _ in range(CardNumber.NUMBER_GENERATION_RETRIES):
                 pattern = "{:0" + serialized_length.__str__() + "d}"
                 suffix_number = pattern.format(
-                    CardNumber._generate_number_from_sequence(library_card.library)
+                    CardNumber._generate_random_number(
+                        serialized_length, min_length=serialized_length // 2
+                    )
                 )
+                # we don't want too many zeros in the number, it looks shabby
+                if suffix_number.count("0") > serialized_length // 3:
+                    log.info(
+                        f"Discarding random number {suffix_number}: Too many zeros."
+                    )
+                    continue
                 number = library_card.library.prefix + suffix_number
                 # Test the availability of this number, else retry
                 exists = virtuallibrarycard.models.LibraryCard.objects.filter(
                     library=library_card.library, number=number
                 ).exists()
                 if exists:
+                    log.info(
+                        f"Discarding random number {suffix_number}: Card number already exists."
+                    )
                     continue
                 # Number is available
                 library_card.number = number

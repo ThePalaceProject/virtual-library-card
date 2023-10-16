@@ -222,7 +222,6 @@ class CardSignupView(FormView):
         Set the User session data and redirect url on a success."""
         context = self.get_context_data()
         result = Geolocalize.get_user_location(lat, long)
-
         if result:
             first_result = result["results"]
             location = first_result[0]["locations"][0]

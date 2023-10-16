@@ -111,7 +111,6 @@ class LibraryChangeForm(forms.ModelForm):
                     url=self.instance.logo.url, alt=self.instance.name + " logo"
                 )
             )
-        self.fields["sequence_down"].label = _("Sequence order")
 
         # Customisation button setup
         emails_field: LinkButtonField = self.fields["Customize_emails_field"]

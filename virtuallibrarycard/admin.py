@@ -275,9 +275,6 @@ class LibraryAdmin(admin.ModelAdmin):
                     "card_validity_months",
                     "prefix",
                     "bulk_upload_prefix",
-                    "sequence_start_number",
-                    "sequence_end_number",
-                    "sequence_down",
                 )
             },
         ),

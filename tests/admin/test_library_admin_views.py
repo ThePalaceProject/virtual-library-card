@@ -23,8 +23,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "email": "",
             "prefix": "",
             "bulk_upload_prefix": "",
-            "sequence_start_number": 0,
-            "sequence_down": False,
             "patron_address_mandatory": True,
             "age_verification_mandatory": True,
             "pin_text": "pin",
@@ -74,8 +72,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             terms_conditions_url="termsurl",
             prefix="new",
             bulk_upload_prefix="bulk",
-            sequence_start_number=0,
-            sequence_down=False,
             patron_address_mandatory=True,
             age_verification_mandatory=True,
             pin_text="pin",
@@ -98,8 +94,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             terms_conditions_url="",
             prefix="",
             allow_bulk_card_uploads=False,
-            # sequence_start_number=0,
-            # sequence_down=False,
         )
         self._add_library_states_data(data)
         response = self.test_client.post(self.get_add_url(), data)
@@ -116,12 +110,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         )
         self.assertFormError(
             response, "adminform", "prefix", ["This field is required."]
-        )
-        self.assertFormError(
-            response, "adminform", "sequence_start_number", ["This field is required."]
-        )
-        self.assertFormError(
-            response, "adminform", "sequence_down", ["This field is required."]
         )
         self.assertFormError(response, "adminform", "logo", ["This field is required."])
         self.assertFormError(
@@ -154,7 +142,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "identifier": "newid",
             "prefix": "newid",
             "name": "newid",
-            "sequence_start_number": 99,
             "logo": FileIO("tests/files/logo.png"),
         }
         data = self._get_library_change_data(self._default_library, **changes)
@@ -166,7 +153,6 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         library: Library = Library.objects.get(identifier="newid")
         assert library.prefix == "newid"
         assert library.name == "newid"
-        assert library.sequence_start_number == 99
 
     def test_library_add_states(self):
         library = self.create_library(name="test", places=["FL"])

@@ -20,7 +20,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from virtual_library_card.card_number import CardNumber
-from virtual_library_card.logging import log
 
 
 def boolean_choices():
@@ -204,24 +203,6 @@ class Library(models.Model):
 
     def __str__(self):
         return self.name
-
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        try:
-            db_library: Library = Library.objects.get(
-                id=self.id
-            )  # this is the copy of the object saved in the database
-            if (
-                db_library
-                and self.sequence_start_number != db_library.sequence_start_number
-            ):
-                CardNumber.reset_sequence(self)
-        except Library.DoesNotExist:
-            pass
-        except Exception as e:
-            log.exception("******** saving library exception")
-        super().save(force_insert, force_update, using, update_fields)
 
     def get_allowed_email_domains(self) -> list[str]:
         return [e.domain for e in self.library_email_domains.all()]
