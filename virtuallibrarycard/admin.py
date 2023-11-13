@@ -131,7 +131,16 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     add_fieldsets = (
         (
             None,
-            {"fields": ("first_name", "last_name", "email", "password1", "password2")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "password1",
+                    "password2",
+                    "library",
+                )
+            },
         ),
     )
     actions = ["export_as_csv"]

@@ -22,6 +22,7 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
     MODEL_ADMIN = CustomUserAdmin
 
     def test_new_user_save(self):
+        library = self.create_library()
         response = self.test_client.post(
             self.get_add_url(),
             {
@@ -29,10 +30,13 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
                 "password1": "new_pass",
                 "password2": "new_pass",
                 "first_name": "test",
+                "library": library.pk,
             },
         )
         assert response.status_code == 302
-        assert CustomUser.objects.filter(email="test@user.com").count() == 1
+        query = CustomUser.objects.filter(email="test@user.com")
+        assert query.count() == 1
+        assert query.first().library == library
 
     def test_new_user_save_errors(self):
         response = self.test_client.post(
