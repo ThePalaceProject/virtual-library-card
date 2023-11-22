@@ -11,50 +11,6 @@ from virtual_library_card.sender import Sender
 class TestSender(BaseUnitTest):
     @mock.patch("virtual_library_card.sender.EmailMultiAlternatives")
     @mock.patch("virtual_library_card.sender.render_to_string")
-    def test_send_admin_card_numbers_alert(
-        self, mock_render: mock.MagicMock, mock_email: mock.MagicMock
-    ):
-        library = self._default_library
-        superuser = self.create_user(library)
-        admin = self.create_user(library)
-
-        return_value = "returnvalue"
-        mock_render.return_value = return_value
-
-        Sender.send_admin_card_numbers_alert(library, [admin], [superuser])
-
-        assert mock_render.call_count == 1
-        assert mock_render.call_args[0] == (
-            "email/number_sequence_alert.html",
-            {
-                "library_name": library.name,
-                "identifier": library.identifier,
-                "logo_url": library.logo.url,
-                "login_url": Sender._get_absolute_login_url(library.identifier),
-            },
-        )
-
-        assert mock_email.call_count == 1
-        assert mock_email.call_args[0] == (
-            f"{library.name} cards numbers | The limit will be reached soon",
-            return_value,
-            settings.DEFAULT_FROM_EMAIL,
-        )
-        assert mock_email.call_args_list[0].kwargs == dict(
-            to=[admin.email],
-            cc=[superuser.email],
-        )
-
-        assert mock_email().attach_alternative.call_count == 1
-        assert mock_email().attach_alternative.call_args[0] == (
-            return_value,
-            "text/html",
-        )
-
-        assert mock_email().send.call_count == 1
-
-    @mock.patch("virtual_library_card.sender.EmailMultiAlternatives")
-    @mock.patch("virtual_library_card.sender.render_to_string")
     @mock.patch("virtual_library_card.sender.Tokens")
     def test_send_user_welcome(
         self,

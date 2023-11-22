@@ -99,11 +99,6 @@ class Library(models.Model):
     prefix = models.CharField(max_length=10, null=True, blank=False)
     bulk_upload_prefix = models.CharField(max_length=10, null=True, blank=False)
     card_validity_months = models.PositiveSmallIntegerField(null=True, blank=True)
-    sequence_start_number = models.IntegerField(default=0)
-    sequence_end_number = models.IntegerField(null=True, blank=True)
-    sequence_down = models.BooleanField(
-        choices=BOOL_CHOICES, blank=False, null=False, default=False
-    )
 
     # Configurables
     patron_address_mandatory = models.BooleanField(

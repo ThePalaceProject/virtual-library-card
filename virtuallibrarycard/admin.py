@@ -18,7 +18,6 @@ from django.urls import URLPattern, URLResolver, path, reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic.base import TemplateView
-from sequences.models import Sequence
 
 from virtual_library_card.logging import LoggingMixin
 from virtuallibrarycard.business_rules.library_card import (
@@ -247,9 +246,8 @@ class LibraryAdmin(admin.ModelAdmin):
         "terms_conditions_link",
         "social_links",
         "card_validity_months",
-        "sequence_down",
     ]
-    list_filter = ("card_validity_months", "sequence_start_number")
+    list_filter = ("card_validity_months",)
 
     fieldsets = (
         (
@@ -403,20 +401,6 @@ class LibraryCardAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
 
-class CustomSequenceAdmin(admin.ModelAdmin):
-    list_display = ["name", "last"]
-    ordering = ["name"]
-    readonly_fields = ["name", "last"]
-    list_display_links = ()
-    model = Sequence
-
-    def get_model_perms(self, request):
-        """
-        Return empty perms dict thus hiding the model from admin index.
-        """
-        return {}
-
-
 def export_list_as_csv(self, request, queryset):
     meta = self.model._meta
     field_names = [field.name for field in meta.fields]
@@ -567,5 +551,4 @@ admin_site.enable_nav_sidebar = False
 admin_site.register(CustomUser, CustomUserAdmin)
 admin_site.register(Library, LibraryAdmin)
 admin_site.register(LibraryCard, LibraryCardAdmin)
-admin_site.register(Sequence, CustomSequenceAdmin)
 admin_site.register(Place, PlaceAdmin)

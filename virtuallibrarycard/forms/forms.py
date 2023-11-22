@@ -171,12 +171,6 @@ class LibraryChangeForm(forms.ModelForm):
 
 
 class LibraryCardChangeForm(forms.ModelForm):
-    sequence_down = forms.TypedChoiceField(
-        coerce=lambda x: bool(int(x)),
-        choices=((0, "Up"), (1, "Down")),
-        widget=forms.RadioSelect,
-    )
-
     class Meta:
         model = LibraryCard
         exclude = []
