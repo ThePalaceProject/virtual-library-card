@@ -1,8 +1,6 @@
-from typing import Any
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView
@@ -179,25 +177,6 @@ class CardSignupView(FormView):
     def dispatch(self, request, *args, **kwargs):
         UserSessionManager.clean_session_data(request)
         return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request, *args: str, **kwargs: Any):
-        """In case of a GET request we try to validate coordinates if present
-        OR we render the location form"""
-        lat, long = self.request.GET.get("lat"), self.request.GET.get("long")
-        identifier = kwargs.get("identifier")
-
-        # If we have been provided the latitude and longitude
-        # we can verify the information on the server-side
-        # and redirect to the card request form page
-        if lat and long and identifier:
-            library = Library.objects.filter(identifier=identifier).first()
-            try:
-                self._validate_location(library, lat, long)
-                return redirect(self.success_url)
-            except InvalidUserLocation as ex:
-                return ex.response_str
-
-        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         identifier = form.cleaned_data.get("identifier")

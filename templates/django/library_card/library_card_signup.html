@@ -1,5 +1,74 @@
+<style>
+    .location-spinner {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
 
+    .location-spinner .spinner-content {
+        font-size: 1.5em;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
+    /* CSS Spinner https://loading.io/css/ */
+    .lds-ring {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 8px solid #000;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #000 transparent transparent transparent;
+    }
+
+    .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+
+    .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+
+    .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+
+    @keyframes lds-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="location-spinner">
+    <div class="spinner-spinner">
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    </div>
+    <div class="spinner-content">
+        <span>Locating Your Library</span>
+    </div>
+</div>
 
 <form name="card_form" id="card_form" method="post" style="visibility: hidden">
     {% csrf_token %}
@@ -22,15 +91,31 @@
     }
 
     function successCallback(position) {
-        let identifier = window.location.href.split("/").slice(-2)[0];
-        document.getElementById('id_lat').value = position.coords.latitude;
-        document.getElementById('id_long').value = position.coords.longitude;
-        document.getElementById('id_identifier').value = identifier;
-        document.getElementById('card_form').submit();
+        locationFormSubmit(position.coords.latitude, position.coords.longitude)
     }
 
-    window.onload = function() {
-        initGeolocation();
+    function locationFormSubmit(lat, long) {
+        // Submit the form after auto-filling the provided information
+        let identifier = window.location.href.split("/").slice(-2)[0];
+        document.getElementById('id_lat').value = lat;
+        document.getElementById('id_long').value = long;
+        document.getElementById('id_identifier').value = identifier;
+        document.getElementById('card_form').submit()
+    }
+
+    window.onload = function () {
+        /** If we have ?lat=...*long=... query parameters then we use that information
+         * otherwise we attempt to pull that location from the browser geolocation API
+         **/
+        var params = new URLSearchParams(window.location.search)
+        var lat = params.get("lat"),
+            long = params.get("long");
+        if ([lat, long].indexOf(null) > -1) {
+            initGeolocation();
+        }
+        else {
+            locationFormSubmit(lat, long);
+        }
     }
 
 
