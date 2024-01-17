@@ -30,7 +30,7 @@ class TestGeolocalize(BaseUnitTest):
         mock_urllib.request.urlopen().read = mock.MagicMock(return_value=return_value)
         response = Geolocalize._lookup_position("10", "10")
 
-        expected_url = f"http://www.mapquestapi.com/geocoding/v1/reverse?key={settings.MARQUEST_AUTH_ID}&location=10,10&outFormat=json&thumbMaps=false"
+        expected_url = f"http://www.mapquestapi.com/geocoding/v1/reverse?key={settings.MAPQUEST_API_KEY}&location=10,10&outFormat=json&thumbMaps=false"
         assert (
             mock_urllib.request.urlopen.call_count == 2
         )  # called once when setting up urlopen().read mock object

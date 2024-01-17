@@ -24,7 +24,7 @@ class Geolocalize:
         root_url = "http://www.mapquestapi.com/geocoding/v1/reverse?"
         params_url = (
             "key="
-            + settings.MARQUEST_AUTH_ID
+            + settings.MAPQUEST_API_KEY
             + "&location="
             + latitude
             + ","
@@ -44,7 +44,7 @@ class Geolocalize:
         country_code = "US,CA"
 
         parameters = {
-            "key": settings.MARQUEST_AUTH_ID,
+            "key": settings.MAPQUEST_API_KEY,
             "collection": collection,
             "countryCode": country_code,
             "q": query,
