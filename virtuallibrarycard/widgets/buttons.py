@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from django import forms
 
@@ -10,7 +10,7 @@ class FormButtonInput(forms.widgets.Input):
     template_name: str = "form_button_input.html"
     href: str = None
 
-    def get_context(self, name: str, value, attrs) -> Dict[str, Any]:
+    def get_context(self, name: str, value, attrs) -> dict[str, Any]:
         ctx = super().get_context(name, value, attrs)
         ctx["widget"]["href"] = self.href
         return ctx

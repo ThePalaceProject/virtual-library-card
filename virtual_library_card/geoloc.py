@@ -1,6 +1,5 @@
 import json
 import urllib
-from typing import List
 
 from django.conf import settings
 
@@ -74,7 +73,7 @@ class PostProcess:
             return
 
         # List[dict, dict]: [What should we match against, What should we change]
-        changes: List[List[dict, dict]] = [
+        changes: list[list[dict, dict]] = [
             [dict(adminArea1="AS"), dict(adminArea1="US", adminArea3="AS")],
             [dict(adminArea1="GU"), dict(adminArea1="US", adminArea3="GU")],
             [dict(adminArea1="PR"), dict(adminArea1="US", adminArea3="PR")],

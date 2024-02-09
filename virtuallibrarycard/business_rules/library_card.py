@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Generator
 from dataclasses import dataclass
 from datetime import datetime
 from io import BytesIO, StringIO
 from os import linesep
 from random import random
 from threading import Thread
-from typing import IO, Any, Generator
+from typing import IO, Any
 
 import chardet
 from django.core.files.storage import FileSystemStorage

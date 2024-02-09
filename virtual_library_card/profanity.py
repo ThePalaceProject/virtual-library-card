@@ -1,5 +1,4 @@
 import itertools
-from typing import List, Optional
 
 from better_profanity import profanity
 from better_profanity.varying_string import VaryingString
@@ -13,7 +12,7 @@ class ProfanityWordList:
     since it matches our need for basic censorship with common replacements but not the need to do partial string matches
     """
 
-    _ALL_CENSORED_WORDS: List[str] = []
+    _ALL_CENSORED_WORDS: list[str] = []
 
     @classmethod
     def contains_profanity(cls, word: str) -> bool:
@@ -25,13 +24,13 @@ class ProfanityWordList:
         return False
 
     @classmethod
-    def wordlist(cls) -> List[str]:
+    def wordlist(cls) -> list[str]:
         if not cls._ALL_CENSORED_WORDS:
             cls._generate_wordlist()
         return cls._ALL_CENSORED_WORDS
 
     @classmethod
-    def _generate_wordlist(cls, custom_words: Optional[List[str]] = None):
+    def _generate_wordlist(cls, custom_words: list[str] | None = None):
         # setup and cache the profanity list
         profanity.load_censor_words(custom_words=custom_words)
         cls._ALL_CENSORED_WORDS = []
@@ -43,7 +42,7 @@ class ProfanityWordList:
         )
 
     @classmethod
-    def _generate_word_variations(cls, vstr: VaryingString) -> List[str]:
+    def _generate_word_variations(cls, vstr: VaryingString) -> list[str]:
         """Generate all possible variations for a given word"""
         variations = []
         combos = []

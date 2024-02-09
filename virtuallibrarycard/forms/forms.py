@@ -1,5 +1,5 @@
 from gettext import gettext as _
-from typing import Any, Dict, Optional
+from typing import Any
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -29,7 +29,7 @@ class LibraryCardCreationForm(forms.ModelForm):
         exclude = []
         labels = {"user": _("User Email")}
 
-    def __init__(self, data: Dict = None, *args, **kwargs) -> None:
+    def __init__(self, data: dict = None, *args, **kwargs) -> None:
         super().__init__(data, *args, **kwargs)
 
         # If we have the field and also have a new instance (on create)
@@ -41,7 +41,7 @@ class LibraryCardCreationForm(forms.ModelForm):
                 <br>In case a number is provided it will be prefixed by the Library prefix"
             )
 
-    def clean(self) -> Optional[Dict[str, Any]]:
+    def clean(self) -> dict[str, Any] | None:
         super().clean()
         number = self.cleaned_data.get("number")
         if not self.instance.pk and number:

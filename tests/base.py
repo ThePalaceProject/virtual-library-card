@@ -1,7 +1,6 @@
 import sys
 from logging import StreamHandler
 from random import choice
-from typing import Dict, List
 from unittest import mock
 
 import pytest
@@ -103,7 +102,7 @@ class TestData:
         card.save()
         return card
 
-    def inline_post_data(self, name, data: List[Dict]):
+    def inline_post_data(self, name, data: list[dict]):
         """Generic inline form data creation"""
         inline = {
             f"{name}-TOTAL_FORMS": len(data),
