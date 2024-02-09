@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 from urllib.request import Request
 
 from crispy_forms.helper import FormHelper
@@ -32,7 +32,7 @@ class EmailVerificationTokenView(LoggingMixin, TemplateView):
         self.user = None
         super().__init__(*args, **kwargs)
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         if self.user:
             context["user"] = self.user
@@ -144,7 +144,7 @@ class EmailVerificationResendToken(FormView):
         self.email_missing = False
         super().__init__(**kwargs)
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         success = self.request.GET.get("success", None)
 

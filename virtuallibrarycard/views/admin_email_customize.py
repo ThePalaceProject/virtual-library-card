@@ -1,5 +1,5 @@
 from gettext import gettext as _
-from typing import Any, Dict
+from typing import Any
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -41,7 +41,7 @@ class AdminCustomizeWelcomeEmailView(PermissionRequiredMixin, FormView):
         library_id = self.kwargs["id"]
         return Library.objects.get(id=library_id)
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """The context data needs the email template rendered string
         so the javascript may show a preview to the user"""
         ctx = super().get_context_data(**kwargs)
@@ -69,7 +69,7 @@ class AdminCustomizeWelcomeEmailView(PermissionRequiredMixin, FormView):
 
         return ctx
 
-    def get_initial(self) -> Dict[str, Any]:
+    def get_initial(self) -> dict[str, Any]:
         """The intitial form data should be prefilled with the saved text"""
         library = self._get_url_library()
         return {
