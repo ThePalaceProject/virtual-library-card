@@ -1,7 +1,7 @@
 name: Lint
 on: [push, pull_request]
 env:
-  PYTHON_VERSION: 3.9
+  PYTHON_VERSION: "3.10"
 
 jobs:
   lint:
@@ -27,7 +27,7 @@ jobs:
       - name: Install Poetry
         uses: ThePalaceProject/circulation/.github/actions/poetry@main
         with:
-          version: "1.5.1"
+          version: "1.7.1"
 
       - name: Install Pre-commit
         run: |

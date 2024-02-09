@@ -21,7 +21,7 @@ ENV UWSGI_MASTER=1 \
     UWSGI_POST_BUFFERING=1 \
     UWSGI_LOGFORMAT="[pid: %(pid)|app: -|req: -/-] %(addr) (%(user)) {%(vars) vars in %(pktsize) bytes} [%(ctime)] %(method) %(clean_uri) => generated %(rsize) bytes in %(msecs) msecs (%(proto) %(status)) %(headers) headers in %(hsize) bytes (%(switches) switches on core %(core))"
 
-ARG POETRY_VERSION=1.5.1
+ARG POETRY_VERSION=1.7.1
 
 # Install system
 RUN apt-get update -y && \
