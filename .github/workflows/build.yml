@@ -66,6 +66,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/virtual-library-card
           tags: |
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }},priority=10
             type=semver,pattern={{major}}.{{minor}},priority=10
             type=semver,pattern={{version}},priority=20
             type=ref,event=branch,priority=30
