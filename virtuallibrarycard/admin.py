@@ -395,9 +395,9 @@ class LibraryCardAdmin(admin.ModelAdmin):
         """Overridden to add the password reset url extra context"""
         user = LibraryCard.objects.get(id=object_id).user
         if user:
-            extra_context[
-                "reset_password_url"
-            ] = f"../../../customuser/{user.id}/password"
+            extra_context["reset_password_url"] = (
+                f"../../../customuser/{user.id}/password"
+            )
         return super().change_view(request, object_id, form_url, extra_context)
 
 
@@ -524,9 +524,9 @@ def export_users_by_consent(request: HttpRequest):
 
     content.seek(0)
     response = StreamingHttpResponse(content, content_type="text/csv")
-    response[
-        "Content-Disposition"
-    ] = f"attachment; filename=consented_users_{consent_type}_{datetime.datetime.now()}.csv"
+    response["Content-Disposition"] = (
+        f"attachment; filename=consented_users_{consent_type}_{datetime.datetime.now()}.csv"
+    )
     return response
 
 

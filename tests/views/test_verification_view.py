@@ -112,7 +112,8 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
     def test_password_set_post(self):
         """Is the password set on a post to the verification form
         This sounds funny, but the password set form is on the email verification page
-        because a user may be created without a password, and will subsequently require a password to log in"""
+        because a user may be created without a password, and will subsequently require a password to log in
+        """
         user = self._default_user
         token = Tokens.generate(
             TokenTypes.EMAIL_VERIFICATION, expires_in_days=1, email=user.email

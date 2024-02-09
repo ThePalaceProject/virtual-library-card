@@ -158,9 +158,9 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            "patron_address_mandatory"
-        ] = self.model.library.patron_address_mandatory
+        context["patron_address_mandatory"] = (
+            self.model.library.patron_address_mandatory
+        )
         return context
 
     def get_success_url(self):

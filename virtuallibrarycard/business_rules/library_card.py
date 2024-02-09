@@ -260,7 +260,8 @@ def iter_clean_lines(io: IO) -> Generator[str, None, None]:
     """Iterate over an IO object and ignore blank lines
     This is to specifically ignore empty last lines in csvs
     decoding is done through charset detection
-    This handles unicode BOM characters since we do not control how the browser might read the file"""
+    This handles unicode BOM characters since we do not control how the browser might read the file
+    """
     # Detect charset and the decode entire file
     detectline = io.read(128)
     io.seek(0)

@@ -54,9 +54,9 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
                 "library_email_domains-INITIAL_FORMS": 0,
                 "library_email_domains-MIN_NUM_FORMS": 0,
                 "library_email_domains-MAX_NUM_FORMS": 1000,
-                "library_email_domains-__prefix__-library": library.id
-                if library
-                else "",
+                "library_email_domains-__prefix__-library": (
+                    library.id if library else ""
+                ),
             }
         )
 

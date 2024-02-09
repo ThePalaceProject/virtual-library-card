@@ -65,7 +65,8 @@ class PostProcess:
     @classmethod
     def mapquest_reverse_geocode(cls, data: dict) -> None:
         """Some mapquest data is different than what we expect the hierarchy to be.
-        Eg. US territories are treated as countries on their own, they should be under the US Country."""
+        Eg. US territories are treated as countries on their own, they should be under the US Country.
+        """
         if (
             len(data.get("results", [])) < 1
             or len(locations := data["results"][0].get("locations", [])) < 1

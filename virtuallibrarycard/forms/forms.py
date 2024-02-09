@@ -250,12 +250,12 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             if (
                 instance and not instance.place
             ):  # Edition just after creation form with minimal fields
-                self.fields[
-                    "email"
-                ].widget.value_from_datadict = lambda *args: self.instance.email
-                self.fields[
-                    "first_name"
-                ].widget.value_from_datadict = lambda *args: self.instance.first_name
+                self.fields["email"].widget.value_from_datadict = (
+                    lambda *args: self.instance.email
+                )
+                self.fields["first_name"].widget.value_from_datadict = (
+                    lambda *args: self.instance.first_name
+                )
                 self.fields["email"].widget.attrs["disabled"] = True
 
         except KeyError as e:

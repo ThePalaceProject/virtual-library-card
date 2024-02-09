@@ -37,7 +37,8 @@ class LibraryRules:
         country: str = None,
     ) -> bool:
         """Test from the current place all the way to the last parent available.
-        All levels of the place hierarchy MUST match even if the value isn't provided in the keyword args."""
+        All levels of the place hierarchy MUST match even if the value isn't provided in the keyword args.
+        """
         match_types = {
             Place.Types.COUNTRY: country,
             Place.Types.STATE: state,
