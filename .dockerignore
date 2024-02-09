@@ -4,9 +4,6 @@
 # Temp files
 *~
 
-# Readmes
-**/*.md
-
 # Tests
 tests/
 
