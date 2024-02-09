@@ -71,6 +71,18 @@ jobs:
             type=ref,event=branch,priority=30
             type=sha,priority=40
 
+      # We use docker/metadata-action to generate tags, instead of using string
+      # interpolation, because it properly handles making sure special
+      # characters are escaped, and the repo owner string is lowercase.
+      - name: Generate tags for cache image
+        id: cache-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/virtual-library-card
+          tags: |
+            type=raw,value=latest
+        if: github.ref_type == 'branch' && github.ref_name != 'main'
+
       - name: Build image (with cache)
         uses: docker/build-push-action@v5
         with:
@@ -80,7 +92,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64, linux/arm64
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/virtual-library-card:main
+          cache-from: type=registry,ref=${{ fromJSON(steps.cache-meta.outputs.json).tags[0] }}
         if: github.ref_type == 'branch' && github.ref_name != 'main'
 
       - name: Build image (full)
