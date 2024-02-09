@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load static %}
+<html lang="en">
+{% trans "Virtual Library Card" as virtual_library_card %}
+<head>
+    <title>{% trans virtual_library_card %} | {% block title %} {% endblock %}</title>
+    {% include "includes/header.html" %}
+    {% include 'material/includes/material_css.html' %}
+    {% include 'material/includes/material_js.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen and (min-width:480px) and (max-width: 799px)"
+          href="{% static 'css/style-tablet.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen and (min-width:100px) and (max-width: 480px)"
+          href="{% static 'css/style-mobile.css' %}">
+
+</head>
+
+<body>
+
+<div id="page">
+    <div id="content" class="embedded_page">
+        <div class="container main-container ">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <div id="footer">
+        {% include "includes/minimal_footer.html" %}
+    </div>
+</div>
+
+<script>
+    jQuery(function ($) {
+        // Very, very dirty hack to display asterisks after labels
+        // We could do it by overriding some material.css rules but we had an issue: the selectors used by
+        // materialize did select labels placed BEFORE the associated input field (such as the State SELECT), but
+        // not AFTER. For some obscure reasons, Maretialize geerates labels for INPUTs after these, while it
+        // generates labels for SELECT before these. So we capitulate and rely to this hack...
+        $('.required').find('input ~ label').append(' *');
+        // We also cleanup any value prefilled by the browser:
+        $('input[type=email]').delay(125).val('');
+        $('input[type=password]').delay(125).val('');
+
+        $('form').bind('submit', function () {
+            $(this).find(':input').prop('disabled', false);
+        });
+    });
+</script>
+</body>
+</html>

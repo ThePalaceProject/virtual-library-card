@@ -1,0 +1,27 @@
+{% extends 'minimal_layout.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }} | {% blocktrans %}Library Card Denied{% endblocktrans %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="embeded_page_top">
+        {% include "includes/header_logo.html" %}
+
+        <h1 class="embeded_page_title">| {% blocktrans %}Library Card Denied{% endblocktrans %} </h1>
+    </div>
+
+
+    <div class="form-message-area">
+        <h4>{% blocktrans %}Library Card not allowed{% endblocktrans %}</h4>
+        <p>{% blocktrans %}You must be in <strong>USA</strong> to request your library card{% endblocktrans %}</p>
+
+    </div>
+
+
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style type="text/css">
+        /* add an asterisk using CSS */
+        .required label, label.required {
+            font-weight: normal;
+        }
+
+        .aligned .required:after, .aligned .required label:after, .aligned label.required:after {
+            content: " *";
+        }
+    </style>
+{% endblock %}

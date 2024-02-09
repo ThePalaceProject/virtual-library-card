@@ -1,0 +1,42 @@
+{% load i18n %}
+{% trans "Terms & Conditions" as terms %}
+<footer id="main-footer" style="padding: 10px 0" role="contentinfo">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12  col-md-push-1 footer-widget">
+                {% if request.session.terms_conditions_url is not null or library is not null %}
+                    <ul class="fh5co-footer-links">
+                        <li class="bottom_links">
+                            {% if library is not null and library.terms_conditions_url is not null %}
+                                <a title="{% blocktrans %}Terms & Conditions{% endblocktrans %}"
+                                   aria-label="{% blocktrans %}Terms & Conditions{% endblocktrans %}"
+                                   href="{{ library.terms_conditions_url }}">{% blocktrans %}Terms &
+                                    Conditions{% endblocktrans %}</a>
+                            {% else %}
+                                <a title="{% blocktrans %}Terms & Conditions{% endblocktrans %}"
+                                   aria-label="{% blocktrans %}Terms & Conditions{% endblocktrans %}"
+                                   href="{{ request.session.terms_conditions_url }}">{% blocktrans %}Terms &
+                                    Conditions{% endblocktrans %}</a>
+                            {% endif %}
+                            <span>|</span>
+                            {% if library is not null %}
+                                <a title="{% blocktrans %}Customer Support{% endblocktrans %}"
+                                   aria-label="{% blocktrans %}Customer Support{% endblocktrans %}"
+                                   href="mailto:'{{ library.email }}'">{{ library.email }}</a>
+                            {% elif request.session.email is not null %}
+                                <a title="{% blocktrans %}Customer Support{% endblocktrans %}"
+                                   aria-label="{% blocktrans %}Customer Support{% endblocktrans %}"
+                                   href="{{ request.session.email }}">{{ request.session.email }}</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+</div>

@@ -1,0 +1,33 @@
+@media screen and (max-width: 768px) {
+    .main-nav .top .num, .main-nav .top .main-nav-social, .main-nav .top .site {
+        padding: 5px 10px;
+    }
+
+    .main-nav .menu-1 {
+        display: none;
+    }
+
+    #main-hero .flexslider .slider-text > .slider-text-inner h1 {
+        font-size: 30px;
+    }
+
+    #main-footer {
+        padding: 3em 0;
+    }
+
+    #main-footer .footer-widget {
+        text-align: left;
+    }
+
+    #main-offcanvas {
+        display: block;
+    }
+
+    .main-nav-toggle {
+        display: block;
+    }
+
+    #main-logo .logo {
+        width: 140px;
+    }
+}

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    {{ block.super }} | {% blocktrans %}Deleting your account{% endblocktrans %}
+{% endblock %}
+
+
+{% block content %}
+    <h1>{% blocktrans %}Your account has been successfully deleted{% endblocktrans %}</h1>
+    <p>{% blocktrans %}We hope you'll be back shortly{% endblocktrans %}</p>
+
+{% endblock %}

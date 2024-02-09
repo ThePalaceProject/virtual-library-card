@@ -1,0 +1,23 @@
+<HTML>
+<BODY>
+{% if ERRNUM %}
+ERRNUM={{ ERRNUM }}<BR>
+{% endif %}
+{% if ERRMSG %}
+ERRMSG={{ ERRMSG }}<BR>
+{% endif %}
+{% for library_card in library_cards %}
+  {% if library_card.expiration_date %}
+EXP DATE[p43]={{ library_card.expiration_date.strftime('%m-%d-%y') }}<BR>
+  {% endif %}
+HOME LIBR[p53]={{ library_card.library.identifier }}<BR>
+CREATED[p83]={{ library_card.created.strftime('%m-%d-%y') }}<BR>
+PATRN NAME[pn]={{ library_card.user.get_smart_name() }}<BR>
+ADDRESS[pa]={{ library_card.user.street_address_line1 }}<BR>
+  {% if library_card.user.street_address_line2 %}
+ADDRESS2[ph]={{ library_card.user.street_address_line2 }}<BR>
+  {% endif %}
+P BARCODE[pb]={{ library_card.number }}<BR>
+{% endfor %}
+</BODY>
+</HTML>

@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }} | {% blocktrans %}Deleting your account{% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% blocktrans %}Deleting my profile{% endblocktrans %}</h1>
+
+
+    <form method="post">{% csrf_token %}
+        <h4>{% blocktrans %}Are you sure you want to delete your account {% endblocktrans %}
+            <strong>{{ object }}</strong>?</h4>
+
+        {% if library_cards %}
+            <h5>             {% if library_cards %}
+                <span><strong>{% blocktrans %}Important: {% endblocktrans %}</strong>
+                    {% blocktrans %}By deleting your profile, you will also delete your library cards{% endblocktrans %}
+                </span>
+            {% endif %}</h5>
+            <ul class="detailedInfo" style="margin-top: 40px">
+
+                <li><input type="submit" class="btn-danger"
+                           aria-label="{% blocktrans count count=library_cards.count %}Yes, I want to delete my profile and my library card{% plural %}Yes, I want to delete my profile and my {{ count }} library cards{% endblocktrans %}"
+                           value="{% blocktrans count count=library_cards.count %}Yes, I want to delete my profile and my library card{% plural %}Yes, I want to delete my profile and my {{ count }} library cards{% endblocktrans %}">
+                </li>
+
+                <li style="margin-top: 20px">
+                    <a class="btn btn-info"
+                       title="{% blocktrans %}No, I only want to delete my library cards{% endblocktrans %}"
+                       aria-label="{% blocktrans %}No, I only want to delete my library cards{% endblocktrans %}"
+                       href="/account/delete/{{ user.first_name }}/cards/">
+                    {% blocktrans %}No, I only want to delete my library cards{% endblocktrans %}</a>
+                </li>
+            </ul>
+        {% else %}
+            <ul class="detailedInfo" style="margin-top: 40px">
+                <li><input type="submit" class="btn btn-danger"
+                           aria-label="{% blocktrans %}Yes, I want to delete my profile{% endblocktrans %}"
+                           value="{% blocktrans %}Yes, I want to delete my profile{% endblocktrans %}"></li>
+            </ul>
+        {% endif %}
+        <ul class="detailedInfo" style="margin-top: 40px">
+            <li><a class="btn btn-success" aria-label="{% blocktrans %}Cancel{% endblocktrans %}"
+                   title="{% blocktrans %}Cancel{% endblocktrans %}"
+                   href="/account/profile/{{ user.get_username }}/">{% blocktrans %}
+                Cancel{% endblocktrans %}</a></li>
+
+        </ul>
+    </form>
+{% endblock %}

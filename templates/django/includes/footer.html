@@ -1,0 +1,28 @@
+{% load i18n %}
+{% trans "&copy; 2019 Lyrasis." as copyright %}
+{% trans "All Rights Reserved" as copyright2 %}
+{% trans "Go to top" as gotop %}
+<footer id="main-footer" role="contentinfo">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+
+            {% if request.session.identifier is not null %}
+                {% include "includes/library_links.html" with default_branding=True privacy_url=request.session.privacy_url terms_conditions_url=request.session.terms_conditions_url email=request.session.email %}
+            {% elif user is not null and user.library is not null %}
+                {% include "includes/library_links.html" with  default_branding=True privacy_url=user.library.privacy_url terms_conditions_url=user.library.terms_conditions_url email=user.library.email %}
+            {% endif %}
+            <div class="col-md-2 col-sm-4 col-xs-6 col-md-push-4 footer-widget">
+                <p>
+                    <small class="block">{% trans copyright %}<br/></small>
+                    <small class="block">{% trans copyright2 %}</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="gototop js-top">
+    <a href="#" class="js-gotop" aria-label="{% trans gotop %}"
+       title="{% trans gotop %}"><i class="icon-arrow-up"></i></a>
+</div>

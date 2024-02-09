@@ -1,0 +1,105 @@
+{% load static %}
+{% load i18n %}
+{% trans "Home" as home %}
+{% trans "Admin" as admin %}
+{% trans "Users" as users %}
+{% trans "Groups" as groups %}
+{% trans "Libraries" as libraries %}
+{% trans "Library Cards" as library_cards %}
+{% trans "Website domain" as website_domain %}
+{% trans "My profile" as my_profile %}
+{% trans "Manage password" as manage_password %}
+{% trans "Logout" as logout %}
+
+<nav class="main-nav" role="navigation">
+    <div class="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    {% if default_branding %}
+                    {% if request.session.identifier %}
+                        {% include "includes/library_contact_info.html" with default_branding=default_branding social_facebook=request.session.social_facebook social_twitter=request.session.social_twitter phone=request.session.library_phone %}
+                    {% elif user is not null and user.library is not null %}
+                        {% include "includes/library_contact_info.html" with default_branding=default_branding social_facebook=user.library.social_facebook social_twitter=user.library.social_twitter phone=user.library.phone %}
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="top-menu">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-2">
+                    <div id="main-logo">
+
+                        <a title="{% trans home %}" aria-label="{% trans home %}" href="/">
+                            {% if default_branding %}
+                                {% include "includes/header_logo.html" %}
+                        {% endif %}
+                    </a></div>
+                </div>
+                <div class="col-xs-10 text-right menu-1">
+                    <ul>
+                        <li class="active"><a href="/"><i class="icon icon-home"></i></a></li>
+                        {% if user.is_authenticated %}
+                            {% if user.is_superuser or user.is_staff %}
+                                <li class="has-dropdown">
+                                    <a title="{% trans admin %}" aria-label="{% trans admin %}"
+                                       href="/admin">{% trans admin %}</a>
+                                    <ul class="dropdown">
+                                        {% if perms.VirtualLibraryCard.view_customuser %}
+                                            <li><a title="{% trans users %}" aria-label="{% trans users %}"
+                                                   href="/admin/VirtualLibraryCard/customuser/">{% trans users %}</a>
+                                            </li>
+                                        {% endif %}
+                                        {% if perms.VirtualLibraryCard.view_group %}
+                                            <li><a title="{% trans groups %}" aria-label="{% trans groups %}"
+                                                   href="/admin/auth/group/">{% trans groups %}</a></li>
+                                        {% endif %}
+                                        {% if perms.VirtualLibraryCard.view_library %}
+                                            <li><a title="{% trans libraries %}" aria-label="{% trans libraries %}"
+                                                   href="/admin/VirtualLibraryCard/library/">{% trans libraries %}</a>
+                                            </li>
+                                        {% endif %}
+                                        {% if perms.VirtualLibraryCard.view_librarycard %}
+                                            <li>
+                                                <a title="{% trans library_cards %}"
+                                                   aria-label="{% trans library_cards %}"
+                                                   href="/admin/VirtualLibraryCard/librarycard/">{% trans library_cards %}</a>
+                                            </li>
+                                        {% endif %}
+
+
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            <li class="has-dropdown">
+                                <a href="/account/edit/{{ user.first_name|urlencode }}"> <i class="icon icon-user"></i>
+                                    <span>{{ user.first_name|urlencode }}</span></a>
+                                <ul class="dropdown">
+                                    <li>
+                                        <a title="{% trans my_profile %}" aria-label="{% trans my_profile %}"
+                                           href="/account/profile/{{ user.first_name|urlencode }}/"><span>{% trans my_profile %}</span></a>
+                                    </li>
+                                    <li>
+                                        <a title="{% trans manage_password %}" aria-label="{% trans manage_password %}"
+                                           href="/account/change-password/{{ user.first_name|urlencode }}"><span>{% trans manage_password %}</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            <li class="btn-main-nav"><a title="{% trans logout %}" aria-label="{% trans logout %}"
+                                                        href="{% url 'logout' %}?next=/accounts/login?next=/"><span>{% trans logout %}</span></a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</nav>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html lang="en">
+{% trans "Virtual Library Card" as virtual_library_card %}
+<head>
+    <title>{% trans virtual_library_card %} | {% block title %} {% endblock %}</title>
+    {% include "includes/header.html" %}
+</head>
+
+<body>
+
+<div id="page">
+    <div id="content" class="embedded_page">
+        <div class="container main-container ">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <div id="footer">
+        {% include "includes/minimal_footer.html" %}
+    </div>
+</div>
+
+</body>
+</html>

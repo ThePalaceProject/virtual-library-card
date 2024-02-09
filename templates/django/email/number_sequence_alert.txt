@@ -1,0 +1,5 @@
+{% load i18n %}
+{% blocktrans %}The end of the sequence you have defined for creating your card numbers will soon be reached.{% endblocktrans %}
+{% blocktrans %}Please go to the Virtual Card admin website to update your sequence{% endblocktrans %}
+{% blocktrans %}You can login in your personal space here: {% endblocktrans %} {{login_url}}
+{% blocktrans with library_name=library_name %}The {{ library_name }} team{% endblocktrans %}

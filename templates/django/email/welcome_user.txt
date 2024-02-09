@@ -1,0 +1,9 @@
+{% load i18n %}
+{% load absoluteuri %}
+{% blocktrans with library_name=library_name%}Thank you for joining the {{ library_name }}{% endblocktrans %}
+{% blocktrans with card_number=card_number%}Your library card number is  {{ card_number }} {% endblocktrans %}
+{% blocktrans%}Please remember this card number so you may use it to access library ebooks and audiobooks from your library in SimplyE.{% endblocktrans %}
+{% blocktrans%}Use the card number and the Password you set when you applied together.{% endblocktrans %}
+{% blocktrans%}You can go to your personal space to manage your account, manage your information or even reset your password if needed{% endblocktrans %}
+{% blocktrans %}You can login in your personal space here: {% endblocktrans %} {{ login_url}}
+{% blocktrans with library_name=library_name %}The {{ library_name }} team{% endblocktrans %}

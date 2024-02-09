@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% trans "Page Error" as page_title %}
+{% trans "The page you are triying to reach does not exist" as message %}
+{% block title %}Virtual Library Card | {% blocktrans %}Page Error{% endblocktrans %}{% endblock %}
+{% block content %}
+
+    <h1>{% blocktrans %}Page Error{% endblocktrans %}</h1>
+    <p>{% blocktrans %}The page you are trying to reach does not exist{% endblocktrans %}</p>
+
+{% endblock %}

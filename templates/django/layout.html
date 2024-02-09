@@ -1,0 +1,30 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+{% trans "Virtual Library Card" as virtual_library_card %}
+<head>
+    <title>{% trans virtual_library_card %} | {% block title %} {% endblock %}</title>
+{% include "includes/header.html" %}
+</head>
+
+<body>
+
+<div id="page">
+    <div id="menu">
+        {% block menu %}
+            {% include "includes/menu.html" with default_branding=True %}
+        {% endblock %}
+    </div>
+
+    <div id="content">
+    <div class="container main-container">
+        {% block content %}{% endblock %}
+    </div>
+    </div>
+    <div id="footer">
+    {% include "includes/footer.html" %}
+        {% include "includes/footer_scripts.html" %}
+        </div>
+</div>
+</body>
+</html>

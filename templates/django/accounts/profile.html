@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% load i18n %}
+
+{% block title %} | {% blocktrans %}My profile{% endblocktrans %} {% endblock %}
+{% block content %}
+    {% if user.is_authenticated %}
+
+        <h1><strong>{{ user.first_name }}</strong>  {% blocktrans %}welcome to your profile page{% endblocktrans %}</h1>
+
+        <div> {% if success and delete_cards %}
+            <p>{% blocktrans %}Your library card has been successfully revoked{% endblocktrans %} </p>
+        {% endif %}
+        </div>
+
+        <div class="bloc">
+            {% include "accounts/includes/profile_info.html" %}
+            {% include "accounts/includes/profile_address.html" %}
+            {% include "accounts/includes/profile_library.html" with delete_cards=delete_cards success=success %}
+
+            <div class="btn-area form-btn-inline">
+                <button tabindex="{{ nb_library_cards }}"
+                        aria-label="{% blocktrans %}Delete my profile{% endblocktrans %}"
+                        class="form-btn-delete form-btn-inline" style="margin-bottom: 30px"
+                        onclick="window.location.href ='/account/delete/{{ user.first_name }}/'">
+                    {% blocktrans %}Delete my profile{% endblocktrans %}
+                </button>
+
+                <button tabindex="{{ nb_library_cards }}" aria-label="{% blocktrans %}Edit{% endblocktrans %}"
+                        class="form-btn form-btn-inline" style="margin-bottom: 30px"
+                        onclick="window.location.href ='/account/edit/{{ user.first_name }};'">
+                    {% blocktrans %}Edit{% endblocktrans %}
+                </button>
+            </div>
+        </div>
+
+    {% endif %}
+{% endblock %}

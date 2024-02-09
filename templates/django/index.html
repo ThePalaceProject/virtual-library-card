@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% trans "My library Card" as my_library_card %}
+{% block title %}{% trans my_library_card %}{% endblock %}
+{% block content %}
+
+    <p>{{message}}</p>
+
+    <form action="/account/library_card_request/">
+        <input type="hidden" id="identifier" name="identifier" value="nypl">
+        <button type="submit">Request a library card for nypl</button>
+    </form>
+    <p></p>
+    <form action="/account/library_card_request/">
+        <input type="hidden" id="identifier" name="identifier" value="mcc">
+        <button type="submit">Request a library card for Manchester Comm College</button>
+    </form>
+
+{% endblock %}

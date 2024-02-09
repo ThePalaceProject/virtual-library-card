@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% trans "My library Card" as my_library_card %}
+{% block title %}{% trans my_library_card %}{% endblock %}
+{% block content %}
+
+    <h1>{% blocktrans %}Page Error 500{% endblocktrans %}</h1>
+    <p>{% blocktrans %}The page you are trying to reach does not exist{% endblocktrans %}</p>
+
+{% endblock %}

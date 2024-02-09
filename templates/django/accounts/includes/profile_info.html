@@ -1,0 +1,21 @@
+{% load i18n %}
+{% trans "Your personal information" as info_title %}
+{% trans "First name" as first_name %}
+{% trans "Last name" as last_name %}
+{% trans "Email address" as email %}
+{% trans "Date of born" as dob %}
+{% if user %}
+    <h3>{% trans info_title %}</h3>
+    <ul class="detailedInfo">
+        {% if user.first_name %}
+            <li><span class="title">{% trans first_name %} </span><span class="value">{{ user.first_name }}</span></li>
+        {% endif %}
+        {% if  user.last_name %}
+            <li><span class="title">{% trans last_name %} </span><span class="value">{{ user.last_name }}</span></li>
+        {% endif %}
+        <li><span class="title">{% trans email %}</span><span class="value">{{ user.email }}</span></li>
+        {% if user.dob %}
+            <li><span class="title">{% trans dob %} </span><span class="value">{{ user.dob }}</span></li>
+        {% endif %}
+    </ul>
+{% endif %}

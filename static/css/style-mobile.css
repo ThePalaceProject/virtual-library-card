@@ -1,0 +1,46 @@
+@media screen and (max-width: 480px) {
+    .main-nav .top .site {
+        display: none;
+    }
+
+
+    #main-logo .logo {
+        width: 100px;
+    }
+
+
+    h1, .h1 {
+        font-size: 26px;
+    }
+
+
+    .main-nav .top-menu {
+        padding: 0px 0;
+        font-size: 1.1em;
+    }
+
+    #main-footer {
+        padding: 1.2em 0;
+        margin-top: 10px;
+    }
+
+    #main-footer .footer-widget {
+        margin-bottom: 10px;
+    }
+
+    #main-footer .footer-widget h3 {
+        margin-bottom: 5px;
+        font-size: 12px;
+        letter-spacing: 2px;
+    }
+
+    .gototop {
+        position: fixed;
+        float: left;
+    }
+
+
+}
+
+
+

@@ -1,0 +1,11 @@
+{% load static %}
+
+{% if library is not null %}
+    {{ library.logo_header | safe }}
+{% elif request.session.logo_header is not null %}
+    {{ request.session.logo_header | safe }}
+{% elif user is not null and user.library is not null and user.library.logo_header is not null %}
+    {{ user.library.logo_header | safe }}
+{% elif default_branding is True %}
+    <img aria-hidden="True" class="logo" src="{% static 'images/logo.png' %}">
+{% endif %}

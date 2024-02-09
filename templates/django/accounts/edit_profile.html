@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    {{ block.super }} | {% blocktrans with first_name=user.first_name %} Edit {{ first_name }}'s' Profile.
+{% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% blocktrans %}Update your profile{% endblocktrans %}</h1>
+     {% crispy form %}
+{% endblock %}

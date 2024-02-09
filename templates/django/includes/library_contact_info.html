@@ -1,0 +1,18 @@
+{% load static %}
+{% load i18n %}
+{% if phone is not null %}
+    <p class="num"><i class="icon-phone3"></i>{{ phone }}</p>
+{% endif %}
+<ul class="main-nav-social">
+    {% if social_facebook is not null %}
+        <li><a title="Facebook" aria-label="Facebook" href="{{ social_facebook }}"><i
+                target="_blank" class="icon-facebook2"></i></a>
+        </li>
+    {% endif %}
+    {% if social_twitter is not null %}
+        <li><a title="Twitter" aria-label="Twitter" href="{{ social_twitter }}"><i
+                target="_blank" class="icon-twitter2"></i></a>
+        </li>
+    {% endif %}
+</ul>
+

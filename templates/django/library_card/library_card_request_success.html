@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% trans "Your Library Card" as your_library_card %}
+{% trans "Congratulations" as congratulations %}
+{% trans "your Library card has been successfully created" as your_library_card_created_success %}
+
+{% block title %} | {% trans your_library_card %} {% endblock %}
+{% block content %}
+
+    <h1>{% blocktrans with first_name=user.first_name %} Congratulations <strong> {{ first_name }}</strong>
+        !{% endblocktrans %}
+        {% trans your_library_card %}</h1>
+
+    <h3>{% blocktrans with email=user.email %}Check your <strong>{{ email }}</strong> mailbox to see the card
+        details{% endblocktrans %}</h3>
+
+    {% include "accounts/includes/profile_info.html" %}
+
+    {% include "accounts/includes/profile_address.html" %}
+{% endblock %}

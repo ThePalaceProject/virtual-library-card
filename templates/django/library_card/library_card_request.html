@@ -1,0 +1,63 @@
+{% extends 'minimal_layout_geoloc.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load material_form %}
+{% block title %}
+    {{ block.super }} | {% blocktrans %}Library Card Request{% endblocktrans %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="embeded_page_top">
+        {% if library is not null %}
+            {{ library.logo_header }}
+        {% endif %}
+        <h1 class="embeded_page_title">| {% blocktrans %}Sign up for a library card{% endblocktrans %} </h1>
+    </div>
+
+
+    {% for key, key_errors in form.errors.as_data.items %}
+        {% for error in key_errors %}
+            {% if error.code == 'LOGIN' or error.code == 'ALREADY_EXISTS' %}
+                <div class="form-message-area">
+                    {% if error.code == 'ALREADY_EXISTS' %}
+                        <h4 class="alert alert-danger "><i class="fa fa-exclamation-triangle"></i>
+                    {% else %}
+                        <h4>
+                    {% endif %}
+                    {{ error.params.custom_message | safe }}</h4>
+                    <ul>
+
+                        <li>{% blocktrans %}You can login and see your Library Card information using this
+                            link{% endblocktrans %}
+                            <a class="btn-primary btn-inline" aria-label="{% blocktrans %}My profile{% endblocktrans %}"
+                               title="{% blocktrans %}My profile{% endblocktrans %}"
+                               href="/accounts/login/?identifier={{ request.session.identifier }}"><span>{% blocktrans %}
+                                My
+                                profile{% endblocktrans %}</span></a>
+                        </li>
+                        <li class="forgot_password_label">
+						<span class="txt1">
+                            {% blocktrans %}Forgot your password?{% endblocktrans %}
+						</span>
+                            <a class="btn-warning btn-inline"
+                               aria-label="{% blocktrans %}Reset my password{% endblocktrans %}"
+                               title="{% blocktrans %}Reset my password{% endblocktrans %}"
+                               href="/account/reset-password/{{ request.session.identifier }}/?identifier={{ request.session.identifier }}">
+                                {% blocktrans %}Reset my password{% endblocktrans %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {% form form=form %}{% endform %}
+        <button type="submit" name="_submit" class="btn">Submit</button>
+    </form>
+
+{% endblock %}

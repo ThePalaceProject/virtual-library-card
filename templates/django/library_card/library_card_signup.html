@@ -1,0 +1,37 @@
+
+
+
+<form name="card_form" id="card_form" method="post" style="visibility: hidden">
+    {% csrf_token %}
+    {{ form }}
+</form>
+
+<script type="text/javascript" async defer>
+
+    function initGeolocation() {
+        if (navigator && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        } else {
+            console.log('Geolocation is not supported');
+            document.location = "/account/library_card_request/geolocation_denied"
+        }
+    }
+
+    function errorCallback() {
+        document.location = "/account/library_card_request/geolocation_denied"
+    }
+
+    function successCallback(position) {
+        let identifier = window.location.href.split("/").slice(-2)[0];
+        document.getElementById('id_lat').value = position.coords.latitude;
+        document.getElementById('id_long').value = position.coords.longitude;
+        document.getElementById('id_identifier').value = identifier;
+        document.getElementById('card_form').submit();
+    }
+
+    window.onload = function() {
+        initGeolocation();
+    }
+
+
+</script>

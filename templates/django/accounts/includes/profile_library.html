@@ -1,0 +1,50 @@
+{% load i18n %}
+{% trans "Your library card information" as library_info_title %}
+{% trans "Revoke" as revoke %}
+{% trans "You have no active library cards" as no_active_cards %}
+{% trans "Physical Library Card number" as physical_card_number %}
+{% trans "Please click on the Revoke button for the card you want to revoke" as delete_cards_help_text %}
+{% if user %}
+    <h3>{% trans library_info_title %}</h3>
+    <ul class="detailedInfo">
+
+        {% if library_cards %}
+            {% if delete_cards %}
+                <div class="explanation">
+                    {% trans delete_cards_help_text %}
+                </div>
+            {% endif %}
+            {% for library_card in library_cards %}
+                <li><span
+                        class="title"><strong>{{ library_card.library.name }}</strong></span>
+                    <span
+                            class="value">{{ library_card.number }}</span>
+                    {% if delete_cards %}
+                        <span
+                                class="action">
+                     <form style="display: inline;" method="POST"
+                           action="/account/library_cards/cancel/{{ library_card.number }}">
+                         {% csrf_token %}
+                         <input type="hidden" name="card_id" value="{{ library_card.id }}">
+                         <input type="hidden" name="number" value="{{ library_card.number }}">
+                    <button tabindex="{{ forloop.counter0 }}" class="form-btn-warning form-btn-small form-btn-inline"
+                            aria-label="{% trans revoke %}"
+                            style="margin-bottom: 30px" type="submit">{% trans revoke %}</button>
+                     </form>
+
+                </span>
+                    {% endif %}
+                </li>
+
+            {% endfor %}
+        {% else %}
+            {% trans no_active_cards %}
+        {% endif %}
+
+
+        {% if delete_cards is False and user.existing_library_card %}
+            <li><span class="title">{% trans physical_card_number %}</span><span
+                    class="value">{{ user.existing_library_card }}</span></li>
+        {% endif %}
+    </ul>
+{% endif %}

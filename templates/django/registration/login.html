@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load i18n %}
+{% load static %}
+{% trans "Login" as login %}
+{% trans "Forgot your password?" as forgot_password %}
+{% trans "Reset my password" as reset_password %}
+<head>
+    <title>{% trans login %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% include "includes/header.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login-main.css' %}">
+
+
+</head>
+<body>
+
+<div class="limiter">
+
+    <div class="container-login">
+
+
+        <div class="wrap-login">
+            <p class="login-logo">
+                {% if request.session.logo_header is not null %}
+                    {{ request.session.logo_header | safe }}
+                {% else %}
+                    <img alt="logo" aria-label="logo" src="{% static 'images/logo.png' %}">
+                {% endif %}
+            </p>
+            <div class="login-form">
+					<span class="login-form-title">
+						{% trans login %}
+					</span>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="form-btn" type="submit">Login</button>
+                </form>
+
+                <div class="forgot_password_label">
+						<span class="txt1">
+							{% trans forgot_password %}
+						</span>
+
+                    <a title="{% trans reset_password %}" aria-label="{% trans reset_password %}" class="txt1 bo1 hov1"
+                       href="/account/reset-password/{{ request.session.identifier }}">
+                        {% trans reset_password %}
+                    </a>
+                </div>
+</div>
+                <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                <script src="{% static 'js/popper.min.js' %}"></script>
+                <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+                <script src="{% static 'js/select2.min.js' %}"></script>
+                <script src="{% static 'js/main-login.js' %}"></script>
+</body>
+</html>

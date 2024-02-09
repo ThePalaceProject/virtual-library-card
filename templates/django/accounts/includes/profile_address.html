@@ -1,0 +1,23 @@
+{% load i18n %}
+{% trans "Your address" as address_title %}
+{% if user %}
+    <h3>{% trans address_title %}</h3>
+    <ul class="detailedInfo">
+        {% if user.first_name or user.last_name %}
+            <li><span class="value">{% if user.first_name %}
+                {{ user.first_name }}{% endif %} {% if user.last_name %}{{ user.last_name }}{% endif %}</span></li>
+        {% endif %}
+
+        {% if user.street_address_line1 %}
+            <li><span class="value">{{ user.street_address_line1 }}</span></li>
+        {% endif %}
+        {% if user.street_address_line2 %}
+            <li><span class="value">{{ user.street_address_line2 }}</span></li>
+        {% endif %}
+        {% if user.zip or  user.city %}
+            <li><span class="value">{{ user.city }}, {{ user.us_state }} {{ user.zip }} (USA) </span></li>
+        {% endif %}
+
+
+    </ul>
+{% endif %}
