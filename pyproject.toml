@@ -2,6 +2,19 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
 
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    '^\s*\.\.\.\s*$',
+    '^\s*pass\s*$',
+    '^\s*raise NotImplementedError\s*$',
+]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+source = ["virtual_library_card", "virtuallibrarycard"]
+
 [tool.isort]
 profile = "black"
 
@@ -60,9 +73,14 @@ tox-gh-actions = "^3.0"
 [tool.poetry.group.dev.dependencies]
 parameterized = "^0.9"
 pytest = "^7.2.2"
+pytest-cov = "^4.0.0"
 pytest-django = "^4.5.2"
 
 [tool.pytest.ini_options]
+addopts = [
+    "--cov",
+    "--cov-report=xml",
+]
 DJANGO_SETTINGS_MODULE = "virtual_library_card.settings.dev"
 
 [tool.tomlsort]
