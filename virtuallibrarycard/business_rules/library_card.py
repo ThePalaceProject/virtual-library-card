@@ -22,7 +22,7 @@ from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
 class LibraryCardRules:
     @classmethod
     def new_card(
-        cls, user: CustomUser, library: Library, number: str = None
+        cls, user: CustomUser, library: Library, number: str | None = None
     ) -> tuple[LibraryCard, bool]:
         """Generate a new card only of a card does not exist for this user and library
         Also send the welcome email"""
@@ -50,7 +50,7 @@ class LibraryCardBulkUpload:
         cls,
         library: Library,
         fileio: IO,
-        admin_user: CustomUser = None,
+        admin_user: CustomUser | None = None,
         _async: bool = False,
     ) -> LibraryCardBulkUpload:
         """Bulk upload a CSV of library users with information enough to generate cards
@@ -63,7 +63,7 @@ class LibraryCardBulkUpload:
         self,
         library: Library,
         fileio: IO,
-        admin_user: CustomUser = None,
+        admin_user: CustomUser | None = None,
         _async: bool = True,
     ) -> None:
         self.library = library

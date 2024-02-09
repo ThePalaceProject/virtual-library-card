@@ -26,7 +26,7 @@ class Sender:
     def send_user_welcome(
         library: Library,
         user: CustomUser,
-        card_number: str = None,
+        card_number: str | None = None,
     ):
         """Send out a welcome email which has two optional parts
         - User welcome for a new card

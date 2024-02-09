@@ -39,8 +39,8 @@ class FirebaseDynamicLinksAPI:
         self,
         method: Literal["get"] | Literal["post"],
         path: str,
-        data: Any = None,
-        json: dict = None,
+        data: Any | None = None,
+        json: dict | None = None,
     ) -> Any:
         """Make a REST request to the dynamic links API
         :param method: The HTTP method

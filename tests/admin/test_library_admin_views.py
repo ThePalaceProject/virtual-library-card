@@ -41,7 +41,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         return data
 
     def _add_library_states_data(
-        self, data: dict, places: list[str] = None, library=None
+        self, data: dict, places: list[str] | None = None, library=None
     ):
         """Helper function for change form data, for the inline library form"""
         places = places or []

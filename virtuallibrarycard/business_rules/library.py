@@ -6,10 +6,10 @@ class LibraryRules:
     def validate_user_address_fields(
         cls,
         library: Library,
-        city: str = None,
-        county: str = None,
-        state: str = None,
-        country: str = None,
+        city: str | None = None,
+        county: str | None = None,
+        state: str | None = None,
+        country: str | None = None,
     ) -> bool:
         """Validate whether the given address fields are valid for a user that would signup for a given library
         - Country, State or City, at least one must be within the list of places of the library
@@ -31,10 +31,10 @@ class LibraryRules:
     def _place_hierarchy_match(
         cls,
         place: Place,
-        city: str = None,
-        county: str = None,
-        state: str = None,
-        country: str = None,
+        city: str | None = None,
+        county: str | None = None,
+        state: str | None = None,
+        country: str | None = None,
     ) -> bool:
         """Test from the current place all the way to the last parent available.
         All levels of the place hierarchy MUST match even if the value isn't provided in the keyword args.
