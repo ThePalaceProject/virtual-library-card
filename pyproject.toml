@@ -9,9 +9,10 @@ profile = "black"
 authors = ["The Palace Project <info@thepalaceproject.org>"]
 description = "Virtual Library Card Creator"
 homepage = "https://thepalaceproject.org"
+license = "Apache-2.0"
 name = "Virtual Library Card"
 readme = "README.md"
-repository = "https://github.com/ThePalaceProject/ virtual-library-card"
+repository = "https://github.com/ThePalaceProject/virtual-library-card"
 version = "0"  # Version number is managed with tags in git
 
 [tool.poetry.dependencies]

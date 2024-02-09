@@ -12,13 +12,10 @@ Python 3.8+ must be installed, and a SQL database must be available.
 
 ## Notes
 
-- The project settings are split into 3 files inside the "settings" directory. "base.py" contains the common
-  definitions, while "dev.py" and "prod.py" contain specific parameters for development and production environments
-  (see -
-  [Strategy based on multiple settings files](https://simpleisbetterthancomplex.com/tips/2017/07/03/django-tip-20-working-with-multiple-settings-modules.html)
-  ).
-- The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags in the
-  `settings/prod.py` allow to control what is deployed.
+- The project settings are split into 2 files inside the "settings" directory. "base.py" contains the common
+  definitions, while "dev.py" contains an example configuration for development.
+- The website and API are in the same Django project and app. The `HAS_API` and `HAS_WEBSITE` flags allow
+  control over what is deployed.
 
 ## Running the application locally
 
@@ -90,16 +87,16 @@ The database schema must be initialized and updated with:
 
 Notes:
 
-- This will also create the "default" library, which can be customized through a few settings in `settings/base.py`:
+- This will also create the "default" library, which can be customized through a few settings in `settings/dev.py`:
 
-        DEFAULT_SUPERUSER_LIBRARY_NAME = "Lyrasis"
-        DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER = "lyra"
-        DEFAULT_SUPERUSER_LIBRARY_PREFIX = "0123"
-        DEFAULT_SUPERUSER_LIBRARY_STATE = "NY"
+        DEFAULT_SUPERUSER_LIBRARY_NAME
+        DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER
+        DEFAULT_SUPERUSER_LIBRARY_PREFIX
+        DEFAULT_SUPERUSER_LIBRARY_STATE
 
 - The name of the superuser can be also configured in the settings files:
 
-        DEFAULT_SUPERUSER_FIRST_NAME = "superuser"
+        DEFAULT_SUPERUSER_FIRST_NAME
 
 ### 8. Select what (website or/and API) will be deployed
 
