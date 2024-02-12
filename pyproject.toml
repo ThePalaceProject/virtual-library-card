@@ -15,8 +15,49 @@ branch = true
 relative_files = true
 source = ["virtual_library_card", "virtuallibrarycard"]
 
+[tool.django-stubs]
+django_settings_module = "virtual_library_card.settings.dev"
+
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+# TODO: Enable the the check_untyped_defs option
+# This will get rid of the warnings that we get when running mypy
+# > note: By default the bodies of untyped functions are not checked
+# However this currently causes a number of errors to surface that will
+# need to be cleaned up before we can enable the option.
+# check_untyped_defs = true
+# When we enable this option, we should remove this disable. Its just here
+# to silence the noise in the mypy output for now, so its easier to see when
+# there are errors in the output.
+disable_error_code = "annotation-unchecked"
+files = ["."]
+plugins = ["mypy_django_plugin.main"]
+warn_redundant_casts = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+# This override silences errors for modules we import that don't currently
+# have type hints, or type stubs that cover them. We should go through this
+# list periodically and remove modules that have since added type hints.
+ignore_missing_imports = true
+module = [
+    "better_profanity.*",
+    "crispy_forms.*",
+    "dal.*",
+    "datedelta.*",
+    "localflavor.*",
+    "parameterized.*",
+    "rest_framework.*",
+    "uwsgi.*",
+    # This is ignored because the file is created when building a container
+    # so it typically doesn't exist when running mypy, but since it only
+    # contains a couple version strings it can be safely ignored
+    "virtual_library_card._version",
+]
 
 [tool.poetry]
 authors = ["The Palace Project <info@thepalaceproject.org>"]
@@ -77,10 +118,13 @@ tox-docker = "^4.0"
 tox-gh-actions = "^3.0"
 
 [tool.poetry.group.dev.dependencies]
+django-stubs = {version = "^4.2.7", extras = ["compatible-mypy"]}
+mypy = "^1.7.0"
 parameterized = "^0.9"
 pytest = "^8.0.0"
 pytest-cov = "^4.0.0"
 pytest-django = "^4.5.2"
+types-requests = "^2.28.11"
 
 [tool.pytest.ini_options]
 addopts = [
