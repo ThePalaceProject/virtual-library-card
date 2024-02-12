@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "bootstrap4",
     "crispy_forms",
+    "crispy_bootstrap4",
     "material",
     "compressor",
     "absoluteuri",
