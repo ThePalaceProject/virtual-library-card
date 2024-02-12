@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "compressor",
     "absoluteuri",
     "virtuallibrarycard.apps.VirtuallibrarycardConfig",
-    "captcha",
+    "django_recaptcha",
 ]
 
 # Log level is taken from the env

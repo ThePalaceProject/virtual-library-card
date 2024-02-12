@@ -387,11 +387,11 @@ class TestCardRequest(BaseUnitTest):
     def test_card_request_no_captcha_installed(self):
         # Remove captcha from the installed apps
         installed_apps = [ac.name for ac in apps.get_app_configs()]
-        installed_apps.remove("captcha")
+        installed_apps.remove("django_recaptcha")
         apps.set_installed_apps(installed_apps)
 
         new_apps = [ac.name for ac in apps.get_app_configs()]
-        assert "captcha" not in new_apps
+        assert "django_recaptcha" not in new_apps
         self.test_card_request(with_captcha=False)
         apps.unset_installed_apps()
 

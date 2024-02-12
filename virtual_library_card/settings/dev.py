@@ -26,7 +26,7 @@ DATABASES = {
 }
 
 # Testing ONLY
-SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 
 ABSOLUTEURI_PROTOCOL = "http"
 DATE_INPUT_FORMATS = ["%m-%d-%Y"]
