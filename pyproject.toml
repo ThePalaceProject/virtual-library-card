@@ -24,6 +24,10 @@ description = "Virtual Library Card Creator"
 homepage = "https://thepalaceproject.org"
 license = "Apache-2.0"
 name = "Virtual Library Card"
+packages = [
+    {include = "virtual_library_card"},
+    {include = "virtuallibrarycard"},
+]
 readme = "README.md"
 repository = "https://github.com/ThePalaceProject/virtual-library-card"
 version = "0"  # Version number is managed with tags in git
@@ -62,6 +66,7 @@ python-stdnum = "1.19"
 pytz = "^2023.2"
 pyuwsgi = ">=2.0,<2.1"
 requests = "^2.31"
+setuptools = "^69.1.0"
 
 [tool.poetry.group.ci.dependencies]
 dunamai = "^1.16"
