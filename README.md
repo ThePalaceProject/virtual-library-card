@@ -161,9 +161,9 @@ The site should be available in your browser for testing at `https://localhost:8
 
 ## Other settings
 
-The `RECAPTCHA_PUBLIC_KEY` and `RECAPTCHA_PRIVATE_KEY` must be set if the `captcha` django plugin
+The `RECAPTCHA_PUBLIC_KEY` and `RECAPTCHA_PRIVATE_KEY` must be set if the `django_recaptcha` django plugin
 is installed via the `INSTALLED_APPS` setting.
-If the `captcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
+If the `django_recaptcha` App is not in the `INSTALLED_APPS` setting, the signup flow will silently remove the need for
 captcha to be present on that page.
 
 ### Environment Variables

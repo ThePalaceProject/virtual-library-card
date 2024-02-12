@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from captcha.fields import ReCaptchaField
 from django import forms
 from django.apps import apps
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
+from django_recaptcha.fields import ReCaptchaField
 
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
@@ -54,7 +54,7 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
         self.fields["first_name"].required = True
 
         # keep the captcha part dynamic, in case captcha is not supported
-        if apps.is_installed("captcha"):
+        if apps.is_installed("django_recaptcha"):
             self.fields["captcha"] = ReCaptchaField()
 
         user = kwargs["instance"]
