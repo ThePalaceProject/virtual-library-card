@@ -29,7 +29,7 @@ class LibraryCardCreationForm(forms.ModelForm):
         exclude = []
         labels = {"user": _("User Email")}
 
-    def __init__(self, data: dict = None, *args, **kwargs) -> None:
+    def __init__(self, data: dict | None = None, *args, **kwargs) -> None:
         super().__init__(data, *args, **kwargs)
 
         # If we have the field and also have a new instance (on create)

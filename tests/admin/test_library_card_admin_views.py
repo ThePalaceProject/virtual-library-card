@@ -14,7 +14,7 @@ class TestLibraryCardAdminViews(BaseAdminUnitTest):
     MODEL = LibraryCard
     MODEL_ADMIN = LibraryCardAdmin
 
-    def _get_card_data(self, card: LibraryCard = None, **data):
+    def _get_card_data(self, card: LibraryCard | None = None, **data):
         initial = {
             "number": "",
             "created": "",

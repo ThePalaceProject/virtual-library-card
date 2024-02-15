@@ -134,7 +134,9 @@ class BaseUnitTest(TestData, TestCase):
         self._transaction.__exit__(None, None, None)
         super().tearDown()
 
-    def do_library_card_signup_flow(self, client: Client, library: Library = None):
+    def do_library_card_signup_flow(
+        self, client: Client, library: Library | None = None
+    ):
         """A common flow which is needed multiple times"""
 
         if not library:
