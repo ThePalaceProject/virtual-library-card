@@ -118,7 +118,7 @@ tox-docker = "^4.0"
 tox-gh-actions = "^3.0"
 
 [tool.poetry.group.dev.dependencies]
-django-stubs = {version = "^4.2.7", extras = ["compatible-mypy"]}
+django-stubs = {version = "^5.0.2", extras = ["compatible-mypy"]}
 mypy = "^1.7.0"
 parameterized = "^0.9"
 pytest = "^8.0.0"
