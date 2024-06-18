@@ -114,7 +114,7 @@ setuptools = "^70.0.0"
 dunamai = "^1.16"
 pre-commit = "^3.0"
 tox = "^4.5"
-tox-docker = "^4.0"
+tox-docker = "^5.0"
 tox-gh-actions = "^3.0"
 
 [tool.poetry.group.dev.dependencies]
