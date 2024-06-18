@@ -86,7 +86,7 @@ jobs:
         if: github.ref_type == 'branch' && github.ref_name != 'main'
 
       - name: Build image (with cache)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
@@ -98,7 +98,7 @@ jobs:
         if: github.ref_type == 'branch' && github.ref_name != 'main'
 
       - name: Build image (full)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
