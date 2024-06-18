@@ -59,9 +59,19 @@ RECAPTCHA_PRIVATE_KEY = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 DEFAULT_FILE_STORAGE = "virtual_library_card.storage.S3PublicStorage"
 STATICFILES_STORAGE = "virtual_library_card.storage.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = "vlc-test"
-AWS_S3_ENDPOINT_URL = os.environ.get(
-    "VLC_DEV_AWS_S3_ENDPOINT_URL", "http://localhost:9000"
-)
+if "VLC_DEV_AWS_S3_ENDPOINT_URL" in os.environ:
+    AWS_S3_ENDPOINT_URL = os.environ["VLC_DEV_AWS_S3_ENDPOINT_URL"]
+elif (
+    "VLC_DEV_AWS_S3_ENDPOINT_URL_HOST" in os.environ
+    and "VLC_DEV_AWS_S3_ENDPOINT_URL_PORT" in os.environ
+):
+    AWS_S3_ENDPOINT_URL = (
+        f"http://{os.environ['VLC_DEV_AWS_S3_ENDPOINT_URL_HOST']}"
+        f":{os.environ['VLC_DEV_AWS_S3_ENDPOINT_URL_PORT']}"
+    )
+else:
+    AWS_S3_ENDPOINT_URL = "http://localhost:9000"
+
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("VLC_DEV_AWS_S3_CUSTOM_DOMAIN", False)
 AWS_S3_URL_PROTOCOL = os.environ.get("VLC_DEV_AWS_S3_URL_PROTOCOL", "https:")
 
