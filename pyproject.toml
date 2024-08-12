@@ -74,7 +74,7 @@ repository = "https://github.com/ThePalaceProject/virtual-library-card"
 version = "0"  # Version number is managed with tags in git
 
 [tool.poetry.dependencies]
-attrs = "^23.1.0"
+attrs = "^24.2.0"
 better-profanity = "^0.7.0"
 boto3 = "^1.26.90"
 certifi = "2024.7.4"
