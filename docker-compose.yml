@@ -23,11 +23,15 @@ services:
       SUPERUSER_PASSWORD: "test"
 
   pg:
-    image: "postgres:12"
+    image: "postgres:16"
     environment:
       POSTGRES_USER: vlc
       POSTGRES_PASSWORD: test
       POSTGRES_DB: virtual_library_card_dev
+    command: >
+             -c ssl=on
+             -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+             -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
 
   minio:
     image: "bitnami/minio:2023.2.27"
