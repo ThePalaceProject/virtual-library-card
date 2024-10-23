@@ -27,6 +27,7 @@ ARG REPO=ThePalaceProject/virtual-library-card
 
 # Install system
 RUN apt-get update -y && \
+    apt-get install -y libexpat1 && \
     apt-get install --no-install-recommends -y \
     curl mime-support && \
     curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "$POETRY_VERSION" && \
