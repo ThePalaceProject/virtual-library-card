@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # example docker compose configuration for testing and development
 
