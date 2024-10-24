@@ -27,6 +27,8 @@ services:
       POSTGRES_USER: vlc
       POSTGRES_PASSWORD: test
       POSTGRES_DB: virtual_library_card_dev
+      # AWS RDS requires SSL, so we enable SSL for the database with a self-signed snakeoil cert
+      # so that this database mimics the production databases as closely as we can.
     command: >
              -c ssl=on
              -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem

@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 ENV APP_DIR=/virtual_library_card/ \
     DJANGO_SETTINGS_MODULE=virtual_library_card.settings.prod \
@@ -25,7 +25,7 @@ ENV UWSGI_MASTER=1 \
 # required for postgres ssl: the crt file doesn't exist
 # but the path must point to a visible directory otherwise we
 # get a permissions error
-ENV PGSSLCERT /tmp/postgresql.crt
+ENV PGSSLCERT=/tmp/postgresql.crt
 
 ARG POETRY_VERSION=1.7.1
 ARG REPO=ThePalaceProject/virtual-library-card
