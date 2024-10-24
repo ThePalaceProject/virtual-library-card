@@ -22,6 +22,7 @@ DATABASES = {
         "PASSWORD": "test",
         "HOST": os.environ.get("VLC_DEV_DB_HOST", "pg"),
         "PORT": os.environ.get("VLC_DEV_DB_PORT", "5432"),
+        "OPTIONS": {"sslmode": os.environ.get("VLC_DEV_DB_SSL_MODE", "require")},
     }
 }
 

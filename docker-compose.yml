@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # example docker compose configuration for testing and development
 
@@ -23,11 +22,17 @@ services:
       SUPERUSER_PASSWORD: "test"
 
   pg:
-    image: "postgres:12"
+    image: "postgres:16"
     environment:
       POSTGRES_USER: vlc
       POSTGRES_PASSWORD: test
       POSTGRES_DB: virtual_library_card_dev
+      # AWS RDS requires SSL, so we enable SSL for the database with a self-signed snakeoil cert
+      # so that this database mimics the production databases as closely as we can.
+    command: >
+             -c ssl=on
+             -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+             -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
 
   minio:
     image: "bitnami/minio:2023.2.27"

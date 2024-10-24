@@ -143,7 +143,7 @@ Eventually you will be able to pull the container from dockerhub.
 
 Either create a new database in the production PostgreSQL Database. Or use the docker PostgreSQL container for testing.
 
-    docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:12
+    docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:16
 
 ### 3. Create settings file
 
