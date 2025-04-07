@@ -9,10 +9,18 @@ from virtuallibrarycard.models import LibraryCard
 
 
 class TestCardNumber(BaseUnitTest):
-    def test_allowed_characters(self):
-        assert len(CardNumber.ALLOWED_CHARACTERS) == 36
-        assert CardNumber.ALLOWED_CHARACTERS[0] == "0"
-        assert CardNumber.ALLOWED_CHARACTERS[-1] == "Z"
+    def test__generate_random_characters(self):
+        # Test the generation of random characters
+        random_chars = CardNumber._generate_random_characters(10)
+        assert len(random_chars) == 10
+        assert all(c in CardNumber.ALLOWED_CHARACTERS for c in random_chars)
+        assert all(c not in random_chars for c in "01liLIOo")
+
+        # Test the generation of random characters with a different length
+        random_chars = CardNumber._generate_random_characters(5)
+        assert len(random_chars) == 5
+        assert all(c in CardNumber.ALLOWED_CHARACTERS for c in random_chars)
+        assert all(c not in random_chars for c in "01liLIOo")
 
     def test_generate_card_number(self):
         lc = LibraryCard(library=self._default_library)
