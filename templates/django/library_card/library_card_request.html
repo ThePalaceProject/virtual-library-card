@@ -54,10 +54,10 @@
         {% endfor %}
     {% endfor %}
 
-    <form method="POST">
+    <form method="POST" id="library-card-request-form">
         {% csrf_token %}
         {% form form=form %}{% endform %}
-        <button type="submit" name="_submit" class="btn">Submit</button>
+        <button type="button" id="form-submit-btn" class="btn">Submit</button>
     </form>
 
     <!-- Autofill location into inputs modal 
@@ -72,6 +72,23 @@
                 <div class="modal-body" style="text-align: center;">
                     <button id="location-autofill-yes" class="btn btn-success">YES</button>
                     <button id="location-autofill-no" class="btn btn-danger">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="email-confirmation-modal" class="modal" role="dialog" style="background-color: transparent; box-shadow: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="font-size: 1.5em; text-align: center;">
+                    Please confirm your information
+                </div>
+                <div class="modal-body" style="text-align: center; padding: 20px;">
+                    <p>Please verify that the email address below is correct:</p>
+                    <p><strong id="confirmation-email-display"></strong></p>
+                    <p class="text-muted">Your library card information will be sent to this email address.</p>
+                    <button type="submit" name="_submit" form="library-card-request-form" id="email-confirmation-yes" class="btn btn-success">Confirm and Submit</button>
+                    <button id="email-confirmation-no" class="modal-close btn btn-danger">Edit Information</button>
                 </div>
             </div>
         </div>
@@ -101,14 +118,33 @@
             }
 
             // Materialize style modal invocations
-            $("#location-autofill-modal").modal(); // init modal
+            $("#email-confirmation-modal").modal({
+                onOpenStart: function() {
+                    // Get the email from the form and display it in the modal
+                    var emailValue = $("#id_email").val();
+                    $("#confirmation-email-display").text(emailValue);
+                }
+            }); // init email confirmation modal
+            $("#location-autofill-modal").modal(); // init location autofill modal
             $("#location-autofill-yes").on("click", function () { modalCallback(true) })
             $("#location-autofill-no").on("click", function () { modalCallback(false) })
 
-            // display the modal only if the address is mandatory and we have valid data
+            // display the location autofill modal only if the address is mandatory and we have valid data
             if (addressMandatory && (city || zip)) {
                 $("#location-autofill-modal").modal("open")
             }
+
+            // Handle form submission with validation
+            $("#form-submit-btn").on("click", function() {
+                // Check form validity using HTML5 validation
+                if ($("#library-card-request-form")[0].checkValidity()) {
+                    // Form is valid, open confirmation modal
+                    $("#email-confirmation-modal").modal("open");
+                } else {
+                    // Trigger HTML5 validation UI
+                    $("#library-card-request-form")[0].reportValidity();
+                }
+            });
         });
     </script>
 
