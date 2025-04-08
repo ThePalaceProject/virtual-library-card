@@ -62,31 +62,9 @@ class UserConsentInline(admin.StackedInline):
         return False
 
 
-class AlphabeticalLibraryFilter(admin.SimpleListFilter):
-    """
-    Filter to show libraries in alphabetical order.
-
-    By default the Django admin will show the libraries in the order they
-    were created, this is just a simple filter to show them in alphabetical
-    order.
-    """
-
-    title = "library"
-    parameter_name = "library"
-
-    def lookups(self, request, model_admin):
-        libraries = Library.objects.all().order_by("name")
-        return [(lib.id, lib.name) for lib in libraries]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(library_id=self.value())
-        return queryset
-
-
 class AlphabeticalPlaceTypeFilter(admin.SimpleListFilter):
     """
-    Filter to show place types in alphabetical order.
+    Filter showing place types in alphabetical order.
     """
 
     title = "type"
@@ -202,7 +180,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
     def get_list_filter(self, request: Any) -> list[Any]:
         list_filter = super().get_list_filter(request)
         if request.user.is_superuser:
-            list_filter = list_filter + (AlphabeticalLibraryFilter,)
+            list_filter = list_filter + ("library",)
         list_filter = list_filter + ("place",)
         return list_filter
 
@@ -265,14 +243,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(library=request.user.library.id)
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        """
-        Make sure that libraries are sorted by name in the edit form.
-        """
-        if db_field.name == "library":
-            kwargs["queryset"] = Library.objects.all().order_by("name")
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class LibraryAllowedDomainsInline(admin.StackedInline):
@@ -418,7 +388,7 @@ class LibraryCardAdmin(admin.ModelAdmin):
 
     def get_list_filter(self, request: Any) -> tuple[Any]:
         return (
-            (AlphabeticalLibraryFilter, "expiration_date")
+            ("library", "expiration_date")
             if request.user.is_superuser
             else ("expiration_date",)
         )

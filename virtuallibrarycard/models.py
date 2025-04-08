@@ -58,6 +58,7 @@ def default_customization():
 class Library(models.Model):
     class Meta:
         verbose_name_plural = "libraries"
+        ordering = ["name"]  # This will sort by name alphabetically
 
     @staticmethod
     def create_default_library():
