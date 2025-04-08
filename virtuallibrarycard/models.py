@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime
-from enum import Enum
+from enum import Enum, StrEnum
 from pathlib import Path
 
 import datedelta
@@ -576,20 +576,14 @@ class Place(models.Model):
     Eg. Texas is a state within the US, so the Place(type=state, name=Texas) will have a
     relationship parent=Place(type=country, name=United States)."""
 
-    class Types:
+    class Types(StrEnum):
         COUNTRY = "country"
         STATE = "state"
         PROVINCE = "province"
         COUNTY = "county"
         CITY = "city"
 
-    AREA_TYPES = (
-        (Types.COUNTRY, Types.COUNTRY),
-        (Types.STATE, Types.STATE),
-        (Types.PROVINCE, Types.PROVINCE),
-        (Types.COUNTY, Types.COUNTY),
-        (Types.CITY, Types.CITY),
-    )
+    AREA_TYPES = ((t, t) for t in sorted(Types))
 
     # The external identifier from the datasource, this cannot change
     external_id = models.CharField(max_length=128, null=False, blank=False, unique=True)

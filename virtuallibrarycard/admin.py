@@ -62,25 +62,6 @@ class UserConsentInline(admin.StackedInline):
         return False
 
 
-class AlphabeticalPlaceTypeFilter(admin.SimpleListFilter):
-    """
-    Filter showing place types in alphabetical order.
-    """
-
-    title = "type"
-    parameter_name = "type"
-
-    def lookups(self, request, model_admin):
-        # Get unique type values and sort them alphabetically
-        types = Place.objects.values_list("type", flat=True).distinct().order_by("type")
-        return [(t, t) for t in types]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(type=self.value())
-        return queryset
-
-
 class CustomUserAdmin(LoggingMixin, UserAdmin):
     add_form_template = "admin/user_add_form.html"
     add_form = CustomUserCreationForm
@@ -507,7 +488,7 @@ class PlaceAdmin(admin.ModelAdmin):
     model = Place
     list_display = ["name", "type", "parent"]
     ordering = ["name"]
-    list_filter = [AlphabeticalPlaceTypeFilter]
+    list_filter = ["type"]
     search_fields = ["name", "abbreviation__exact", "parent__name"]
     form = CustomPlaceChangeForm
 
