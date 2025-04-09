@@ -13,10 +13,8 @@ class CardNumber:
     CARD_NUMBER_LENGTH = 14
     # Minimum length the random part should be
     MIN_RANDOM_LENGTH = 4
-    # What characters are allowed in the random sequence, 0-9 A-Z
-    ALLOWED_CHARACTERS = [str(i) for i in range(10)] + [
-        chr(i) for i in range(ord("A"), ord("Z") + 1)
-    ]
+    # What characters are allowed in the random sequence, removes some confusing characters
+    ALLOWED_CHARACTERS = "23456789ABCDEFGHJKMNPRSTUVWXYZabcdefghjkmnpqrstuvwxyz"
 
     @classmethod
     def _generate_random_characters(cls, length: int):
