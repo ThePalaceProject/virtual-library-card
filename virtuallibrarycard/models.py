@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -20,6 +21,11 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from virtual_library_card.card_number import CardNumber
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from backports.strenum import StrEnum
 
 
 def boolean_choices():
@@ -58,6 +64,7 @@ def default_customization():
 class Library(models.Model):
     class Meta:
         verbose_name_plural = "libraries"
+        ordering = ["name"]  # This will sort by name alphabetically
 
     @staticmethod
     def create_default_library():
@@ -575,20 +582,14 @@ class Place(models.Model):
     Eg. Texas is a state within the US, so the Place(type=state, name=Texas) will have a
     relationship parent=Place(type=country, name=United States)."""
 
-    class Types:
+    class Types(StrEnum):
         COUNTRY = "country"
         STATE = "state"
         PROVINCE = "province"
         COUNTY = "county"
         CITY = "city"
 
-    AREA_TYPES = (
-        (Types.COUNTRY, Types.COUNTRY),
-        (Types.STATE, Types.STATE),
-        (Types.PROVINCE, Types.PROVINCE),
-        (Types.COUNTY, Types.COUNTY),
-        (Types.CITY, Types.CITY),
-    )
+    AREA_TYPES = ((t, t) for t in sorted(Types))
 
     # The external identifier from the datasource, this cannot change
     external_id = models.CharField(max_length=128, null=False, blank=False, unique=True)
