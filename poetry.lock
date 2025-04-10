@@ -737,14 +737,14 @@ typing-extensions = "*"
 
 [[package]]
 name = "djangorestframework"
-version = "3.15.2"
+version = "3.16.0"
 description = "Web APIs for Django, made easy."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "djangorestframework-3.15.2-py3-none-any.whl", hash = "sha256:2b8871b062ba1aefc2de01f773875441a961fefbf79f5eed1e32b2f096944b20"},
-    {file = "djangorestframework-3.15.2.tar.gz", hash = "sha256:36fe88cd2d6c6bec23dca9804bab2ba5517a8bb9d8f47ebc68981b56840107ad"},
+    {file = "djangorestframework-3.16.0-py3-none-any.whl", hash = "sha256:bea7e9f6b96a8584c5224bfb2e4348dfb3f8b5e34edbecb98da258e892089361"},
+    {file = "djangorestframework-3.16.0.tar.gz", hash = "sha256:f022ff46613584de994c0c6a4aebbace5fd700555fbe9d33b865ebf173eba6c9"},
 ]
 
 [package.dependencies]
@@ -2029,4 +2029,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "58e861a12b42230865ddc000dde2902c28c77517209785a4c9e32ef7ee1512b3"
+content-hash = "0c249f7c70c056249fbdfa316c2cd4112d058077e10b26c46ea59e6bdef3d09c"
