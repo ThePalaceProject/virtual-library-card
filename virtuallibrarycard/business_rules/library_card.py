@@ -257,7 +257,7 @@ class LibraryCardBulkUpload:
         return True
 
 
-def iter_clean_lines(io: IO) -> Generator[str, None, None]:
+def iter_clean_lines(io: IO) -> Generator[str]:
     """Iterate over an IO object and ignore blank lines
     This is to specifically ignore empty last lines in csvs
     decoding is done through charset detection
