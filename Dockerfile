@@ -27,7 +27,7 @@ ENV UWSGI_MASTER=1 \
 # get a permissions error
 ENV PGSSLCERT=/tmp/postgresql.crt
 
-ARG POETRY_VERSION=1.7.1
+ARG POETRY_VERSION=2.1.1
 ARG REPO=ThePalaceProject/virtual-library-card
 
 # Install system
