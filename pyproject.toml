@@ -19,6 +19,7 @@ source = ["virtual_library_card", "virtuallibrarycard"]
 django_settings_module = "virtual_library_card.settings.dev"
 
 [tool.isort]
+combine_as_imports = true
 profile = "black"
 
 [tool.mypy]
