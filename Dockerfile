@@ -27,7 +27,7 @@ ENV UWSGI_MASTER=1 \
 # get a permissions error
 ENV PGSSLCERT=/tmp/postgresql.crt
 
-ARG POETRY_VERSION=1.7.1
+ARG POETRY_VERSION=2.1.1
 ARG REPO=ThePalaceProject/virtual-library-card
 
 # Install system
@@ -49,14 +49,14 @@ WORKDIR $APP_DIR
 # If these files change, the later poetry install will handle it.
 RUN curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o ${APP_DIR}pyproject.toml && \
     curl -fsSL https://raw.githubusercontent.com/${REPO}/main/poetry.lock -o ${APP_DIR}poetry.lock && \
-     poetry install --sync --only main --no-root --no-interaction && \
+    poetry sync --only main --no-root --no-interaction && \
     poetry cache clear -n --all pypi && \
     rm -Rf /root/.cache && \
     find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
 
 # Do final poetry install, when the layers are cached, this is the only step that will run
 COPY . $APP_DIR
-RUN POETRY_VIRTUALENVS_CREATE=false poetry install --sync --only main --no-interaction && \
+RUN POETRY_VIRTUALENVS_CREATE=false poetry sync --only main --no-interaction && \
     poetry cache clear -n --all pypi && \
     rm -Rf /root/.cache && \
     find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
