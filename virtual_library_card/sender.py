@@ -22,8 +22,9 @@ class Sender:
         """Change whitespaces [space, newline] to an html format"""
         return string.replace("  ", "&nbsp;&nbsp;").replace("\n", "<br/>")
 
-    @staticmethod
+    @classmethod
     def send_user_welcome(
+        cls,
         library: Library,
         user: CustomUser,
         card_number: str | None = None,
@@ -56,15 +57,16 @@ class Sender:
                 "email/welcome_user.html",
                 {
                     "card_number": card_number,
-                    "login_url": Sender._get_absolute_login_url(library.identifier),
+                    "login_url": cls._get_absolute_login_url(library.identifier),
+                    "reset_url": cls._get_absolute_reset_url(library.identifier),
                     "library": library,
                     "verification_link": verification_link,
                     "has_welcome": has_welcome,
                     "has_verification": not user.email_verified,
-                    "custom_top_text": Sender.text_whitespaces_to_html(
+                    "custom_top_text": cls.text_whitespaces_to_html(
                         strip_tags(library.customization.welcome_email_top_text or "")
                     ),
-                    "custom_bottom_text": Sender.text_whitespaces_to_html(
+                    "custom_bottom_text": cls.text_whitespaces_to_html(
                         strip_tags(
                             library.customization.welcome_email_bottom_text or ""
                         )
@@ -99,4 +101,9 @@ class Sender:
     @staticmethod
     def _get_absolute_login_url(library_identifier):
         url = settings.ROOT_URL + reverse("login") + library_identifier + "/"
+        return url
+
+    @staticmethod
+    def _get_absolute_reset_url(library_identifier):
+        url = settings.ROOT_URL + reverse("reset-password") + library_identifier + "/"
         return url

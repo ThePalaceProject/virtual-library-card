@@ -41,7 +41,19 @@
         <p>
             {{ barcode_text }}: <strong>{{ card_number }}</strong>
             <br>
-            {{ pin_text }}: {% blocktranslate %}use the password you created when you signed up for a card{% endblocktranslate %}
+            {{ pin_text }}:
+            {% blocktranslate %}
+                use the password you created when you signed up for a card
+            {% endblocktranslate %}
+        </p>
+        <p>
+            {% set reset_link %}
+                <a href="{{ reset_url }}">{{ reset_url }}</a>
+            {% endset %}
+            {% blocktrans with reset_link=reset_link %}
+                Save this email to retain your login information. If you have forgotten your password, please visit
+                {{ reset_link }} OR click "Forgot your password?" on the Settings - Libraries screen in the Palace app.
+            {% endblocktrans %}
         </p>
     {%  endif %}
 
