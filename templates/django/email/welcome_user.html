@@ -1,12 +1,19 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
+
 <body>
 
 <p>
 {% translate "Hello," %}
 </p>
+
+{% if custom_top_text %}
+<p>
 {{ custom_top_text | safe }}
+</p>
+{% endif %}
+
 <p>
 {% blocktrans with library_name=library.name %}Thank you for joining {{ library_name }}.{% endblocktrans %}
 </p>
@@ -32,10 +39,16 @@
 {% blocktrans %}Save this email to retain your login information. If you have forgotten your password, please visit{% endblocktrans %} <a href="{{ reset_url }}">{{ reset_url }}</a> {% blocktrans %}OR click "Forgot your password?" on the Settings - Libraries screen in the Palace app.{% endblocktrans %}
 </p>
 {%  endif %}
+
 <p>
 {% blocktrans with library_name=library.name %}You are receiving this message because someone used this email address to request a library card for {{ library_name }}. If you were not expecting this to happen, please ignore this message{% endblocktrans %}{% if has_verification %} {% translate " and do not click the verification link above." %}{% else %}.{% endif %}
 </p>
+
+{% if custom_bottom_text %}
+<p>
 {{ custom_bottom_text | safe }}
+</p>
+{%  endif %}
 
 <p>
 {% blocktrans %}Happy Reading,{% endblocktrans %}<br>
@@ -43,4 +56,5 @@
 </p>
 
 </body>
+
 </html>
