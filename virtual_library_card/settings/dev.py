@@ -84,16 +84,6 @@ AWS_S3_URL_PROTOCOL = os.environ.get("VLC_DEV_AWS_S3_URL_PROTOCOL", "https:")
 AWS_S3_ACCESS_KEY_ID = "vlc-minio"
 AWS_S3_SECRET_ACCESS_KEY = "123456789"
 
-# Dynamic link data
-DYNAMIC_LINKS = {
-    "web_api_key": "test_web_key",
-    "domain_uri_prefix": "https://palacetest.page.link",
-    "android_package_name": "com.thepalaceproject.circulation",
-    "ios_bundle_id": "123456789",
-}
-
-DYNAMIC_LINKS_SIGNUP_URL = "https://thepalaceproject.org/app"
-
 # To adjust depending on deployment
 DEFAULT_PRIVACY_URL = "https://legal.palaceproject.io/Privacy%20Policy.html"
 
