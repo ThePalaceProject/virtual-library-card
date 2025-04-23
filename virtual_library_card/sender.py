@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -73,7 +74,8 @@ class Sender:
                     ),
                 },
             )
-            plain_message = strip_tags(html_message)
+            plain_message = strip_tags(html_message).strip()
+            plain_message = re.sub(r"\n\n+", "\n\n", plain_message)
             msg = EmailMultiAlternatives(
                 subject, plain_message, settings.DEFAULT_FROM_EMAIL, to=[to]
             )

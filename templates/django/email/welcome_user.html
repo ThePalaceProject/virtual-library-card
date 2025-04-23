@@ -1,87 +1,46 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
-
 <body>
-    <p>
-        {% translate "Hello," %}
-    </p>
 
-    {{ custom_top_text | safe }}
+<p>
+{% translate "Hello," %}
+</p>
+{{ custom_top_text | safe }}
+<p>
+{% blocktrans with library_name=library.name %}Thank you for joining {{ library_name }}.{% endblocktrans %}
+</p>
 
-    <p>
-        {% blocktrans with library_name=library.name %}
-            Thank you for joining {{ library_name }}.
-        {% endblocktrans %}
-    </p>
+{% if has_verification %}
+<p>
+{% blocktrans %}Please verify your email address within the next 24 hours by clicking here:{% endblocktrans %} <a href="{{ verification_link }}">{{ verification_link }}</a>
+</p>
+<p>
+<em><strong>{% blocktrans %}Your account will not be activated until the link has been clicked. You may recreate a new verification email by clicking the link above again.{% endblocktrans %}</strong></em>
+</p>
+{% endif %}
 
-    {% if has_verification %}
-        <p>
-            {% blocktrans %}
-                Please verify your email address within the next 24 hours by clicking here:
-            {% endblocktrans %}
-            <a href="{{ verification_link }}">{{ verification_link }}</a>
-        </p>
-        <p>
-            <em><strong>
-            {% blocktrans %}
-                Your account will not be activated until the link has been clicked. You may recreate a
-                new verification email by clicking the link above again.
-            {% endblocktrans %}
-            </strong></em>
-        </p>
-    {% endif %}
+{% if has_welcome %}
+<p>
+{% blocktrans %}Your login details are below:{% endblocktrans %}
+</p>
+<p>
+{{ library.barcode_text }}: <strong>{{ card_number }}</strong><br>
+{{ library.pin_text }}: {% blocktranslate %}use the password you created when you signed up for a card{% endblocktranslate %}
+</p>
+<p>
+{% blocktrans %}Save this email to retain your login information. If you have forgotten your password, please visit{% endblocktrans %} <a href="{{ reset_url }}">{{ reset_url }}</a> {% blocktrans %}OR click "Forgot your password?" on the Settings - Libraries screen in the Palace app.{% endblocktrans %}
+</p>
+{%  endif %}
+<p>
+{% blocktrans with library_name=library.name %}You are receiving this message because someone used this email address to request a library card for {{ library_name }}. If you were not expecting this to happen, please ignore this message{% endblocktrans %}{% if has_verification %} {% translate " and do not click the verification link above." %}{% else %}.{% endif %}
+</p>
+{{ custom_bottom_text | safe }}
 
-    {% if has_welcome %}
-        <p>
-            {% blocktrans %}
-                Your login details are below:
-            {% endblocktrans %}
-        </p>
-        <p>
-            {{ barcode_text }}: <strong>{{ card_number }}</strong>
-            <br>
-            {{ pin_text }}:
-            {% blocktranslate %}
-                use the password you created when you signed up for a card
-            {% endblocktranslate %}
-        </p>
-        <p>
-            {% set reset_link %}
-                <a href="{{ reset_url }}">{{ reset_url }}</a>
-            {% endset %}
-            {% blocktrans with reset_link=reset_link %}
-                Save this email to retain your login information. If you have forgotten your password, please visit
-                {{ reset_link }} OR click "Forgot your password?" on the Settings - Libraries screen in the Palace app.
-            {% endblocktrans %}
-        </p>
-    {%  endif %}
-
-    <p>
-        {% blocktrans with library_name=library.name %}
-            You are receiving this message because someone used this email address to request a library card for
-            {{ library_name }}. If you were not expecting this to happen, please ignore this
-        {% endblocktrans %}
-        {# We keep the text "message" in both if-else blocks so that we can control the spacing for the "."(period) #}
-        {% if has_verification %}
-            {% translate "message and do not click the verification link above." %}
-        {% else %}
-            {% translate "message." %}
-        {% endif %}
-    </p>
-
-    {{ custom_bottom_text | safe }}
-
-    <p>
-        {% blocktrans %}
-            Happy Reading,
-        {% endblocktrans %}
-        <br>
-        {% blocktrans with library_name=library.name %}
-            The Palace Team and {{ library_name }}
-        {% endblocktrans %}
-    </p>
+<p>
+{% blocktrans %}Happy Reading,{% endblocktrans %}<br>
+{% blocktrans with library_name=library.name %}The Palace Team and {{ library_name }}{% endblocktrans %}
+</p>
 
 </body>
-
 </html>

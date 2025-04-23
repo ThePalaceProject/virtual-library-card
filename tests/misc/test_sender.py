@@ -37,6 +37,7 @@ class TestSender(BaseUnitTest):
             {
                 "card_number": card.number,
                 "login_url": Sender._get_absolute_login_url(library.identifier),
+                "reset_url": Sender._get_absolute_reset_url(library.identifier),
                 "library": library,
                 "verification_link": None,
                 "has_verification": False,
@@ -48,7 +49,7 @@ class TestSender(BaseUnitTest):
 
         assert mock_email.call_count == 1
         assert mock_email.call_args_list[0].args == (
-            f"{library.name} | Welcome",
+            f"{library.name}: Welcome to the Palace App",
             render_string,
             settings.DEFAULT_FROM_EMAIL,
         )
@@ -70,6 +71,7 @@ class TestSender(BaseUnitTest):
             {
                 "card_number": None,
                 "login_url": Sender._get_absolute_login_url(library.identifier),
+                "reset_url": Sender._get_absolute_reset_url(library.identifier),
                 "library": library,
                 "verification_link": token_url + "Generated",
                 "has_verification": True,
@@ -104,25 +106,65 @@ class TestSender(BaseUnitTest):
             == f"{settings.ROOT_URL}/accounts/login/{self._default_library.identifier}/"
         )
 
+    def test_get_absolute_reset_url(self):
+        url = Sender._get_absolute_reset_url(self._default_library.identifier)
+        assert (
+            url
+            == f"{settings.ROOT_URL}/account/reset-password/{self._default_library.identifier}/"
+        )
+
     def test_libary_email_configurables(self):
         library = self._default_library
         user = self._default_user
-        card = self._default_card
 
         library.barcode_text = "totally not a number"
         library.pin_text = "very special secret"
 
-        Sender.send_user_welcome(library, user, card)
+        Sender.send_user_welcome(library, user, "12345")
         assert len(mail.outbox) == 1
         msg = mail.outbox[0]
 
         # New text is present
-        assert "Your library totally not a number is" in msg.body
-        assert "Use the totally not a number" in msg.body
-        assert "the very special secret you set" in msg.body
+        assert "totally not a number: 12345" in msg.body
+        assert "very special secret:" in msg.body
         # Original text is not present
-        assert "card number" not in msg.body.lower()
-        assert "password" not in msg.body.lower()
+        assert "card number:" not in msg.body.lower()
+        assert "password:" not in msg.body.lower()
+
+    def test_libary_email_text_formatting(self):
+        library = self._default_library
+        user = self._default_user
+
+        library.customization.welcome_email_top_text = "Welcome user top text!"
+        library.customization.welcome_email_bottom_text = "Welcome user bottom text!"
+
+        Sender.send_user_welcome(library, user, "12345")
+        [msg] = mail.outbox
+
+        assert (
+            msg.body
+            == f"""
+Hello,
+
+Welcome user top text!
+
+Thank you for joining Default.
+
+Your login details are below:
+
+barcode: 12345
+pin: use the password you created when you signed up for a card
+
+Save this email to retain your login information. If you have forgotten your password, please visit {Sender._get_absolute_reset_url(self._default_library.identifier)} OR click "Forgot your password?" on the Settings - Libraries screen in the Palace app.
+
+You are receiving this message because someone used this email address to request a library card for Default. If you were not expecting this to happen, please ignore this message.
+
+Welcome user bottom text!
+
+Happy Reading,
+The Palace Team and Default
+        """.strip()
+        )
 
     def test_whitespaces_to_html(self):
         string = """A\n\nB    C D   E  \nF"""
