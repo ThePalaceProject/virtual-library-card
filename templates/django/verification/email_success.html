@@ -36,19 +36,5 @@
         <p>You password was successfully set. Thank you!</p>
     {% endif %}
 
-    {# The redirect link workflow #}
-    {% if redirect_link %}
-        {% blocktrans %}
-        <p>
-            You will automatically be redirected to the Palace app in 10 seconds.<br/>
-            Don't want to wait? Click the link below to go now.<br/>
-            <a href="{{ redirect_link }}">The Palace App</a>
-        </p>
-        {% endblocktrans %}
-        <script>
-            setTimeout(function(){ window.location.href = "{{ redirect_link }}"; }, 10000)
-        </script>
-    {% endif %}
-
 </div>
 {% endblock %}
