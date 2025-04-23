@@ -44,7 +44,6 @@ class Sender:
         log.debug(f"send_user_welcome to: {to}, from: {settings.DEFAULT_FROM_EMAIL}")
 
         try:
-            token = None
             verification_link = None
             if not user.email_verified:
                 token = Tokens.generate(TokenTypes.EMAIL_VERIFICATION, email=user.email)
@@ -52,7 +51,7 @@ class Sender:
                     f"{host}{reverse('email_token_verify')}?token={token}"
                 )
 
-            subject = _(f"{library.name} | Welcome")
+            subject = _(f"{library.name}: Welcome to the Palace App")
             html_message = render_to_string(
                 "email/welcome_user.html",
                 {
