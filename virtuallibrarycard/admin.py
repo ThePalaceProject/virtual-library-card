@@ -236,7 +236,6 @@ class LibraryAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "identifier",
-                    "uuid",
                     "name",
                     "age_verification_mandatory",
                     "logo",

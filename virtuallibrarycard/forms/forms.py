@@ -124,11 +124,6 @@ class LibraryChangeForm(forms.ModelForm):
             "This field is only required when Bulk Card Uploads are enabled."
         )
 
-        self.fields["uuid"].help_text = _(
-            "The Library UUID should be a globally unique UUID provided by the Library Registry."
-            "<br>If not provided, on email verification, the user will not be redirected to the Mobile Apps."
-        )
-
         # The initial set of library places
         if self.instance.pk:
             self.fields["places_filter"].initial = self.instance.places
