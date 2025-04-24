@@ -16,7 +16,6 @@ from virtuallibrarycard.models import (
     Library,
     LibraryCard,
     LibraryPlace,
-    Place,
 )
 
 log.removeHandler(log.handlers[0])
@@ -93,7 +92,6 @@ class TestData:
             first_name=first_name or self._random_name(),
             **kwargs,
         )
-        user.place = Place.by_abbreviation(place_abbreviation)
         user.save()
         return user
 

@@ -67,10 +67,6 @@ class TestProfileEditView(BaseUnitTest):
             "first_name": "first",
             "last_name": "last",
             "email": "email@t.co",
-            "street_address_line1": "address1",
-            "street_address_line2": "address2",
-            "city": "city",
-            "zip": "99999",
         }
 
         response = self.client.post(f"/account/edit/{user.first_name}/", data)
@@ -102,42 +98,6 @@ class TestProfileEditView(BaseUnitTest):
             response,
             "form",
             "last_name",
-            ["This field is required."],
-        )
-
-        self.assertRaises(
-            AssertionError,
-            self.assertFormError,
-            response,
-            "form",
-            "street_address_line1",
-            ["This field is required."],
-        )
-
-        self.assertRaises(
-            AssertionError,
-            self.assertFormError,
-            response,
-            "form",
-            "city",
-            ["This field is required."],
-        )
-
-        self.assertRaises(
-            AssertionError,
-            self.assertFormError,
-            response,
-            "form",
-            "zip",
-            ["This field is required."],
-        )
-
-        self.assertRaises(
-            AssertionError,
-            self.assertFormError,
-            response,
-            "form",
-            "street_address_line2",
             ["This field is required."],
         )
 

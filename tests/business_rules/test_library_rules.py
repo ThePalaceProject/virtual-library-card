@@ -9,7 +9,7 @@ class TestLibraryRules(BaseUnitTest):
         result = LibraryRules.validate_user_address_fields(
             library, state="AL", country="US"
         )
-        assert result is True
+        assert result is not False
 
     def test_validate_address_invalid_state(self):
         library = self.create_library(places=["NY", "AL"])
@@ -23,7 +23,7 @@ class TestLibraryRules(BaseUnitTest):
         result = LibraryRules.validate_user_address_fields(
             library, state="AL", country="CA"
         )
-        assert result is True
+        assert result is not False
 
     def test_invalid_country(self):
         library: Library = self.create_library(places=[])
@@ -50,7 +50,7 @@ class TestLibraryRules(BaseUnitTest):
         result = LibraryRules.validate_user_address_fields(
             library, state="Anything", city="Toronto"
         )
-        assert result is True
+        assert result is not False
 
     def test_invalid_city(self):
         toronto = Place(

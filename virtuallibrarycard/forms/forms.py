@@ -9,7 +9,6 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
-from localflavor.us.forms import USStateSelect
 
 from virtual_library_card.logging import LoggingMixin
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
@@ -189,18 +188,11 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm):
         model = CustomUser
-        state = forms.CharField(widget=USStateSelect)
         fields = [
             "first_name",
             "last_name",
             "email",
-            "street_address_line1",
-            "street_address_line2",
-            "city",
-            "zip",
-            "place",
             "library",
-            "country_code",
             "over13",
         ]
 
@@ -208,16 +200,11 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
-        state = forms.CharField(widget=USStateSelect)
         fields = [
             "first_name",
             "last_name",
             "email",
             "over13",
-            "street_address_line1",
-            "street_address_line2",
-            "city",
-            "zip",
             "library",
             "user_permissions",
         ]
@@ -245,41 +232,15 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         if is_superuser:
             is_superuser.label = "VLC Super Administrator status"
 
-        try:
-            instance = getattr(self, "instance", None)
-            if (
-                instance and not instance.place
-            ):  # Edition just after creation form with minimal fields
-                self.fields["email"].widget.value_from_datadict = (
-                    lambda *args: self.instance.email
-                )
-                self.fields["first_name"].widget.value_from_datadict = (
-                    lambda *args: self.instance.first_name
-                )
-                self.fields["email"].widget.attrs["disabled"] = True
-
-        except KeyError as e:
-            self.log.error(f"Error disabling email and first name {e}")
-
+        instance = getattr(self, "instance", None)
         if instance and instance.library.age_verification_mandatory == False:
             # Don't show this in case we don't need age verification
             self.fields["over13"].widget = forms.HiddenInput()
 
         try:
             self.fields["library"].required = True
-
         except KeyError as e:
             self.log.error(f"Library field is not editable {e}")
-
-        self.fields["street_address_line1"].required = False
-        self.fields["city"].required = False
-        self.fields["zip"].required = False
-
-        if "place" in self.fields:
-            self.fields["place"].label = "State"
-            self.fields["place"].queryset = Place.objects.filter(
-                type__in=(Place.Types.STATE, Place.Types.PROVINCE)
-            )
 
     def save(self, commit=True):
         user: CustomUser = super().save(commit)

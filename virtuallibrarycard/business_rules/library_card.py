@@ -16,7 +16,7 @@ from django.db.utils import IntegrityError
 
 from virtual_library_card.logging import log
 from virtual_library_card.sender import Sender
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard
 
 
 class LibraryCardRules:
@@ -39,7 +39,7 @@ class LibraryCardRules:
 
 class LibraryCardBulkUpload:
     REQUIRED_CSV_HEADERS = ["id", "first_name", "email"]
-    OPTIONAL_CSV_HEADERS = ["last_name", "city", "us_state", "zip"]
+    OPTIONAL_CSV_HEADERS = ["last_name"]
     FOLDER = "bulk_upload_csvs"
     # Write uploaded CSVs to the local system since they are temporary files
     # Must change this in the future if and when implementing async out-of-band queues and job servers
@@ -156,13 +156,7 @@ class LibraryCardBulkUpload:
                 # Set the additional data points, if present
                 for name in self.OPTIONAL_CSV_HEADERS:
                     if name in item and item[name]:
-                        if name == "us_state":
-                            value = Place.objects.filter(
-                                abbreviation=item[name]
-                            ).first()
-                            name = "place"
-                        else:
-                            value = item[name]
+                        value = item[name]
                         setattr(user, name, value)
 
                 try:

@@ -14,7 +14,7 @@ from virtuallibrarycard.forms.forms_library_card import (
     RequestLibraryCardForm,
     SignupCardForm,
 )
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard, Place
+from virtuallibrarycard.models import CustomUser, Library, LibraryCard
 
 
 class LibraryCardsView(LoginRequiredMixin, TemplateView):
@@ -112,33 +112,16 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
         identifier = self.request.session["identifier"]
         if identifier:
             identifier = self.request.session["identifier"]
-            country = self.request.session["country"]
-            state = self.request.session["state"]
-            city = self.request.session["city"]
-            zipcode = self.request.session["zipcode"]
-            #  Not Working (Err 500):
-            #            del self.request.session['identifier']
-            #            del self.request.session['state']
-            #            del self.request.session['city']
-            #            del self.request.session['zipcode']
             self.request.session.modified = True
 
             try:
                 self.model = CustomUser()
                 library = Library.objects.filter(identifier=identifier).first()
-                states = Place.get_states(abbreviation=state)
-                place = states[0] if len(states) else None
                 self.model.library = library
-                self.model.place = place
-                self.model.city = city
-                self.model.country_code = country
-                self.model.zip = zipcode
                 self.model.username = ""
                 self.model.first_name = ""
                 self.model.last_name = ""
                 self.model.email = ""
-                self.model.street_address_line1 = ""
-                self.model.street_address_line2 = ""
                 self.model.existing_library_card = ""
                 self.model.is_superuser = False
                 self.model.is_staff = False
@@ -149,19 +132,11 @@ class LibraryCardRequestView(LoggingMixin, CreateView):
                     self.model.over13 = False
 
                 kwargs["instance"] = self.model
-                # kwargs['prefix'] = 'FR'
 
             except Exception as e:
                 self.log.error(e)
 
         return kwargs
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["patron_address_mandatory"] = (
-            self.model.library.patron_address_mandatory
-        )
-        return context
 
     def get_success_url(self):
         return reverse(
@@ -208,7 +183,6 @@ class CardSignupView(FormView):
             country = location["adminArea1"]
             county = location["adminArea4"]
             city = location["adminArea5"]
-            zipcode = location["postalCode"]
 
             context.update(
                 {
@@ -222,7 +196,7 @@ class CardSignupView(FormView):
                 library, state=state, county=county, city=city, country=country
             )
 
-            if not valid_address:
+            if valid_address is False:
                 raise InvalidUserLocation(
                     render(
                         self.request,
@@ -231,13 +205,10 @@ class CardSignupView(FormView):
                     )
                 )
 
-            # We put the informations into the session only after checking the access is allowed
+            # We put the information into the session only after checking the access is allowed
             UserSessionManager.set_session_library(self, library)
-            UserSessionManager.set_session_user_location(
-                self.request, country, state, city, zipcode
-            )
 
-            # We add the library identifier to the URL in order to allow comapring it with the one which can
+            # We add the library identifier to the URL in order to allow comparing it with the one which can
             # be present in the session. This allows preventing circumventing the geolocation barrier by
             # first logging into a local library
             self.success_url += "?identifier=" + library.identifier

@@ -76,7 +76,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
         "is_active",
         "library",
         "authorization_expires",
-        "state",
         "groups_permission",
         "nb_library_cards",
     ]
@@ -99,18 +98,6 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
             {
                 "fields": ("password",),
                 "description": "This password/PIN is used to login to this website and is the pin associated with your library card in the Palace app.",
-            },
-        ),
-        (
-            _("Address"),
-            {
-                "fields": (
-                    "street_address_line1",
-                    "street_address_line2",
-                    "city",
-                    "place",
-                    "zip",
-                )
             },
         ),
         (_("Library Info"), {"fields": ("library", "library_cards")}),
@@ -155,22 +142,16 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
             return [UserConsentInline]
         return []
 
-    def state(self, obj):
-        return obj.place and str(obj.place.name)
-
     def get_list_filter(self, request: Any) -> list[Any]:
         list_filter = super().get_list_filter(request)
         if request.user.is_superuser:
             list_filter = list_filter + ("library",)
-        list_filter = list_filter + ("place",)
         return list_filter
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
             if not request.user.is_superuser:
                 obj.library = request.user.library
-                libplace = obj.library.library_places.first()
-                obj.place = libplace and libplace.place
 
         super().save_model(request, obj, form, change)
 
@@ -257,7 +238,6 @@ class LibraryAdmin(admin.ModelAdmin):
                     "identifier",
                     "uuid",
                     "name",
-                    "patron_address_mandatory",
                     "age_verification_mandatory",
                     "logo",
                 )

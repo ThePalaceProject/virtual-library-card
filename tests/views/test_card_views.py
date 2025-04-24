@@ -64,10 +64,6 @@ class TestCardSignup(BaseUnitTest):
             == f"/account/library_card_request/?identifier={library.identifier}"
         )
         assert mock_manager.set_session_library.call_count == 1
-        assert mock_manager.set_session_user_location.call_count == 1
-        assert mock_manager.set_session_user_location.call_args == mock.call(
-            view.request, "US", "AL", "city", "998867"
-        )
 
         # An invalid request raise an error
         mock_geolocalize.get_user_location.return_value = (
@@ -110,8 +106,6 @@ class TestCardSignup(BaseUnitTest):
             resp.url
             == f"/account/library_card_request/?identifier={library.identifier}"
         )
-
-        assert c.session["zipcode"] == "998867"
 
     @mock.patch("virtuallibrarycard.views.views_library_card.Geolocalize")
     def test_signup_redirect_admin_levels(self, mock_geolocalize: mock.MagicMock):
@@ -245,11 +239,7 @@ class TestCardRequest(BaseUnitTest):
             first_name="New",
             last_name="User",
             email=email,
-            street_address_line1="Some street",
-            street_address_line2="",
-            city="city",
             place=library.places[0].id,
-            zip="99887",
             over13="on",
             password1="xx123456789",
             password2="xx123456789",
@@ -278,7 +268,6 @@ class TestCardRequest(BaseUnitTest):
             resp, "test@example.com", self._default_library
         )
         user = CustomUser.objects.get(email="test@example.com")
-        assert user.place == self._default_library.places[0]
 
         # welcome email sent
         assert len(mail.outbox) == 1
@@ -302,12 +291,7 @@ class TestCardRequest(BaseUnitTest):
                 country_code="CA",  # Not US
                 # first_name="New", # No first name
                 last_name="User",
-                # email="test@example.com", # No Email
-                # street_address_line1="Some street", # No street address
-                street_address_line2="",
-                city="city",
                 place=12,  # A random place id
-                # zip="99887",
                 over13="on",
                 password1="xx123456789",
                 password2="xx123456789",
@@ -317,8 +301,6 @@ class TestCardRequest(BaseUnitTest):
         expected_errors_fields = [
             "first_name",
             "email",
-            "street_address_line1",
-            "zip",
             "captcha",
         ]
         errors = ["This field is required."]
@@ -333,39 +315,11 @@ class TestCardRequest(BaseUnitTest):
                 ),
             )
 
-    def test_card_request_no_patron_address(self):
-        c = Client()
-
-        library = self.create_library(patron_address_mandatory=False)
-        # Prime the session
-        self.do_library_card_signup_flow(c, library=library)
-
-        identifier = library.identifier
-        resp = c.post(
-            f"/account/library_card_request/?identifier={identifier}",
-            self._get_card_request_data(
-                library,
-                "test@example.com",
-                country_code="CA",
-                street_address_line1="",
-                zip="",
-                city="",
-            ),
-        )
-        self._assert_card_request_success(resp, "test@example.com", library)
-
-        ## Form specifics
-        user = self.create_user(library)
-        form = RequestLibraryCardForm(instance=user)
-        for name in ("city", "zip", "street_address_line1", "street_address_line2"):
-            assert form.fields[name].required == False
-            assert type(form.fields[name].widget) == forms.HiddenInput
-
     def test_card_request_email_no_duplicates(self):
         user = self.create_user(self._default_library, "TEST@t.co")
         c = Client()
 
-        library = self.create_library(patron_address_mandatory=False)
+        library = self.create_library()
         # Prime the session
         self.do_library_card_signup_flow(c, library=library)
 
