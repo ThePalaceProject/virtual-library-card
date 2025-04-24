@@ -1,3 +1,5 @@
+from typing import Literal
+
 from virtuallibrarycard.models import Library, Place
 
 
@@ -10,7 +12,7 @@ class LibraryRules:
         county: str | None = None,
         state: str | None = None,
         country: str | None = None,
-    ) -> bool:
+    ) -> Place | Literal[False]:
         """Validate whether the given address fields are valid for a user that would signup for a given library
         - Country, State or City, at least one must be within the list of places of the library
         """
@@ -23,7 +25,7 @@ class LibraryRules:
             if cls._place_hierarchy_match(
                 place, city=city, county=county, state=state, country=country
             ):
-                return True
+                return place
 
         return False
 

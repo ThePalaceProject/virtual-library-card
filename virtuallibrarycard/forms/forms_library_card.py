@@ -29,27 +29,18 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             "first_name",
             "last_name",
             "email",
-            "street_address_line1",
-            "street_address_line2",
-            "city",
-            "zip",
-            "place",
             "library",
-            "country_code",
             "over13",
         ]
 
         widgets = {
             "library": forms.HiddenInput(),
-            "country_code": forms.HiddenInput(),
         }
-        readonly_fields = ("library", "country_code")
+        readonly_fields = "library"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].widget.attrs.pop("autofocus", None)
-        self.fields["place"].widget.attrs["disabled"] = True
-        self.fields["place"].label = "State"
         self.fields["over13"].required = True
         self.fields["first_name"].required = True
 
@@ -67,14 +58,7 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             consent.disabled = True
             consent.widget = consent.hidden_widget()
 
-        # Country code is taken from the users lat/lon location
-        self.fields["country_code"].value = user.country_code
-        if library.patron_address_mandatory == False:
-            # Hide unwanted address fields
-            for name in ("street_address_line1", "street_address_line2", "city", "zip"):
-                self.fields[name].required = False
-                self.fields[name].widget = forms.HiddenInput()
-        if library.age_verification_mandatory == False:
+        if library.age_verification_mandatory is False:
             # Don't show this in case we don't need age verification
             self.fields["over13"].required = False
             self.fields["over13"].widget = forms.HiddenInput()
@@ -87,11 +71,6 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
                 break
         else:
             self.fields["first_name"].widget.attrs["autofocus"] = "autofocus"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-
-        return kwargs
 
     def validate_unique(self):
         form_email = self.cleaned_data.get("email")

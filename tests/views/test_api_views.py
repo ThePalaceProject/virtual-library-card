@@ -221,8 +221,7 @@ class TestUserLibraryCardViewSet(BaseUnitTest):
             f"HOME LIBR[p53]={card.library.identifier}<BR>"
             f"\nCREATED[p83]={card.created.strftime('%m-%d-%y')}<BR>"
             f"\nPATRN NAME[pn]={card.user.get_smart_name()}<BR>"
-            f"\nADDRESS[pa]={card.user.street_address_line1}<BR>\n"
-            f"P BARCODE[pb]={card.number}<BR>\n</BODY>\n</HTML>"
+            f"\nP BARCODE[pb]={card.number}<BR>\n</BODY>\n</HTML>"
         )
 
         response = self.client.get(f"/PATRONAPI/{card.number}/dump")

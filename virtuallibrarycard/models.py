@@ -13,7 +13,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
-from django.core.validators import RegexValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -108,12 +107,6 @@ class Library(models.Model):
     card_validity_months = models.PositiveSmallIntegerField(null=True, blank=True)
 
     # Configurables
-    patron_address_mandatory = models.BooleanField(
-        choices=boolean_choices(),
-        blank=False,
-        default=True,
-        verbose_name="Require Patron Address",
-    )
     barcode_text = models.CharField(
         max_length=255, default="barcode", verbose_name="Barcode Text"
     )
@@ -281,9 +274,7 @@ class CustomUserManager(BaseUserManager):
     for authentication instead of username.
     """
 
-    def create_user(
-        self, email, password, library, place_abbreviation, first_name, **extra_fields
-    ):
+    def create_user(self, email, password, library, first_name, **extra_fields):
         """
         Create and save a User with the given email and password.
         """
@@ -293,14 +284,11 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("The first name must be set"))
         if not library:
             raise ValueError(_("The library must be set"))
-        if not place_abbreviation:
-            raise ValueError(_("The place must be set"))
         email = self.normalize_email(email)
         user = self.model(
             email=email,
             library=library,
             first_name=first_name,
-            place=Place.objects.filter(abbreviation=place_abbreviation).first(),
             **extra_fields,
         )
         user.set_password(password)
@@ -329,7 +317,6 @@ class CustomUserManager(BaseUserManager):
             email,
             password,
             default_library,
-            default_library.get_first_place(),
             first_name,
             **extra_fields,
         )
@@ -344,34 +331,6 @@ def default_library():
 
 
 class CustomUser(AbstractUser):
-    street_address_line1 = models.CharField(
-        _("Street address line 1"), max_length=255, null=True, blank=False
-    )
-    street_address_line2 = models.CharField(
-        _("Street address line 2"), max_length=255, null=True, blank=True
-    )
-    city = models.CharField(max_length=255, null=True, blank=False)
-
-    place = models.ForeignKey(
-        "Place",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-    )
-
-    country_code = models.CharField(
-        max_length=255, null=True, blank=False, default="US"
-    )
-    zip = models.CharField(
-        validators=[
-            RegexValidator(
-                r"^([0-9A-Z]{3}(?: [A-Z0-9]{3})?)|(\d{5}(?:-\d{4})?)$",
-                message="Enter a zip code in the format [XXX or XXX XXX](Canada) or [XXXXX or XXXXX-XXXX](USA)",
-            )
-        ],
-        max_length=10,
-        null=True,
-    )
     library = models.ForeignKey(
         Library,
         on_delete=models.PROTECT,

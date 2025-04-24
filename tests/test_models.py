@@ -142,12 +142,10 @@ class TestCustomUserModel(BaseUnitTest):
             "email",
             "password",
             self._default_library,
-            "NY",
             "first name",
             last_name="last name",
         )
         assert user.email == "email"
-        assert user.place.abbreviation == "NY"
         assert user.first_name == "first name"
         assert user.library == self._default_library
         assert user.last_name == "last name"
@@ -158,7 +156,6 @@ class TestCustomUserModel(BaseUnitTest):
                 None,
                 "password",
                 self._default_library,
-                "NY",
                 "first name",
                 last_name="last name",
             )
@@ -167,17 +164,6 @@ class TestCustomUserModel(BaseUnitTest):
             CustomUser.objects.create_user(
                 "email",
                 "password",
-                None,
-                "NY",
-                "first name",
-                last_name="last name",
-            )
-
-        with pytest.raises(ValueError, match="The place must be set"):
-            CustomUser.objects.create_user(
-                "email",
-                "password",
-                self._default_library,
                 None,
                 "first name",
                 last_name="last name",
@@ -188,7 +174,6 @@ class TestCustomUserModel(BaseUnitTest):
                 "email",
                 "password",
                 self._default_library,
-                "NY",
                 None,
                 last_name="last name",
             )

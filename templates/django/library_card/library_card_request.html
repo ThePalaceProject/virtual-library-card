@@ -60,23 +60,9 @@
         <button type="button" id="form-submit-btn" class="btn">Submit</button>
     </form>
 
-    <!-- Autofill location into inputs modal 
+    <!-- Modal configuration
         Ideally this should be at a higher level in the DOM but we're localizing the code
         background and shadow overrides are to counter the conflicting bootstrap and material js's -->
-    <div id="location-autofill-modal" class="modal" role="dialog" style="background-color: transparent; box-shadow: none;">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="font-size: 1.5em; text-align: center;">
-                    Would you like to autofill your city and zip based on your location?
-                </div>
-                <div class="modal-body" style="text-align: center;">
-                    <button id="location-autofill-yes" class="btn btn-success">YES</button>
-                    <button id="location-autofill-no" class="btn btn-danger">NO</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="email-confirmation-modal" class="modal" role="dialog" style="background-color: transparent; box-shadow: none;">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -96,26 +82,7 @@
 
     <script>
         jQuery(function ($) {
-            /** Prep the location autofill modal and actions */
-            var cityEle = $("#id_city"), zipEle = $("#id_zip");
-            var city = cityEle.val();
-            var zip = zipEle.val();
-            var addressMandatory = {% if patron_address_mandatory %} true {% else %} false {% endif %};
-
-            // clear out values
-            cityEle.val("");
-            zipEle.val("");
-
-            function modalCallback(autofill) {
-                if (autofill) {
-                    cityEle.val(city);
-                    zipEle.val(zip);
-                    // Ensure the UI reacts to the data
-                    cityEle.focus();
-                    zipEle.focus();
-                }
-                $("#location-autofill-modal").modal("close");
-            }
+            /** Prep modal and actions */
 
             // Materialize style modal invocations
             $("#email-confirmation-modal").modal({
@@ -125,14 +92,6 @@
                     $("#confirmation-email-display").text(emailValue);
                 }
             }); // init email confirmation modal
-            $("#location-autofill-modal").modal(); // init location autofill modal
-            $("#location-autofill-yes").on("click", function () { modalCallback(true) })
-            $("#location-autofill-no").on("click", function () { modalCallback(false) })
-
-            // display the location autofill modal only if the address is mandatory and we have valid data
-            if (addressMandatory && (city || zip)) {
-                $("#location-autofill-modal").modal("open")
-            }
 
             // Handle form submission with validation
             $("#form-submit-btn").on("click", function() {

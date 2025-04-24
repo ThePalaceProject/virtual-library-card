@@ -104,8 +104,8 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
 
     def test_optional_columns(self):
         self._default_library.allow_bulk_card_uploads = True
-        csv_bytes = b"""id,first_name,email,last_name,city,us_state,zip
-                        111,name111,111@example.org,000,New York,NY,10001"""
+        csv_bytes = b"""id,first_name,email,last_name
+                        111,name111,111@example.org,000"""
         uploaded = BytesIO(csv_bytes)
 
         LibraryCardBulkUpload.bulk_upload_csv(
@@ -114,9 +114,6 @@ class TestLibraryCardBulkUpload(BaseUnitTest):
         user = CustomUser.objects.get(email="111@example.org")
 
         assert user.last_name == "000"
-        assert user.city == "New York"
-        assert user.place.abbreviation == "NY"
-        assert user.zip == "10001"
         assert len(mail.outbox) == 2
 
     @patch("virtuallibrarycard.business_rules.library_card.Thread", new=MockThread)

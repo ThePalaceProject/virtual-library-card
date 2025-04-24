@@ -99,17 +99,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             "last_name": kwargs.get("last_name") or user.last_name or "",
             "library": kwargs.get("library_id") or user.library.id,
             "email": kwargs.get("email") or user.email,
-            "street_address_line1": kwargs.get("street_address_line1")
-            or user.street_address_line1
-            or "",
-            "street_address_line2": kwargs.get("street_address_line2")
-            or user.street_address_line2
-            or "",
-            "city": kwargs.get("city") or user.city or "",
-            "zip": kwargs.get("zip") or user.zip or "",
             "over13": "on",
             "is_active": "on",
-            "place": kwargs.get("place_id") or user.place.id,
         }
 
         # Some changes are either explicit values, or must be omitted
@@ -144,10 +135,6 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         changed_user: CustomUser = CustomUser.objects.get(email="new@email.com")
         assert changed_user.first_name == "new name"
         assert changed_user.last_name == "new last name"
-        assert changed_user.street_address_line1 == "street_address"
-        assert changed_user.street_address_line2 == "street_address2"
-        assert changed_user.city == "city"
-        assert changed_user.zip == "99999"
 
         msgs = get_messages(response.wsgi_request)
         assert len(msgs) == 2  # created card and save success messages
@@ -174,39 +161,12 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             [],
         )
 
-        self.assertFormError(
-            response.context["adminform"],
-            "street_address_line1",
-            [],
-        )
-
-        self.assertFormError(
-            response.context["adminform"],
-            "city",
-            [],
-        )
-
-        self.assertFormError(
-            response.context["adminform"],
-            "zip",
-            [],
-        )
-
-        self.assertFormError(
-            response.context["adminform"],
-            "street_address_line2",
-            [],
-        )
-
     def test_valid_save_generates_card(self):
         user = self.create_user(
             self._default_library,
             "test@user.com",
             "anypass",
             first_name="first",
-            street_address_line1="street",
-            city="city",
-            zip="99999",
         )
 
         # no card up front
@@ -225,25 +185,15 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
             "test1@user.com",
             "anypass",
             first_name="first",
-            street_address_line1="street",
-            city="city",
-            zip="99999",
         )
         data = self._get_user_change_data(user)
         data["email"] = "invalid"
-        data["zip"] = "invalid"
 
         response = self.test_client.post(self.get_change_url(user), data)
 
         assert response.status_code == 200
         self.assertFormError(
             response, "adminform", "email", ["Enter a valid email address."]
-        )
-        self.assertFormError(
-            response,
-            "adminform",
-            "zip",
-            [CustomUser.zip.field.validators[0].message],
         )
 
     def test_read_only_fields(self):
@@ -259,9 +209,6 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         user = self.create_user(
             self._default_library,
             email="test@user.com",
-            street_address_line1="street",
-            city="city",
-            zip="99999",
         )
 
         data = self._get_user_change_data(user, library_id=library.id)

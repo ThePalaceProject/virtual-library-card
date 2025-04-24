@@ -14,10 +14,6 @@ class ProfileEditForm(UserChangeForm):
             "first_name",
             "last_name",
             "email",
-            "street_address_line1",
-            "street_address_line2",
-            "city",
-            "zip",
             "password",
         ]
 
@@ -30,6 +26,3 @@ class ProfileEditForm(UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["password"].widget = HiddenInput()
-        self.fields["street_address_line1"].required = False
-        self.fields["city"].required = False
-        self.fields["zip"].required = False

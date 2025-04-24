@@ -29,13 +29,6 @@ class UserSessionManager:
         return identifier
 
     @staticmethod
-    def set_session_user_location(request, country, state, city, zipcode):
-        request.session["country"] = country
-        request.session["state"] = state
-        request.session["city"] = city
-        request.session["zipcode"] = zipcode
-
-    @staticmethod
     def set_session_library(self, library):
         UserSessionManager.set_request_session_library(self.request, library)
 
@@ -64,10 +57,6 @@ class UserSessionManager:
         request.session.pop("email", None)
         request.session.pop("places", None)
         request.session.pop("terms_conditions_url", None)
-        # Also cleanup user location data
-        request.session.pop("state", None)
-        request.session.pop("city", None)
-        request.session.pop("zipcode", None)
 
     @staticmethod
     def set_context_library_cards(context, user):

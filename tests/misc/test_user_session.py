@@ -30,7 +30,20 @@ class TestUserSessionManager(BaseUnitTest):
     def test_clean_session_data(self):
         request = mock.MagicMock()
         UserSessionManager.clean_session_data(request)
-        assert request.session.pop.call_count == 13
+        request.session.pop.assert_has_calls(
+            [
+                mock.call("sess_variable", None),
+                mock.call("library_phone", None),
+                mock.call("identifier", None),
+                mock.call("library_name", None),
+                mock.call("social_facebook", None),
+                mock.call("social_twitter", None),
+                mock.call("logo_header", None),
+                mock.call("email", None),
+                mock.call("places", None),
+                mock.call("terms_conditions_url", None),
+            ]
+        )
 
     def test_set_context_library_cards(self):
         user = self.create_user(self._default_library)
