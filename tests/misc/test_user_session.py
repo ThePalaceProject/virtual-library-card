@@ -25,7 +25,7 @@ class TestUserSessionManager(BaseUnitTest):
         assert request.session["email"] == library.email
         assert request.session["places"] == ["NY"]
         assert request.session["terms_conditions_url"] == library.terms_conditions_url
-        assert request.session["privacy_url"] == library.terms_conditions_url
+        assert request.session["privacy_url"] == library.privacy_url
 
     def test_clean_session_data(self):
         request = mock.MagicMock()
@@ -42,6 +42,7 @@ class TestUserSessionManager(BaseUnitTest):
                 mock.call("email", None),
                 mock.call("places", None),
                 mock.call("terms_conditions_url", None),
+                mock.call("privacy_url", None),
             ]
         )
 
