@@ -18,8 +18,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "virtual_library_card_dev",
-        "USER": "vlc",
-        "PASSWORD": "test",
+        "USER": os.environ.get("VLC_DEV_DB_USER", "vlc"),
+        "PASSWORD": os.environ.get("VLC_DEV_DB_PASSWORD", "test"),
         "HOST": os.environ.get("VLC_DEV_DB_HOST", "pg"),
         "PORT": os.environ.get("VLC_DEV_DB_PORT", "5432"),
         "OPTIONS": {"sslmode": os.environ.get("VLC_DEV_DB_SSL_MODE", "require")},
@@ -39,7 +39,7 @@ ROOT_URL = "http://localhost:8000"  # Needed for self referential links (like em
 HTML_MINIFY = True
 
 # These are all dummy values for testing
-MAPQUEST_API_KEY = "xxx"
+MAPQUEST_API_KEY = os.environ.get("VLC_DEV_MAPQUEST_API_KEY", "xxx")
 
 EMAIL_HOST = "xxx"
 EMAIL_PORT = "xxx"
