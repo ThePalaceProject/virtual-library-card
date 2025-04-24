@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-13 16:33+0000\n"
+"POT-Creation-Date: 2025-04-23 11:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,723 +18,902 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: VirtualLibraryCard/admin.py:23
-msgid "Personal Info"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:24
-msgid "Address"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:25
-msgid "Library Info"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:26
-msgid "Permissions"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:55
-msgid "Export selected users"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:76
-msgid "Identity"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:77
-msgid "Contact"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:78
-msgid "Links"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:79
-msgid "Cards Config"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:102
-msgid "Export selected libraries"
-msgstr ""
-
-#: VirtualLibraryCard/admin.py:128
-msgid "Export selected library cards"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms.py:47
-msgid "Sequence order"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:56
-msgid "First name is mandatory"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:57
-msgid "Please enter your first name"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:71
-msgid "Please check all address fields"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:72
-msgid "The address you entered does not seem to be correct"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:103
-#, python-format
-msgid "The library card for the %(library_name)s"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:105
-#, python-format
-msgid "and the email %(form_email)s"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:107
-msgid "already exists"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:109
-msgid "The library card has not been created"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_library_card.py:120
-msgid "Error creating your library card"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_password.py:17
-#: VirtualLibraryCard/forms/forms_password.py:27
-#: VirtualLibraryCard/forms/forms_password.py:38
-#: VirtualLibraryCard/forms/forms_profile.py:17
-msgid "Save"
-msgstr ""
-
-#: VirtualLibraryCard/forms/forms_password.py:44
-#, python-format
-msgid "There is no user registered with the specified email address %(email)s"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:56
-msgid "Descending"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:56
-msgid "Ascending"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:60 VirtualLibraryCard/models.py:187
-msgid "State"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:119
-msgid "See"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:149
-msgid "The Email must be set"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:151
-msgid "The First name must be set"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:153
-msgid "The Library must be set"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:155
-msgid "The State must be set"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:174
-msgid "Superuser must have is_staff=True."
-msgstr ""
-
-#: VirtualLibraryCard/models.py:176
-msgid "Superuser must have is_superuser=True."
-msgstr ""
-
-#: VirtualLibraryCard/models.py:184
-msgid "Street address line 1"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:185
-msgid "Street address line 2"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:189
-msgid "Zip code"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:196
-#: templates/accounts/includes/profile_info.html:5
-msgid "Email address"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:197
-msgid "    I certify that I am over 13 years old"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:198
-msgid "username"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:199
-msgid "first name"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:312
-msgid " | EXPIRED"
-msgstr ""
-
-#: VirtualLibraryCard/models.py:314
-msgid " | CANCELLED"
-msgstr ""
-
-#: VirtualLibraryCard/views/views.py:12
-msgid "Welcome"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_api.py:31
-msgid "Invalid patron PIN"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_api.py:34
-#: VirtualLibraryCard/views/views_api.py:51
-msgid "Requested record not found"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_library_card.py:72
-#: VirtualLibraryCard/views/views_library_card.py:76
-#: VirtualLibraryCard/views/views_library_card.py:85
-#: VirtualLibraryCard/views/views_library_card.py:100
-msgid "You are not allowed to access this page"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_library_card.py:89
-#: VirtualLibraryCard/views/views_library_card.py:169
-msgid "Library does not exist"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_library_card.py:166
-msgid "Identifier parameter is mandatory"
-msgstr ""
-
-#: VirtualLibraryCard/views/views_password.py:42
-#, python-format
-msgid "If you did not receive an email contact %(library_name)s at %(email)s"
-msgstr ""
-
-#: templates/400.html:3 templates/400.html:5 templates/400.html:8
-#: templates/404.html:3 templates/404.html:5 templates/404.html:8
+#: templates/django/400.html:3 templates/django/400.html:5
+#: templates/django/400.html:8 templates/django/404.html:3
+#: templates/django/404.html:5 templates/django/404.html:8
 msgid "Page Error"
 msgstr ""
 
-#: templates/400.html:4 templates/404.html:4
+#: templates/django/400.html:4 templates/django/404.html:4
 msgid "The page you are triying to reach does not exist"
 msgstr ""
 
-#: templates/400.html:9 templates/404.html:9 templates/500.html:8
+#: templates/django/400.html:9 templates/django/404.html:9
+#: templates/django/500.html:8
 msgid "The page you are trying to reach does not exist"
 msgstr ""
 
-#: templates/500.html:3 templates/index.html:3
+#: templates/django/500.html:3 templates/django/index.html:3
 msgid "My library Card"
 msgstr ""
 
-#: templates/500.html:7
+#: templates/django/500.html:7
 msgid "Page Error 500"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:7
-#: templates/accounts/delete_profile_success.html:8
+#: templates/django/accounts/customer_confirm_delete.html:7
+#: templates/django/accounts/delete_profile_success.html:8
 msgid "Deleting your account"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:11
+#: templates/django/accounts/customer_confirm_delete.html:11
 msgid "Deleting my profile"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:15
+#: templates/django/accounts/customer_confirm_delete.html:15
 msgid "Are you sure you want to delete your account "
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:20
+#: templates/django/accounts/customer_confirm_delete.html:20
 msgid "Important: "
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:21
+#: templates/django/accounts/customer_confirm_delete.html:21
 msgid "By deleting your profile, you will also delete your library cards"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:27
-#: templates/accounts/customer_confirm_delete.html:28
+#: templates/django/accounts/customer_confirm_delete.html:27
+#: templates/django/accounts/customer_confirm_delete.html:28
 #, python-format
 msgid "Yes, I want to delete my profile and my library card"
 msgid_plural "Yes, I want to delete my profile and my %(count)s library cards"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/accounts/customer_confirm_delete.html:33
-#: templates/accounts/customer_confirm_delete.html:34
-#: templates/accounts/customer_confirm_delete.html:36
+#: templates/django/accounts/customer_confirm_delete.html:33
+#: templates/django/accounts/customer_confirm_delete.html:34
+#: templates/django/accounts/customer_confirm_delete.html:36
 msgid "No, I only want to delete my library cards"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:42
-#: templates/accounts/customer_confirm_delete.html:43
+#: templates/django/accounts/customer_confirm_delete.html:42
+#: templates/django/accounts/customer_confirm_delete.html:43
 msgid "Yes, I want to delete my profile"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:47
-#: templates/accounts/customer_confirm_delete.html:48
+#: templates/django/accounts/customer_confirm_delete.html:47
+#: templates/django/accounts/customer_confirm_delete.html:48
 msgid "Cancel"
 msgstr ""
 
-#: templates/accounts/customer_confirm_delete.html:49
+#: templates/django/accounts/customer_confirm_delete.html:49
 msgid ""
 "\n"
 "                Cancel"
 msgstr ""
 
-#: templates/accounts/delete_profile_success.html:13
+#: templates/django/accounts/delete_profile_success.html:13
 msgid "Your account has been successfully deleted"
 msgstr ""
 
-#: templates/accounts/delete_profile_success.html:14
+#: templates/django/accounts/delete_profile_success.html:14
 msgid "We hope you'll be back shortly"
 msgstr ""
 
-#: templates/accounts/edit_profile.html:8
+#: templates/django/accounts/edit_profile.html:8
 #, python-format
 msgid " Edit %(first_name)s's' Profile.\n"
 msgstr ""
 
-#: templates/accounts/edit_profile.html:13
+#: templates/django/accounts/edit_profile.html:13
 msgid "Update your profile"
 msgstr ""
 
-#: templates/accounts/includes/profile_address.html:2
+#: templates/django/accounts/includes/profile_address.html:2
 msgid "Your address"
 msgstr ""
 
-#: templates/accounts/includes/profile_info.html:2
+#: templates/django/accounts/includes/profile_info.html:2
 msgid "Your personal information"
 msgstr ""
 
-#: templates/accounts/includes/profile_info.html:3
+#: templates/django/accounts/includes/profile_info.html:3
 msgid "First name"
 msgstr ""
 
-#: templates/accounts/includes/profile_info.html:4
+#: templates/django/accounts/includes/profile_info.html:4
 msgid "Last name"
 msgstr ""
 
-#: templates/accounts/includes/profile_info.html:6
+#: templates/django/accounts/includes/profile_info.html:5
+#: virtuallibrarycard/models.py:387
+msgid "Email address"
+msgstr ""
+
+#: templates/django/accounts/includes/profile_info.html:6
 msgid "Date of born"
 msgstr ""
 
-#: templates/accounts/includes/profile_library.html:2
+#: templates/django/accounts/includes/profile_library.html:2
 msgid "Your library card information"
 msgstr ""
 
-#: templates/accounts/includes/profile_library.html:3
+#: templates/django/accounts/includes/profile_library.html:3
 msgid "Revoke"
 msgstr ""
 
-#: templates/accounts/includes/profile_library.html:4
+#: templates/django/accounts/includes/profile_library.html:4
 msgid "You have no active library cards"
 msgstr ""
 
-#: templates/accounts/includes/profile_library.html:5
+#: templates/django/accounts/includes/profile_library.html:5
 msgid "Physical Library Card number"
 msgstr ""
 
-#: templates/accounts/includes/profile_library.html:6
+#: templates/django/accounts/includes/profile_library.html:6
 msgid "Please click on the Revoke button for the card you want to revoke"
 msgstr ""
 
-#: templates/accounts/password/change_password.html:4
-#: templates/accounts/password/change_password.html:13
+#: templates/django/accounts/password/change_password.html:4
+#: templates/django/accounts/password/change_password.html:13
 msgid "Change your password"
 msgstr "Change your password"
 
-#: templates/accounts/password/change_password.html:8
+#: templates/django/accounts/password/change_password.html:8
 #, python-format
 msgid " Edit %(username)s's' Profile.\n"
 msgstr ""
 
-#: templates/accounts/password/password_change_done.html:3
+#: templates/django/accounts/password/password_change_done.html:3
 msgid "Password Change"
 msgstr ""
 
-#: templates/accounts/password/password_change_done.html:6
+#: templates/django/accounts/password/password_change_done.html:6
 msgid "Password change successful"
 msgstr ""
 
-#: templates/accounts/password/password_change_done.html:8
+#: templates/django/accounts/password/password_change_done.html:8
 msgid "Your password has changed"
 msgstr ""
 
-#: templates/accounts/profile.html:4 templates/includes/menu.html:10
-#: templates/library_card/library_card_request.html:34
-#: templates/library_card/library_card_request.html:35
+#: templates/django/accounts/profile.html:4
+#: templates/django/includes/menu.html:10
+#: templates/django/library_card/library_card_request.html:34
+#: templates/django/library_card/library_card_request.html:35
 msgid "My profile"
 msgstr ""
 
-#: templates/accounts/profile.html:8
+#: templates/django/accounts/profile.html:8
 msgid "welcome to your profile page"
 msgstr "welcome to your profile page"
 
-#: templates/accounts/profile.html:11
+#: templates/django/accounts/profile.html:11
 msgid "Your library card has been successfully revoked"
 msgstr ""
 
-#: templates/accounts/profile.html:22 templates/accounts/profile.html:25
+#: templates/django/accounts/profile.html:22
+#: templates/django/accounts/profile.html:25
 msgid "Delete my profile"
 msgstr ""
 
-#: templates/accounts/profile.html:28 templates/accounts/profile.html:31
+#: templates/django/accounts/profile.html:28
+#: templates/django/accounts/profile.html:31
 msgid "Edit"
 msgstr ""
 
-#: templates/email/number_sequence_alert.html:6
+#: templates/django/admin/customize_welcome_email.html:6
+msgid "Customize the welcome email template"
+msgstr ""
+
+#: templates/django/admin/user_add_form.html:6
 msgid ""
-"The end of the sequence you have defined for creating your card numbers will "
-"soon be\n"
-"    reached."
+"First, enter a name and password. Then, you’ll be able to edit more user "
+"options."
 msgstr ""
 
-#: templates/email/number_sequence_alert.html:8
-#: templates/email/number_sequence_alert.txt:3
-msgid "Please go to the Virtual Card admin website to update your sequence"
+#: templates/django/admin/user_add_form.html:8
+msgid "Enter a username and password."
 msgstr ""
 
-#: templates/email/number_sequence_alert.html:9
-#: templates/email/number_sequence_alert.txt:4
-#: templates/email/welcome_user.html:13 templates/email/welcome_user.txt:8
-msgid "You can login in your personal space here: "
-msgstr ""
-
-#: templates/email/number_sequence_alert.html:12
-#: templates/email/number_sequence_alert.txt:5
-#: templates/email/welcome_user.html:15 templates/email/welcome_user.txt:9
+#: templates/django/admin/virtuallibrarycard/customuser/change_list_object_tools.html:9
+#: templates/django/admin/virtuallibrarycard/librarycard/change_list_object_tools.html:9
 #, python-format
-msgid "The %(library_name)s team"
+msgid "Add %(name)s"
 msgstr ""
 
-#: templates/email/number_sequence_alert.txt:2
-msgid ""
-"The end of the sequence you have defined for creating your card numbers will "
-"soon be reached."
-msgstr ""
-
-#: templates/email/welcome_user.html:5 templates/email/welcome_user.txt:3
+#: templates/django/email/csv_upload_report.html:12
 #, python-format
-msgid "Thank you for joining the %(library_name)s"
+msgid " The users upload job has completed for %(library_name)s. "
 msgstr ""
 
-#: templates/email/welcome_user.html:6
+#: templates/django/email/csv_upload_report.html:13
+msgid " Please find the results attached to this email "
+msgstr ""
+
+#: templates/django/email/welcome_user.html:7
+msgid "Hello,"
+msgstr ""
+
+#: templates/django/email/welcome_user.html:11
+#, python-format
+msgid "Thank you for joining %(library_name)s."
+msgstr ""
+
+#: templates/django/email/welcome_user.html:16
+msgid ""
+"Please verify your email address within the next 24 hours by clicking here:"
+msgstr ""
+
+#: templates/django/email/welcome_user.html:19
+msgid ""
+"Your account will not be activated until the link has been clicked. You may "
+"recreate a new verification email by clicking the link above again."
+msgstr ""
+
+#: templates/django/email/welcome_user.html:25
+msgid "Your login details are below:"
+msgstr ""
+
+#: templates/django/email/welcome_user.html:29
+msgid "use the password you created when you signed up for a card"
+msgstr ""
+
+#: templates/django/email/welcome_user.html:32
+msgid ""
+"Save this email to retain your login information. If you have forgotten your "
+"password, please visit"
+msgstr ""
+
+#: templates/django/email/welcome_user.html:32
+msgid ""
+"OR click \"Forgot your password?\" on the Settings - Libraries screen in the "
+"Palace app."
+msgstr ""
+
+#: templates/django/email/welcome_user.html:36
 #, python-format
 msgid ""
-"Your library card number is\n"
-"    <strong>%(card_number)s</strong>"
+"You are receiving this message because someone used this email address to "
+"request a library card for %(library_name)s. If you were not expecting this "
+"to happen, please ignore this message"
 msgstr ""
 
-#: templates/email/welcome_user.html:8
-msgid ""
-"Please remember this card number so you may use it to access library ebooks "
-"and audiobooks from your\n"
-"    library in SimplyE."
+#: templates/django/email/welcome_user.html:36
+msgid " and do not click the verification link above."
 msgstr ""
 
-#: templates/email/welcome_user.html:10 templates/email/welcome_user.txt:6
-msgid "Use the card number and the Password you set when you applied together."
+#: templates/django/email/welcome_user.html:41
+msgid "Happy Reading,"
 msgstr ""
 
-#: templates/email/welcome_user.html:11
-msgid ""
-"You can go to your personal space to manage your account, manage your "
-"information or even reset your\n"
-"    password if needed"
-msgstr ""
-
-#: templates/email/welcome_user.txt:4
+#: templates/django/email/welcome_user.html:42
 #, python-format
-msgid "Your library card number is  %(card_number)s "
+msgid "The Palace Team and %(library_name)s"
 msgstr ""
 
-#: templates/email/welcome_user.txt:5
-msgid ""
-"Please remember this card number so you may use it to access library ebooks "
-"and audiobooks from your library in SimplyE."
+#: templates/django/includes/footer.html:2
+msgid "&copy; 2019 The Palace Project."
 msgstr ""
 
-#: templates/email/welcome_user.txt:7
-msgid ""
-"You can go to your personal space to manage your account, manage your "
-"information or even reset your password if needed"
-msgstr ""
-
-#: templates/includes/footer.html:2
-msgid "&copy; 2019 Lyrasis."
-msgstr ""
-
-#: templates/includes/footer.html:3
+#: templates/django/includes/footer.html:3
 msgid "All Rights Reserved"
 msgstr ""
 
-#: templates/includes/footer.html:4
+#: templates/django/includes/footer.html:4
 msgid "Go to top"
 msgstr ""
 
-#: templates/includes/library_links.html:2
-#: templates/includes/library_links.html:12
-#: templates/includes/library_links.html:13
-#: templates/includes/library_links.html:14
-#: templates/includes/minimal_footer.html:2
-#: templates/includes/minimal_footer.html:12
-#: templates/includes/minimal_footer.html:13
-#: templates/includes/minimal_footer.html:17
-#: templates/includes/minimal_footer.html:18
+#: templates/django/includes/library_links.html:2
+#: templates/django/includes/library_links.html:12
+#: templates/django/includes/library_links.html:13
+#: templates/django/includes/library_links.html:14
+#: templates/django/includes/minimal_footer.html:2
+#: templates/django/includes/minimal_footer.html:12
+#: templates/django/includes/minimal_footer.html:13
+#: templates/django/includes/minimal_footer.html:17
+#: templates/django/includes/minimal_footer.html:18
 msgid "Terms & Conditions"
 msgstr ""
 
-#: templates/includes/library_links.html:3
-#: templates/includes/minimal_footer.html:24
-#: templates/includes/minimal_footer.html:25
-#: templates/includes/minimal_footer.html:28
-#: templates/includes/minimal_footer.html:29
+#: templates/django/includes/library_links.html:3
+#: templates/django/includes/minimal_footer.html:24
+#: templates/django/includes/minimal_footer.html:25
+#: templates/django/includes/minimal_footer.html:28
+#: templates/django/includes/minimal_footer.html:29
 msgid "Customer Support"
 msgstr ""
 
-#: templates/includes/library_links.html:4
+#: templates/django/includes/library_links.html:4
 msgid "Information"
 msgstr ""
 
-#: templates/includes/library_links.html:17
-#: templates/includes/library_links.html:18
+#: templates/django/includes/library_links.html:17
+#: templates/django/includes/library_links.html:18
 msgid "Privacy"
 msgstr ""
 
-#: templates/includes/library_links.html:18
+#: templates/django/includes/library_links.html:18
 msgid ""
 "\n"
 "                    Privacy"
 msgstr ""
 
-#: templates/includes/menu.html:3
+#: templates/django/includes/menu.html:3
 msgid "Home"
 msgstr ""
 
-#: templates/includes/menu.html:4
+#: templates/django/includes/menu.html:4
 msgid "Admin"
 msgstr ""
 
-#: templates/includes/menu.html:5
+#: templates/django/includes/menu.html:5
 msgid "Users"
 msgstr ""
 
-#: templates/includes/menu.html:6
+#: templates/django/includes/menu.html:6
 msgid "Groups"
 msgstr ""
 
-#: templates/includes/menu.html:7
+#: templates/django/includes/menu.html:7
 msgid "Libraries"
 msgstr ""
 
-#: templates/includes/menu.html:8
+#: templates/django/includes/menu.html:8
 msgid "Library Cards"
 msgstr ""
 
-#: templates/includes/menu.html:9
+#: templates/django/includes/menu.html:9
 msgid "Website domain"
 msgstr ""
 
-#: templates/includes/menu.html:11
+#: templates/django/includes/menu.html:11
 msgid "Manage password"
 msgstr ""
 
-#: templates/includes/menu.html:12
+#: templates/django/includes/menu.html:12
 msgid "Logout"
 msgstr ""
 
-#: templates/includes/minimal_footer.html:14
-#: templates/includes/minimal_footer.html:19
+#: templates/django/includes/minimal_footer.html:14
+#: templates/django/includes/minimal_footer.html:19
 msgid ""
 "Terms &\n"
 "                                    Conditions"
 msgstr ""
 
-#: templates/layout.html:4 templates/layout_without_branding.html:4
-#: templates/minimal_layout.html:4 templates/minimal_layout_geoloc.html:5
+#: templates/django/layout.html:4
+#: templates/django/layout_without_branding.html:4
+#: templates/django/minimal_layout.html:4
+#: templates/django/minimal_layout_geoloc.html:5
 msgid "Virtual Library Card"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:7
+#: templates/django/library_card/library_card_request.html:7
 msgid "Library Card Request"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:16
+#: templates/django/library_card/library_card_request.html:16
 msgid "Sign up for a library card"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:32
+#: templates/django/library_card/library_card_request.html:32
 msgid ""
 "You can login and see your Library Card information using this\n"
 "                            link"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:36
+#: templates/django/library_card/library_card_request.html:36
 msgid ""
 "\n"
 "                                My\n"
 "                                profile"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:42
-#: templates/registration/login.html:6
+#: templates/django/library_card/library_card_request.html:42
+#: templates/django/registration/login.html:6
 msgid "Forgot your password?"
 msgstr ""
 
-#: templates/library_card/library_card_request.html:45
-#: templates/library_card/library_card_request.html:46
-#: templates/library_card/library_card_request.html:48
-#: templates/registration/login.html:7
+#: templates/django/library_card/library_card_request.html:45
+#: templates/django/library_card/library_card_request.html:46
+#: templates/django/library_card/library_card_request.html:48
+#: templates/django/registration/login.html:7
 msgid "Reset my password"
 msgstr ""
 
-#: templates/library_card/library_card_request_denied.html:7
-#: templates/library_card/library_card_request_denied.html:15
-#: templates/library_card/library_card_request_denied_country.html:7
-#: templates/library_card/library_card_request_denied_country.html:15
-#: templates/library_card/library_card_request_denied_geoloc.html:7
-#: templates/library_card/library_card_request_denied_geoloc.html:15
+#: templates/django/library_card/library_card_request_denied.html:7
+#: templates/django/library_card/library_card_request_denied.html:15
+#: templates/django/library_card/library_card_request_denied_country.html:7
+#: templates/django/library_card/library_card_request_denied_country.html:15
+#: templates/django/library_card/library_card_request_denied_geoloc.html:7
+#: templates/django/library_card/library_card_request_denied_geoloc.html:15
 msgid "Library Card Denied"
 msgstr ""
 
-#: templates/library_card/library_card_request_denied.html:20
-#: templates/library_card/library_card_request_denied_country.html:20
-#: templates/library_card/library_card_request_denied_geoloc.html:20
+#: templates/django/library_card/library_card_request_denied.html:20
+#: templates/django/library_card/library_card_request_denied_country.html:20
+#: templates/django/library_card/library_card_request_denied_geoloc.html:20
 msgid "Library Card not allowed"
 msgstr ""
 
-#: templates/library_card/library_card_request_denied.html:23
+#: templates/django/library_card/library_card_request_denied.html:23
 #, python-format
 msgid ""
-"You must be in <strong>%(state_name)s </strong> to request\n"
+"You must be in <strong>%(state_names)s </strong> to request\n"
 "                    this library card"
 msgstr ""
 
-#: templates/library_card/library_card_request_denied_country.html:21
+#: templates/django/library_card/library_card_request_denied_country.html:21
 msgid "You must be in <strong>USA</strong> to request your library card"
 msgstr ""
 
-#: templates/library_card/library_card_request_denied_geoloc.html:21
+#: templates/django/library_card/library_card_request_denied_geoloc.html:21
 msgid "You must accept geolocation permissions to request a library card"
 msgstr ""
 
-#: templates/library_card/library_card_request_success.html:3
+#: templates/django/library_card/library_card_request_success.html:3
 msgid "Your Library Card"
 msgstr ""
 
-#: templates/library_card/library_card_request_success.html:4
+#: templates/django/library_card/library_card_request_success.html:4
 msgid "Congratulations"
 msgstr ""
 
-#: templates/library_card/library_card_request_success.html:5
+#: templates/django/library_card/library_card_request_success.html:5
 msgid "your Library card has been successfully created"
 msgstr ""
 
-#: templates/library_card/library_card_request_success.html:10
+#: templates/django/library_card/library_card_request_success.html:10
 #, python-format
 msgid ""
 " Congratulations <strong> %(first_name)s</strong>\n"
 "        !"
 msgstr ""
 
-#: templates/library_card/library_card_request_success.html:14
+#: templates/django/library_card/library_card_request_success.html:14
 #, python-format
 msgid ""
 "Check your <strong>%(email)s</strong> mailbox to see the card\n"
 "        details"
 msgstr ""
 
-#: templates/registration/login.html:5
+#: templates/django/library_card/upload_by_csv.html:12
+#, python-format
+msgid ""
+"\n"
+"    <h1>UPLOAD LIBRARY CARDS BY CSV</h1>\n"
+"    <p>\n"
+"        <span class=\"vlc-text-info\">\n"
+"            The uploaded csv must have the following columns: "
+"%(required_columns)s\n"
+"            <br>\n"
+"            It may optionally have these additional columns: "
+"%(optional_columns)s\n"
+"        </span>\n"
+"    </p>\n"
+"    "
+msgstr ""
+
+#: templates/django/registration/login.html:5
 msgid "Login"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:5
+#: templates/django/registration/password_reset_complete.html:7
 msgid "Email Sent"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:6
+#: templates/django/registration/password_reset_complete.html:12
 msgid "Password reset complete"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:7
+#: templates/django/registration/password_reset_complete.html:13
 msgid "Your new password has been set. "
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:8
+#: templates/django/registration/password_reset_complete.html:14
 msgid "You can log in now on the"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:9
+#: templates/django/registration/password_reset_complete.html:15
 msgid "log in page"
 msgstr ""
 
-#: templates/registration/password_reset_confirm.html:5
-msgid "Set a new password"
-msgstr ""
+#: templates/django/registration/password_reset_confirm.html:7
+#, fuzzy
+#| msgid "Change your password"
+msgid " Set a new password\n"
+msgstr "Change your password"
 
-#: templates/registration/password_reset_confirm.html:6
-msgid "Change my password"
-msgstr ""
+#: templates/django/registration/password_reset_confirm.html:12
+#, fuzzy
+#| msgid "Change your password"
+msgid ""
+" Set a new password\n"
+"    "
+msgstr "Change your password"
 
-#: templates/registration/password_reset_done.html:10
+#: templates/django/registration/password_reset_confirm.html:18
+#, fuzzy
+#| msgid "Change your password"
+msgid " Change my password"
+msgstr "Change your password"
+
+#: templates/django/registration/password_reset_done.html:10
 msgid " Email Sent "
 msgstr ""
 
-#: templates/registration/password_reset_done.html:11
+#: templates/django/registration/password_reset_done.html:11
 msgid " Check your inbox! "
 msgstr ""
 
-#: templates/registration/password_reset_done.html:12
+#: templates/django/registration/password_reset_done.html:12
 msgid ""
-" We've emailed you instructions for setting your password. You should "
+" We've emailed you instructions for resetting your password. You should "
 "receive the email\n"
-"        shortly!  "
+"        shortly.  "
 msgstr ""
 
-#: templates/registration/password_reset_done.html:16
-msgid " Don't forgot to check your spam folder. "
+#: templates/django/registration/password_reset_done.html:16
+msgid " Don't forget to check your spam folder. "
 msgstr ""
 
-#: templates/registration/reset_password.html:7
+#: templates/django/registration/reset_password.html:7
 #, fuzzy
 #| msgid "Password reset on %s"
 msgid " Password Reset\n"
 msgstr "Virtual Library Card | Password Reset"
 
-#: templates/registration/reset_password.html:12
+#: templates/django/registration/reset_password.html:12
 #, fuzzy
 #| msgid "Change your password"
 msgid " Reset your password "
 msgstr "Change your password"
 
-#: virtual_library_card/sender.py:18
-#, python-format
-msgid "%(library_name)s cards numbers | The limit will be reached soon"
+#: templates/django/verification/email_error.html:7
+#: templates/django/verification/email_error.html:15
+msgid "Error Verifying Email"
 msgstr ""
 
-#: virtual_library_card/sender.py:37
-#, python-format
-msgid "%(library_name)s | Welcome"
+#: templates/django/verification/email_error.html:18
+msgid ""
+"\n"
+"    <p>\n"
+"        There was an error while verifying the email address!!\n"
+"    </p>\n"
+"    "
 msgstr ""
 
-#: virtual_library_card/settings/base.py:142
+#: templates/django/verification/email_resend.html:7
+#: templates/django/verification/email_resend.html:15
+#: templates/django/verification/email_success.html:7
+#: templates/django/verification/email_success.html:15
+msgid "Email Verification"
+msgstr ""
+
+#: templates/django/verification/email_resend.html:19
+msgid ""
+"\n"
+"    <p>\n"
+"        The time period for this verification has expired!\n"
+"    </p>\n"
+"    <p>\n"
+"        Would you like to resend the verification email?\n"
+"    </p>\n"
+"    "
+msgstr ""
+
+#: templates/django/verification/email_resend.html:35
+msgid ""
+"\n"
+"    <p>\n"
+"        We could not resend the verification email!!\n"
+"    </p>\n"
+"    "
+msgstr ""
+
+#: templates/django/verification/email_resend.html:43
+msgid ""
+"\n"
+"    <p>\n"
+"        We have sent a new verification email!!\n"
+"    </p>\n"
+"    "
+msgstr ""
+
+#: templates/django/verification/email_success.html:18
+#, python-format
+msgid ""
+"\n"
+"    <p>\n"
+"        <h2>Your email has been verified successfully %(user_name)s!!</h2>\n"
+"    </p>\n"
+"    "
+msgstr ""
+
+#: templates/django/verification/email_success.html:28
+msgid ""
+"\n"
+"        <p>\n"
+"            <h3>You must set the password for this account!</h3>\n"
+"        </p>\n"
+"        "
+msgstr ""
+
+#: templates/django/verification/email_success.html:41
+#, python-format
+msgid ""
+"\n"
+"        <p>\n"
+"            You will automatically be redirected to the Palace app in 10 "
+"seconds.<br/>\n"
+"            Don't want to wait? Click the link below to go now.<br/>\n"
+"            <a href=\"%(redirect_link)s\">The Palace App</a>\n"
+"        </p>\n"
+"        "
+msgstr ""
+
+#: virtual_library_card/sender.py:90
+#, python-format
+msgid "Bulk Upload Results | %(library_name)s"
+msgstr ""
+
+#: virtual_library_card/settings/base.py:168
 msgid "English"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:86
+msgid "Personal Info"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:98
+#, fuzzy
+#| msgid "Password reset on %s"
+msgid "Password"
+msgstr "Virtual Library Card | Password Reset"
+
+#: virtuallibrarycard/admin.py:105
+msgid "Address"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:116
+msgid "Library Info"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:118
+msgid "Permissions"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:220
+msgid "Export selected users"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:254
+msgid "Identity"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:266
+msgid "Contact"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:268
+msgid "Links"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:279
+msgid "Cards Config"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:289
+msgid "Configurations"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:300
+msgid "Places"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:330
+msgid "Export selected libraries"
+msgstr ""
+
+#: virtuallibrarycard/admin.py:386
+msgid "Export selected library cards"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:30
+msgid "User Email"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:40
+msgid ""
+"The card number will be automatically generated if it is not provided "
+"already.                <br>In case a number is provided it will be prefixed "
+"by the Library prefix"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:117
+msgid "Update"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:118
+msgid "Welcome Email"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:120
+msgid "Add some custom text to the welcome emails sent to new patrons."
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:125
+msgid "This field is only required when Bulk Card Uploads are enabled."
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:129
+msgid ""
+"The Library UUID should be a globally unique UUID provided by the Library "
+"Registry.<br>If not provided, on email verification, the user will not be "
+"redirected to the Mobile Apps."
+msgstr ""
+
+#: virtuallibrarycard/forms/forms.py:301
+msgid "Invalid email domain"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:105
+msgid "First name is mandatory"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:106
+msgid "Please enter your first name"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:111
+msgid "Email address already in use"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:159
+#, python-format
+msgid "The library card for the %(library_name)s"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:163
+#, python-format
+msgid "and the email %(form_email)s"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:171
+msgid "already exists"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:174
+msgid "The library card has not been created"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_library_card.py:183
+msgid "Error creating your library card"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_password.py:21
+#: virtuallibrarycard/forms/forms_password.py:33
+#: virtuallibrarycard/forms/forms_password.py:46
+#: virtuallibrarycard/forms/forms_profile.py:26
+#: virtuallibrarycard/views/admin_email_customize.py:21
+msgid "Save"
+msgstr ""
+
+#: virtuallibrarycard/forms/forms_password.py:55
+#, python-format
+msgid "There is no user registered with the specified email address %(email)s"
+msgstr ""
+
+#: virtuallibrarycard/models.py:32
+msgid "Yes"
+msgstr ""
+
+#: virtuallibrarycard/models.py:32
+msgid "No"
+msgstr ""
+
+#: virtuallibrarycard/models.py:91
+msgid "Descending"
+msgstr ""
+
+#: virtuallibrarycard/models.py:91
+msgid "Ascending"
+msgstr ""
+
+#: virtuallibrarycard/models.py:204
+msgid "See"
+msgstr ""
+
+#: virtuallibrarycard/models.py:291
+msgid "The email must be set"
+msgstr ""
+
+#: virtuallibrarycard/models.py:293
+msgid "The first name must be set"
+msgstr ""
+
+#: virtuallibrarycard/models.py:295
+msgid "The library must be set"
+msgstr ""
+
+#: virtuallibrarycard/models.py:297
+msgid "The place must be set"
+msgstr ""
+
+#: virtuallibrarycard/models.py:322
+msgid "Superuser must have is_staff=True."
+msgstr ""
+
+#: virtuallibrarycard/models.py:324
+msgid "Superuser must have is_superuser=True."
+msgstr ""
+
+#: virtuallibrarycard/models.py:348
+msgid "Street address line 1"
+msgstr ""
+
+#: virtuallibrarycard/models.py:351
+msgid "Street address line 2"
+msgstr ""
+
+#: virtuallibrarycard/models.py:389
+msgid "    I certify that I am over 13 years old"
+msgstr ""
+
+#: virtuallibrarycard/models.py:392
+msgid "username"
+msgstr ""
+
+#: virtuallibrarycard/models.py:400
+msgid "first name"
+msgstr ""
+
+#: virtuallibrarycard/models.py:572
+msgid " | EXPIRED"
+msgstr ""
+
+#: virtuallibrarycard/models.py:574
+msgid " | CANCELLED"
+msgstr ""
+
+#: virtuallibrarycard/views/views.py:12
+msgid "Welcome"
+msgstr ""
+
+#: virtuallibrarycard/views/views_api.py:34
+msgid "Patron has an unverified email address"
+msgstr ""
+
+#: virtuallibrarycard/views/views_api.py:40
+msgid "Invalid patron PIN"
+msgstr ""
+
+#: virtuallibrarycard/views/views_api.py:45
+#: virtuallibrarycard/views/views_api.py:89
+msgid "Requested record not found"
+msgstr ""
+
+#: virtuallibrarycard/views/views_api.py:70
+msgid "Missing required parameter(s): 'number' and 'pin'"
+msgstr ""
+
+#: virtuallibrarycard/views/views_library_card.py:78
+#: virtuallibrarycard/views/views_library_card.py:82
+#: virtuallibrarycard/views/views_library_card.py:93
+#: virtuallibrarycard/views/views_library_card.py:110
+msgid "You are not allowed to access this page"
+msgstr ""
+
+#: virtuallibrarycard/views/views_library_card.py:97
+#: virtuallibrarycard/views/views_library_card.py:187
+msgid "Library does not exist"
+msgstr ""
+
+#: virtuallibrarycard/views/views_library_card.py:184
+msgid "Identifier parameter is mandatory"
+msgstr ""
+
+#: virtuallibrarycard/views/views_password.py:46
+#, python-format
+msgid "If you did not receive an email contact %(library_name)s at %(email)s"
 msgstr ""

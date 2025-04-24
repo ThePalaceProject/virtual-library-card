@@ -85,7 +85,7 @@ class TestEmailTokenVerificationViews(BaseUnitTest):
 
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject.startswith(
-            f"{self._default_library.name} | Welcome"
+            f"{self._default_library.name}: Welcome"
         )
 
         # session will be popped

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -22,8 +23,9 @@ class Sender:
         """Change whitespaces [space, newline] to an html format"""
         return string.replace("  ", "&nbsp;&nbsp;").replace("\n", "<br/>")
 
-    @staticmethod
+    @classmethod
     def send_user_welcome(
+        cls,
         library: Library,
         user: CustomUser,
         card_number: str | None = None,
@@ -44,7 +46,6 @@ class Sender:
         log.debug(f"send_user_welcome to: {to}, from: {settings.DEFAULT_FROM_EMAIL}")
 
         try:
-            token = None
             verification_link = None
             if not user.email_verified:
                 token = Tokens.generate(TokenTypes.EMAIL_VERIFICATION, email=user.email)
@@ -52,27 +53,29 @@ class Sender:
                     f"{host}{reverse('email_token_verify')}?token={token}"
                 )
 
-            subject = _(f"{library.name} | Welcome")
+            subject = _(f"{library.name}: Welcome to the Palace App")
             html_message = render_to_string(
                 "email/welcome_user.html",
                 {
                     "card_number": card_number,
-                    "login_url": Sender._get_absolute_login_url(library.identifier),
+                    "login_url": cls._get_absolute_login_url(library.identifier),
+                    "reset_url": cls._get_absolute_reset_url(library.identifier),
                     "library": library,
                     "verification_link": verification_link,
                     "has_welcome": has_welcome,
                     "has_verification": not user.email_verified,
-                    "custom_top_text": Sender.text_whitespaces_to_html(
+                    "custom_top_text": cls.text_whitespaces_to_html(
                         strip_tags(library.customization.welcome_email_top_text or "")
                     ),
-                    "custom_bottom_text": Sender.text_whitespaces_to_html(
+                    "custom_bottom_text": cls.text_whitespaces_to_html(
                         strip_tags(
                             library.customization.welcome_email_bottom_text or ""
                         )
                     ),
                 },
             )
-            plain_message = strip_tags(html_message)
+            plain_message = strip_tags(html_message).strip()
+            plain_message = re.sub(r"\n\n+", "\n\n", plain_message)
             msg = EmailMultiAlternatives(
                 subject, plain_message, settings.DEFAULT_FROM_EMAIL, to=[to]
             )
@@ -100,4 +103,9 @@ class Sender:
     @staticmethod
     def _get_absolute_login_url(library_identifier):
         url = settings.ROOT_URL + reverse("login") + library_identifier + "/"
+        return url
+
+    @staticmethod
+    def _get_absolute_reset_url(library_identifier):
+        url = settings.ROOT_URL + reverse("reset-password") + library_identifier + "/"
         return url

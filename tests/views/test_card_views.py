@@ -282,7 +282,10 @@ class TestCardRequest(BaseUnitTest):
 
         # welcome email sent
         assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == f"{self._default_library.name} | Welcome"
+        assert (
+            mail.outbox[0].subject
+            == f"{self._default_library.name}: Welcome to the Palace App"
+        )
         assert "Your account will not be activated until" in mail.outbox[0].body
 
     def test_card_request_bad_data(self):
