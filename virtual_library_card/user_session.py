@@ -43,7 +43,7 @@ class UserSessionManager:
         request.session["email"] = library.email
         request.session["places"] = library.get_places()
         request.session["terms_conditions_url"] = library.terms_conditions_url
-        request.session["privacy_url"] = library.terms_conditions_url
+        request.session["privacy_url"] = library.privacy_url
 
     @staticmethod
     def clean_session_data(request):
@@ -57,6 +57,7 @@ class UserSessionManager:
         request.session.pop("email", None)
         request.session.pop("places", None)
         request.session.pop("terms_conditions_url", None)
+        request.session.pop("privacy_url", None)
 
     @staticmethod
     def set_context_library_cards(context, user):
