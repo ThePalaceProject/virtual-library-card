@@ -112,7 +112,7 @@ python-stdnum = "1.20"
 pytz = "^2025.1"
 pyuwsgi = ">=2.0,<2.1"
 requests = "^2.31"
-setuptools = "^79.0.0"
+setuptools = "^80.4.0"
 
 [tool.poetry.group.ci.dependencies]
 dunamai = "^1.16"
