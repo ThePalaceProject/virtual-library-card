@@ -1433,20 +1433,18 @@ six = ">=1.5"
 
 [[package]]
 name = "python-stdnum"
-version = "1.20"
+version = "2.1"
 description = "Python module to handle standardized numbers and codes"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "python-stdnum-1.20.tar.gz", hash = "sha256:ad2a2cf2eb025de408210235f36b4ae31252de3186240ccaa8126e117cb82690"},
-    {file = "python_stdnum-1.20-py2.py3-none-any.whl", hash = "sha256:111008e10391d54fb2afad2a10df70d5cb0c6c0a7ec82fec6f022cb8712961d3"},
+    {file = "python_stdnum-2.1-py3-none-any.whl", hash = "sha256:25eabcf5f307dd4150fd8f1c03f4512a6caeb84c9f09be1448711f5803373c58"},
+    {file = "python_stdnum-2.1.tar.gz", hash = "sha256:6b01645969eb3dfd55061a0114d593753cd9e653cea9083198b7eea12644397a"},
 ]
 
 [package.extras]
 soap = ["zeep"]
-soap-alt = ["suds"]
-soap-fallback = ["PySimpleSOAP"]
 
 [[package]]
 name = "pytz"
@@ -2040,4 +2038,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "79e75019f7f2af75bbe953a621d006a2527f7bf3ca1ecf5addccd77c49903a45"
+content-hash = "54732f0cbdfe41f3663822db7c19fe4736a03ebab6a9371e78991c384877f040"
