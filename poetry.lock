@@ -653,18 +653,18 @@ testing = ["coveralls", "tox", "tox-gh-actions"]
 
 [[package]]
 name = "django-render-block"
-version = "0.10"
+version = "0.11"
 description = "Render a particular block from a template to a string."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django_render_block-0.10-py3-none-any.whl", hash = "sha256:4deeec70a360aa90385443aeae1213ffb2acbfe2b5fb09d4afe47e75a29240c3"},
-    {file = "django_render_block-0.10.tar.gz", hash = "sha256:23fbc9cfed17aac47e936e65f0c29ae186765a41234cdc8dbf88d4a9377fdd76"},
+    {file = "django_render_block-0.11-py3-none-any.whl", hash = "sha256:e6a7161393fb59ee803ab0a97ce96286897abafa42835215e019b47ebc442727"},
+    {file = "django_render_block-0.11.tar.gz", hash = "sha256:17886dd3bff222fe8a2f019509c6c53e0e4a38fe684e80d48e8697a879e1301b"},
 ]
 
 [package.dependencies]
-django = ">=3.2"
+django = ">=4.2"
 
 [package.extras]
 dev = ["Jinja2 (>=2.8)"]
@@ -2038,4 +2038,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4"
-content-hash = "54732f0cbdfe41f3663822db7c19fe4736a03ebab6a9371e78991c384877f040"
+content-hash = "6e782f49718203fffe3d09158e25f0e3ab4bd885ea1d8a57c5e02a7f9a666015"
