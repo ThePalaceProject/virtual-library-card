@@ -480,13 +480,13 @@ django = "*"
 
 [[package]]
 name = "django-autocomplete-light"
-version = "3.11.0"
+version = "3.12.1"
 description = "Fresh autocompletes for Django"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django-autocomplete-light-3.11.0.tar.gz", hash = "sha256:212576a17e3308ef7ca77e280b86684167916d2091d4b73640f38845d9516328"},
+    {file = "django_autocomplete_light-3.12.1.tar.gz", hash = "sha256:50f7b83681feec6491c38e6114d7a4fe80f9e99a8cc6c8458a3e7bb137ad6b1d"},
 ]
 
 [package.dependencies]
