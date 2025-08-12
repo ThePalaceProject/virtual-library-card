@@ -503,14 +503,14 @@ tags = ["django-taggit"]
 
 [[package]]
 name = "django-bootstrap4"
-version = "25.1"
+version = "25.2"
 description = "Bootstrap 4 for Django"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django_bootstrap4-25.1-py3-none-any.whl", hash = "sha256:9eb574b6ddd0ae2e8b9da13746e1d084a797b8962cb8e0284c937c97e1938f29"},
-    {file = "django_bootstrap4-25.1.tar.gz", hash = "sha256:6e05d17dda5922ec643e40bb804c7f399ec262c3723a4e5aef5bd550b3ff4ffa"},
+    {file = "django_bootstrap4-25.2-py3-none-any.whl", hash = "sha256:483d6c1990866fbf54d6df9a2d89ecc332cb0fcde90b3c71f048e4383b107120"},
+    {file = "django_bootstrap4-25.2.tar.gz", hash = "sha256:a2c6040364513dc73894f2f961d10b8d546a73230ae0f4074e5c51fb5e908764"},
 ]
 
 [package.dependencies]
