@@ -15,15 +15,15 @@ done
 echo "MinIO is ready"
 
 # Configure MinIO client
-mc alias set myminio http://localhost:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
+mc alias set vlcminio http://localhost:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
 
 # Create the bucket
 echo "Creating bucket: vlc-test"
-mc mb myminio/vlc-test --ignore-existing
+mc mb vlcminio/vlc-test --ignore-existing
 
 # Set the bucket policy to public (download policy)
 echo "Setting bucket policy to download (public read)"
-mc anonymous set download myminio/vlc-test
+mc anonymous set download vlcminio/vlc-test
 
 echo "MinIO setup complete"
 
