@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 ENV APP_DIR=/virtual_library_card/ \
     DJANGO_SETTINGS_MODULE=virtual_library_card.settings.prod \
