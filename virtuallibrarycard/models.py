@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import re
-import sys
 from datetime import datetime
-from enum import Enum
+from enum import Enum, StrEnum
 from pathlib import Path
 
 import datedelta
@@ -20,11 +19,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from virtual_library_card.card_number import CardNumber
-
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    from backports.strenum import StrEnum
 
 
 def boolean_choices():
