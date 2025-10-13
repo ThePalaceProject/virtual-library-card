@@ -4,11 +4,11 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-![Python: 3.10,3.11,3.12](https://img.shields.io/badge/Python-3.10%20|%203.11%20|%203.12-blue)
+![Python: 3.12,3.13](https://img.shields.io/badge/Python-3.12%20|%203.13-blue)
 
 ## Prerequisites
 
-Python 3.10+ must be installed, and a SQL database must be available.
+Python 3.12+ must be installed, and a SQL database must be available.
 
 ## Notes
 
@@ -227,16 +227,15 @@ flag.
 
 | Environment | Python Version |
 |-------------|----------------|
-| py310       | Python 3.10    |
-| py311       | Python 3.11    |
 | py312       | Python 3.12    |
+| py313       | Python 3.13    |
 
 All of these environments are tested by default when running tox. To test one specific environment you can use the `-e`
 flag.
 
-Test Python 3.10
+Test Python 3.12
 
-    tox -e py310
+    tox -e py312
 
 You need to have the Python versions you are testing against installed on your local system. `tox` searches the system
 for installed Python versions, but does not install new Python versions. If `tox` doesn't find the Python version its
@@ -255,9 +254,9 @@ on Github Actions. `tox-docker` is included in the project's development depende
 The docker functionality is included in a `docker` factor that can be added to the environment. To run an environment
 with a particular factor you add it to the end of the environment.
 
-Test with Python 3.10 using docker containers for the services.
+Test with Python 3.12 using docker containers for the services.
 
-    tox -e py310-docker
+    tox -e py312-docker
 
 #### Pytest
 
