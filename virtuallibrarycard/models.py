@@ -338,7 +338,7 @@ class CustomUser(AbstractUser):
     external_type = models.CharField(max_length=255, null=True, blank=False)
     email = models.EmailField(_("Email address"), null=False, blank=False, unique=True)
     over13 = models.BooleanField(
-        _("    I certify that I am over 13 years old"), blank=False, default=True
+        _("    I verify that I am over 13 years old"), blank=False, default=True
     )
     username = models.CharField(
         _("username"),
