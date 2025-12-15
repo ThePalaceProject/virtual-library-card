@@ -45,8 +45,18 @@ To run the MinIO in Docker container run:
       quay.io/minio/minio server /data --console-address ":9001"
 
 After you have MinIO container running, you will need to create the public bucket to put the static files in.
-Log into `http://localhost:9001` with username `vlc-minio` and password `123456789`.
-Create bucket named `vlc-test` and make it public. The name for the bucket can be changed inside the settings file by
+
+    # log into docker instance
+    docker exec -it minio bash
+    # create an alias
+    mc alias set minio http://localhost:9000 vlc-minio 123456789
+    # create vlc-test bucket
+    mc mb minio/vlc-test
+    # set public permissions on bucket.
+    mc anonymous set public  minio/vlc-test
+
+You can then log into `http://localhost:9001` with username `vlc-minio` and password `123456789`
+and see your files.  The name for the bucket can be changed inside the settings file by
 means of the variable `AWS_STORAGE_BUCKET_NAME`.
 
 ### 4. Collect the static files
