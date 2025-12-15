@@ -56,9 +56,15 @@ ABSOLUTEURI_PROTOCOL = "http"
 # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
 RECAPTCHA_PUBLIC_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 RECAPTCHA_PRIVATE_KEY = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+STORAGES = {
+    "default": {
+        "BACKEND": "virtual_library_card.storage.S3PublicStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "virtual_library_card.storage.S3StaticStorage",
+    },
+}
 
-DEFAULT_FILE_STORAGE = "virtual_library_card.storage.S3PublicStorage"
-STATICFILES_STORAGE = "virtual_library_card.storage.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = "vlc-test"
 if "VLC_DEV_AWS_S3_ENDPOINT_URL" in os.environ:
     AWS_S3_ENDPOINT_URL = os.environ["VLC_DEV_AWS_S3_ENDPOINT_URL"]
