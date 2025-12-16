@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum, StrEnum
 from pathlib import Path
 
@@ -490,7 +490,7 @@ class LibraryCard(models.Model):
             and self.library is not None
             and self.library.card_validity_months is not None
         ):
-            self.expiration_date = datetime.today() + datedelta.datedelta(
+            self.expiration_date = datetime.now(UTC) + datedelta.datedelta(
                 months=+self.library.card_validity_months
             )
         return self.expiration_date

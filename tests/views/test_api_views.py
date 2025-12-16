@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest import mock
 
 from django.core.handlers.wsgi import WSGIRequest
@@ -212,7 +212,7 @@ class TestUserLibraryCardViewSet(BaseUnitTest):
         card = self.create_library_card(
             self._default_user,
             self._default_library,
-            expiration_date=datetime.today() + timedelta(days=1),
+            expiration_date=datetime.now(UTC) + timedelta(days=1),
         )
 
         expected = (
