@@ -3,6 +3,8 @@ from __future__ import annotations
 from io import FileIO
 from unittest.mock import MagicMock
 
+from pytest_django.asserts import assertFormError
+
 from tests.base import BaseAdminUnitTest
 from virtuallibrarycard.admin import LibraryAdmin
 from virtuallibrarycard.models import Library, Place
@@ -96,25 +98,19 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         self._add_library_states_data(data)
         response = self.test_client.post(self.get_add_url(), data)
 
-        self.assertFormError(
-            response, "adminform", "identifier", ["This field is required."]
+        assertFormError(response.context['adminform'], "identifier", ["This field is required."]
         )
-        self.assertFormError(response, "adminform", "name", ["This field is required."])
-        self.assertFormError(
-            response, "adminform", "privacy_url", ["This field is required."]
+        assertFormError(response.context['adminform'], "name", ["This field is required."])
+        assertFormError(response.context['adminform'], "privacy_url", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "terms_conditions_url", ["This field is required."]
+        assertFormError(response.context['adminform'], "terms_conditions_url", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "prefix", ["This field is required."]
+        assertFormError(response.context['adminform'], "prefix", ["This field is required."]
         )
-        self.assertFormError(response, "adminform", "logo", ["This field is required."])
-        self.assertFormError(
-            response, "adminform", "barcode_text", ["This field is required."]
+        assertFormError(response.context['adminform'], "logo", ["This field is required."])
+        assertFormError(response.context['adminform'], "barcode_text", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "pin_text", ["This field is required."]
+        assertFormError(response.context['adminform'], "pin_text", ["This field is required."]
         )
 
     def test_create_library_with_places(self):
@@ -205,9 +201,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         response = self.test_client.post(self.get_change_url(library), changes)
 
         assert response.status_code == 200
-        self.assertFormError(
-            response,
-            "adminform",
+        assertFormError(response.context['adminform'],
             "bulk_upload_prefix",
             "When bulk card uploads are allowed, this field must be given a value.",
         )

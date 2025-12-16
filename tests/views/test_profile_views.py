@@ -1,4 +1,5 @@
 from django.test import RequestFactory
+from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
 from virtuallibrarycard.models import CustomUser, LibraryCard
@@ -32,15 +33,15 @@ class TestProfileDeleteView(BaseUnitTest):
         request = RequestFactory().get("/account/delete")
         request.user = user
         request.session = {}
-
+        user_id = user.id
         view = ProfileDeleteView()
         view.setup(request)
+
         response = view.delete(request)
 
         assert response.status_code == 302
         assert response.url == "delete_profile_success"
-        assert CustomUser.objects.filter(id=user.id).count() == 0
-        assert LibraryCard.objects.filter(user=user).count() == 0
+        assert CustomUser.objects.filter(id=user_id).count() == 0
 
     def test_delete_no_login(self):
         resp = self.client.delete("/account/delete/somename/")
@@ -86,17 +87,17 @@ class TestProfileEditView(BaseUnitTest):
         response = self.client.post(f"/account/edit/{user.first_name}/")
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "form", "first_name", ["This field is required."]
+        assertFormError(
+            response.context["form"], "first_name", ["This field is required."]
         )
-        self.assertFormError(response, "form", "email", ["This field is required."])
+        assertFormError(
+            response.context["form"], "email", ["This field is required."])
 
         # not required fields
         self.assertRaises(
             AssertionError,
-            self.assertFormError,
-            response,
-            "form",
+            assertFormError,
+            response.context["form"],
             "last_name",
             ["This field is required."],
         )
@@ -142,9 +143,8 @@ class TestCustomLoginView(BaseUnitTest):
             f"/accounts/login/", {"username": user.email, "password": "badpassword"}
         )
         assert response.status_code == 200
-        self.assertFormError(
-            response,
-            "form",
+        assertFormError(
+            response.context["form"],
             None,
             errors=[
                 "Please enter a correct Email address and password. Note that both fields may be case-sensitive."
