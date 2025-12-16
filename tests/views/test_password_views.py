@@ -1,4 +1,5 @@
 from django.core import mail
+from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
 
@@ -20,9 +21,8 @@ class TestPasswordResetView(BaseUnitTest):
         response = self.client.post(
             "/account/reset-password/", {"email": "nosuchemail@email.com"}
         )
-        self.assertFormError(
-            response,
-            "form",
+        assertFormError(
+            response.context["form"],
             "email",
             [
                 "There is no user registered with the specified email address nosuchemail@email.com"
@@ -30,9 +30,8 @@ class TestPasswordResetView(BaseUnitTest):
         )
 
         response = self.client.post("/account/reset-password/")
-        self.assertFormError(
-            response,
-            "form",
+        assertFormError(
+            response.context["form"],
             "email",
             ["This field is required."],
         )
@@ -76,14 +75,14 @@ class TestPasswordChangeView(BaseUnitTest):
         )
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "form", "old_password", ["This field is required."]
+        assertFormError(
+            response.context["form"], "old_password", ["This field is required."]
         )
-        self.assertFormError(
-            response, "form", "new_password1", ["This field is required."]
+        assertFormError(
+            response.context["form"], "new_password1", ["This field is required."]
         )
-        self.assertFormError(
-            response, "form", "new_password2", ["This field is required."]
+        assertFormError(
+            response.context["form"], "new_password2", ["This field is required."]
         )
 
     def test_login_required(self):
