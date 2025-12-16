@@ -51,7 +51,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        assertFormError(response.context['adminform'],
+        assertFormError(
+            response.context["adminform"],
             "password2",
             ["The two password fields didn’t match."],
         )
@@ -63,13 +64,17 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        assertFormError(response.context['adminform'], "email", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "email", ["This field is required."]
         )
-        assertFormError(response.context['adminform'], "password1", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "password1", ["This field is required."]
         )
-        assertFormError(response.context['adminform'], "password2", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "password2", ["This field is required."]
         )
-        assertFormError(response.context['adminform'], "first_name", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "first_name", ["This field is required."]
         )
 
         # No required fields
@@ -84,7 +89,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        assertFormError(response.context['adminform'], "email", ["Enter a valid email address."]
+        assertFormError(
+            response.context["adminform"], "email", ["Enter a valid email address."]
         )
 
     def _get_user_change_data(self, user, consents=None, **kwargs):
@@ -142,12 +148,15 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         response = self.test_client.post(self.get_change_url(self._default_user), {})
 
         assert response.status_code == 200
-        assertFormError(response.context['adminform'], "email", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "email", ["This field is required."]
         )
-        assertFormError(response.context['adminform'], "first_name", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "first_name", ["This field is required."]
         )
 
-        assertFormError(response.context['adminform'],
+        assertFormError(
+            response.context["adminform"],
             "last_name",
             [],
         )
@@ -183,7 +192,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         response = self.test_client.post(self.get_change_url(user), data)
 
         assert response.status_code == 200
-        assertFormError(response.context['adminform'], "email", ["Enter a valid email address."]
+        assertFormError(
+            response.context["adminform"], "email", ["Enter a valid email address."]
         )
 
     def test_read_only_fields(self):
@@ -204,7 +214,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         data = self._get_user_change_data(user, library_id=library.id)
         response = self.test_client.post(self.get_change_url(user), data)
 
-        assertFormError(response.context['adminform'],
+        assertFormError(
+            response.context["adminform"],
             "email",
             [
                 "User must be part of allowed domains: ['example.org']",

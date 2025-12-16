@@ -2,7 +2,7 @@ from django.test import RequestFactory
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
-from virtuallibrarycard.models import CustomUser, LibraryCard
+from virtuallibrarycard.models import CustomUser
 from virtuallibrarycard.views.views_profile import ProfileDeleteView
 
 
@@ -90,8 +90,7 @@ class TestProfileEditView(BaseUnitTest):
         assertFormError(
             response.context["form"], "first_name", ["This field is required."]
         )
-        assertFormError(
-            response.context["form"], "email", ["This field is required."])
+        assertFormError(response.context["form"], "email", ["This field is required."])
 
         # not required fields
         self.assertRaises(
