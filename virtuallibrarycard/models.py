@@ -512,7 +512,12 @@ class LibraryCard(models.Model):
 
         except Exception as e:
             pass
-        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
 
     def is_expired(self):
         if self.expiration_date is None:

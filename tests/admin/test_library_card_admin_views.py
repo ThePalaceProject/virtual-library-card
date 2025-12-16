@@ -83,7 +83,8 @@ class TestLibraryCardAdminViews(BaseAdminUnitTest):
 
         assert response.status_code == 200
         assert len(cards) == 0
-        assertFormError(response.context['adminform'],
+        assertFormError(
+            response.context["adminform"],
             "number",
             ["This number already exists for this library"],
         )
