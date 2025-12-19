@@ -6,6 +6,7 @@ from django import forms
 from django.apps import apps
 from django.core import mail
 from django.test import Client, RequestFactory
+from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
 from virtuallibrarycard.forms.forms_library_card import RequestLibraryCardForm
@@ -305,7 +306,7 @@ class TestCardRequest(BaseUnitTest):
         ]
         errors = ["This field is required."]
         for field in expected_errors_fields:
-            self.assertFormError(
+            assertFormError(
                 resp.context["form"],
                 field,
                 (
@@ -323,7 +324,7 @@ class TestCardRequest(BaseUnitTest):
         # Prime the session
         self.do_library_card_signup_flow(c, library=library)
 
-        error_args = ("form", "email", ["Email address already in use"])
+        error_args = ("email", ["Email address already in use"])
 
         post_dict = self._get_card_request_data(library, user.email)
         identifier = library.identifier
@@ -339,7 +340,7 @@ class TestCardRequest(BaseUnitTest):
                 f"/account/library_card_request/?identifier={identifier}",
                 post_dict,
             )
-            self.assertFormError(resp, *error_args)
+            assertFormError(resp.context["form"], *error_args)
 
     def test_card_request_no_captcha_installed(self):
         # Remove captcha from the installed apps
@@ -381,9 +382,8 @@ class TestCardRequest(BaseUnitTest):
             post_dict,
         )
 
-        self.assertFormError(
-            resp,
-            "form",
+        assertFormError(
+            resp.context["form"],
             "email",
             errors=["User must be part of allowed domains: ['example.org']"],
         )
@@ -524,7 +524,7 @@ class TestLibraryCardDelete(BaseUnitTest):
         self.client.force_login(user)
         response = self.client.post(f"/account/library_cards/cancel/{card.number}")
 
-        self.assertFormError(response, "form", "number", ["This field is required."])
+        assertFormError(response.context["form"], "number", ["This field is required."])
 
     def test_update_user_library(self):
         """I have no idea what this functions purpose is,

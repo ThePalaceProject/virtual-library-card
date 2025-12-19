@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
+from pytest_django.asserts import assertFormError
 
 from tests.base import BaseAdminUnitTest, BaseUnitTest
 from virtuallibrarycard.admin import LibraryCardAdmin, LibraryCardsUploadCSV
@@ -82,9 +83,8 @@ class TestLibraryCardAdminViews(BaseAdminUnitTest):
 
         assert response.status_code == 200
         assert len(cards) == 0
-        self.assertFormError(
-            response,
-            "adminform",
+        assertFormError(
+            response.context["adminform"],
             "number",
             ["This number already exists for this library"],
         )

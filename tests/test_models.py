@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from unittest.mock import MagicMock, patch
 
@@ -240,7 +240,7 @@ class TestCustomUserModel(BaseUnitTest):
         user = self._default_user
         card1 = self._default_card
         card2 = self.create_library_card(user, self._default_library)
-        card2.canceled_date = datetime.today()
+        card2.canceled_date = datetime.now(UTC)
         card2.save()
         lname = self._default_library.name
 
@@ -392,7 +392,7 @@ class TestUserConsent(BaseUnitTest):
     def test_record_consent(self):
         user = self.create_user(self._default_library)
 
-        now = datetime.now()
+        now = datetime.now(UTC)
         with patch("virtuallibrarycard.models.timezone") as mock_zone:
             mock_zone.now.return_value = now
             consent = UserConsent.record_consent(
@@ -409,7 +409,7 @@ class TestUserConsent(BaseUnitTest):
         assert consent.timestamp == now
 
         # Re-recording consent should not create a new entry
-        later = datetime.now()
+        later = datetime.now(UTC)
         UserConsent.VERSIONS[UserConsent.ConsentType.SURVEY] = "testver"
         with patch("virtuallibrarycard.models.timezone") as mock_zone:
             mock_zone.now.return_value = later

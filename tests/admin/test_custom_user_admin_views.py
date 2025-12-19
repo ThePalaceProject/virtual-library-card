@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
 from django.test import RequestFactory
+from pytest_django.asserts import assertFormError
 
 from tests.base import BaseAdminUnitTest
 from virtuallibrarycard.admin import CustomUserAdmin, export_users_by_consent
@@ -50,9 +51,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        self.assertFormError(
-            response,
-            "adminform",
+        assertFormError(
+            response.context["adminform"],
             "password2",
             ["The two password fields didn’t match."],
         )
@@ -64,17 +64,17 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "adminform", "email", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "email", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "password1", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "password1", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "password2", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "password2", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "first_name", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "first_name", ["This field is required."]
         )
 
         # No required fields
@@ -89,8 +89,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         )
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "adminform", "email", ["Enter a valid email address."]
+        assertFormError(
+            response.context["adminform"], "email", ["Enter a valid email address."]
         )
 
     def _get_user_change_data(self, user, consents=None, **kwargs):
@@ -148,14 +148,14 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         response = self.test_client.post(self.get_change_url(self._default_user), {})
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "adminform", "email", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "email", ["This field is required."]
         )
-        self.assertFormError(
-            response, "adminform", "first_name", ["This field is required."]
+        assertFormError(
+            response.context["adminform"], "first_name", ["This field is required."]
         )
 
-        self.assertFormError(
+        assertFormError(
             response.context["adminform"],
             "last_name",
             [],
@@ -192,8 +192,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         response = self.test_client.post(self.get_change_url(user), data)
 
         assert response.status_code == 200
-        self.assertFormError(
-            response, "adminform", "email", ["Enter a valid email address."]
+        assertFormError(
+            response.context["adminform"], "email", ["Enter a valid email address."]
         )
 
     def test_read_only_fields(self):
@@ -214,9 +214,8 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         data = self._get_user_change_data(user, library_id=library.id)
         response = self.test_client.post(self.get_change_url(user), data)
 
-        self.assertFormError(
-            response,
-            "adminform",
+        assertFormError(
+            response.context["adminform"],
             "email",
             [
                 "User must be part of allowed domains: ['example.org']",
