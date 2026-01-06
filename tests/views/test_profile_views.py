@@ -2,7 +2,7 @@ from django.test import RequestFactory
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
-from virtuallibrarycard.models import CustomUser
+from virtuallibrarycard.models import CustomUser, LibraryCard
 from virtuallibrarycard.views.views_profile import ProfileDeleteView
 
 
@@ -42,6 +42,7 @@ class TestProfileDeleteView(BaseUnitTest):
         assert response.status_code == 302
         assert response.url == "delete_profile_success"
         assert CustomUser.objects.filter(id=user_id).count() == 0
+        assert LibraryCard.objects.filter(user_id=user_id).count() == 0
 
     def test_delete_no_login(self):
         resp = self.client.delete("/account/delete/somename/")
