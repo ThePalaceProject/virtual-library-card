@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import jwt
 from django.conf import settings
@@ -13,7 +13,7 @@ class Tokens:
     def generate(typ, expires_in_days=1, **data) -> str:
         """Generate a jwt token given a type and expiry in days
         Any additional data is added to the token header as-is"""
-        exp = datetime.utcnow() + timedelta(days=expires_in_days)
+        exp = datetime.now(UTC) + timedelta(days=expires_in_days)
         return jwt.encode(
             dict(type=typ, exp=exp.timestamp(), **data),
             settings.SECRET_KEY,

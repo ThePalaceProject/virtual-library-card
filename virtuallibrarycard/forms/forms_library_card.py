@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from django import forms
 from django.apps import apps
@@ -183,7 +183,7 @@ class LibraryCardDeleteForm(LoggingMixin, forms.ModelForm):
         if library_card:
             user = library_card.user
             all_user_library_cards = LibraryCard.objects.filter(user=user)
-            library_card.canceled_date = datetime.today()
+            library_card.canceled_date = datetime.now(UTC)
             library_card.canceled_by_user = user.username
             library_card = library_card.save()
             # I UPDATE THE USER LIBRARY (USED FOR BRANDING) IF REQUIRED

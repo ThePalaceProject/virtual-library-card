@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from virtual_library_card.logging import log
 from virtuallibrarycard.models import Library, LibraryCard
@@ -64,7 +64,7 @@ class UserSessionManager:
         """
         :param context:
         """
-        now = datetime.today()
+        now = datetime.now(UTC)
         library_cards = LibraryCard.objects.filter(
             user=user, canceled_date=None
         ).exclude(expiration_date__lte=now)

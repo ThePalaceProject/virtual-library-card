@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from unittest import mock
 
 from datedelta import datedelta
@@ -51,11 +51,11 @@ class TestUserSessionManager(BaseUnitTest):
         card = self.create_library_card(user, self._default_library)
 
         expired_card = self.create_library_card(user, self._default_library)
-        expired_card.expiration_date = datetime.today() - datedelta(days=1)
+        expired_card.expiration_date = datetime.now(UTC) - datedelta(days=1)
         expired_card.save()
 
         future_card = self.create_library_card(user, self._default_library)
-        future_card.expiration_date = datetime.today() + datedelta(days=1)
+        future_card.expiration_date = datetime.now(UTC) + datedelta(days=1)
         future_card.save()
 
         context = {}
