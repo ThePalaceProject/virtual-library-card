@@ -498,19 +498,19 @@ tags = ["django-taggit"]
 
 [[package]]
 name = "django-bootstrap4"
-version = "25.3"
+version = "26.1"
 description = "Bootstrap 4 for Django"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "django_bootstrap4-25.3-py3-none-any.whl", hash = "sha256:0e0eea24bec0a7f18cab1dbefe56b6a5e278b0870b27993cf1677f85a5236dfd"},
-    {file = "django_bootstrap4-25.3.tar.gz", hash = "sha256:73495cc57843ecd18291181b5672a00145999eabbeba6e5488c49d6bfdc0366f"},
+    {file = "django_bootstrap4-26.1-py3-none-any.whl", hash = "sha256:e0fa98c9e613e3f3f2fe3c394486899f62c1a11c77f5bf11653c6bcc8c0a4267"},
+    {file = "django_bootstrap4-26.1.tar.gz", hash = "sha256:164ff10d7f21c627301bca9b5186f0b0478a2c5647d35147283f3a125bc98018"},
 ]
 
 [package.dependencies]
 beautifulsoup4 = ">=4.10.0"
-django = ">=4.2"
+django = ">=4.2,<7.0"
 
 [[package]]
 name = "django-compressor"
@@ -2198,4 +2198,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4"
-content-hash = "f4db943ffa3719b50585dcfc36356064a147d50d851aa30f05b5580f734163db"
+content-hash = "007020db47452aa59475ea771794c521053d5947a7e41a1d5e2ed7a5f13b41f2"
