@@ -1568,14 +1568,14 @@ six = ">=1.5"
 
 [[package]]
 name = "python-stdnum"
-version = "2.1"
+version = "2.2"
 description = "Python module to handle standardized numbers and codes"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "python_stdnum-2.1-py3-none-any.whl", hash = "sha256:25eabcf5f307dd4150fd8f1c03f4512a6caeb84c9f09be1448711f5803373c58"},
-    {file = "python_stdnum-2.1.tar.gz", hash = "sha256:6b01645969eb3dfd55061a0114d593753cd9e653cea9083198b7eea12644397a"},
+    {file = "python_stdnum-2.2-py3-none-any.whl", hash = "sha256:bdf98fd117a0ca152e4047aa8ad254bae63853d4e915ddd4e0effb33ba0e9260"},
+    {file = "python_stdnum-2.2.tar.gz", hash = "sha256:e95fcfa858a703d4a40130cb3eaac133c60d8808a7f3c98efeedac968c2479b9"},
 ]
 
 [package.extras]
@@ -2198,4 +2198,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4"
-content-hash = "007020db47452aa59475ea771794c521053d5947a7e41a1d5e2ed7a5f13b41f2"
+content-hash = "d921b08ba078a4f7cdf644ff86b0137db19b06caae60e7a006e47ea31368f421"
