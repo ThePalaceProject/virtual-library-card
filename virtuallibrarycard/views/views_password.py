@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView, PasswordResetView
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
@@ -8,7 +9,7 @@ from virtuallibrarycard.forms.forms_password import (
     CustomPasswordChangeForm,
     CustomPasswordResetForm,
 )
-from virtuallibrarycard.models import CustomUser
+from virtuallibrarycard.models import CustomUser, LibraryCard
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
@@ -33,6 +34,8 @@ class CustomResetPasswordView(PasswordResetView):
     model = CustomUser
     form_class = CustomPasswordResetForm
     template_name = "registration/reset_password.html"
+    html_email_template_name = "registration/password_reset_email.html"
+    subject_template_name = "registration/password_reset_subject.txt"
 
     def get_form_kwargs(self):
         return super().get_form_kwargs()
@@ -49,6 +52,19 @@ class CustomResetPasswordView(PasswordResetView):
                     "email": existing_user.library.email,
                 }
             )
+
+            # Get all library cards associated with the user's email address
+            # Query by user's email to ensure we get the correct user's cards
+            # even if the user object is a different instance
+            library_cards = list(LibraryCard.objects.filter(
+                user__email=existing_user.email,
+                canceled_date__isnull=True
+            ).select_related('library').order_by('created'))
+
+            if not self.extra_email_context:
+                self.extra_email_context = {}
+
+            self.extra_email_context['library_cards'] = library_cards
 
         messages.success(self.request, message)
         return super().form_valid(form)
