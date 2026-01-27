@@ -213,11 +213,6 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
         self.created_library_card = None
         self.user = kwargs.get("user")
 
-        # Customize the password change link UI
-        password = self.fields.get("password")
-        if password:
-            password.help_text = "<span class='password-help'><a href='../password'>CHANGE PASSWORD</a></span>"
-
         is_active = self.fields.get("is_active")
         if is_active:
             is_active.label = "Active User status"
