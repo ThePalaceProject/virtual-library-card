@@ -449,17 +449,18 @@ bcrypt = ["bcrypt (>=4.1.1)"]
 
 [[package]]
 name = "django-absoluteuri"
-version = "1.3.0"
+version = "2.0.0"
 description = "Absolute URI functions and template tags for Django"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django-absoluteuri-1.3.0.tar.gz", hash = "sha256:2b7cb57748b4f557d2cdb1f74d6cfa197bed7f664b9c2a039094575a1b648e4a"},
+    {file = "django_absoluteuri-2.0.0-py2.py3-none-any.whl", hash = "sha256:153ab4a658dfb25acbffe99883e7fbb587e61d4d60a6942610249731fbfc2a1f"},
+    {file = "django_absoluteuri-2.0.0.tar.gz", hash = "sha256:c7fbfeac5be2a07c884803881e72d29c21d118817c83f5272ca42c2fec7f7ae3"},
 ]
 
 [package.dependencies]
-Django = ">=1.11"
+Django = ">=4.2"
 
 [[package]]
 name = "django-appconf"
@@ -2196,4 +2197,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4"
-content-hash = "7042286e46b9716c27a4c80ebebbc6df666ae18bb82606c41ce88cca55353ec2"
+content-hash = "607dd0ddd8d140d8d6b26fa8a58e6e583060479eec7d7c0191a89c78689bde96"
