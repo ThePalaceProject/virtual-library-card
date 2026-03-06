@@ -48,7 +48,7 @@ EMAIL_HOST_PASSWORD = "xxx"
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "xxx"
 
-SECRET_KEY = "xxx"
+SECRET_KEY = "test-secret-key-for-development-only!"
 
 ABSOLUTEURI_PROTOCOL = "http"
 
