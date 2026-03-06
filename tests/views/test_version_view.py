@@ -13,7 +13,10 @@ class TestVersionView:
         view = VersionView.as_view()
         return lambda: view(request)
 
-    def test_get_method_no_version(self, view):
+    def test_get_method_no_version(self, view, monkeypatch):
+        monkeypatch.setattr(virtual_library_card, "__version__", None)
+        monkeypatch.setattr(virtual_library_card, "__branch__", None)
+        monkeypatch.setattr(virtual_library_card, "__commit__", None)
         response = view()
         assert response.content_type == "application/json"
         assert response.status_code == 200

@@ -2,12 +2,13 @@ services:
   # example docker compose configuration for testing and development
 
   vlc:
+    image: "${VLC_IMAGE-}"
     build: .
     ports:
       - "8000:8000"
     depends_on:
       pg:
-        condition: service_started
+        condition: service_healthy
       minio:
         condition: service_healthy
     environment:
@@ -33,6 +34,12 @@ services:
              -c ssl=on
              -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
              -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      start_period: 30s
+      timeout: 5s
+      retries: 10
 
   minio:
     build:
