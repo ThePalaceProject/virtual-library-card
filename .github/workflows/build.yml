@@ -171,7 +171,7 @@ jobs:
       - name: Run unit tests
         run: >
           docker compose run vlc
-          bash -c "python manage.py migrate --no-input && pytest --no-cov tests"
+          bash -c "poetry install --only dev --no-interaction && python manage.py migrate --no-input && pytest --no-cov tests"
 
       - name: Stop containers
         if: always()
