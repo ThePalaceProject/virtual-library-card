@@ -170,7 +170,7 @@ jobs:
 
       - name: Run unit tests
         run: >
-          docker compose run vlc
+          docker compose run -v ${{ github.workspace }}/tests:/virtual_library_card/tests vlc
           bash -c "poetry install --only dev --no-interaction && python manage.py migrate --no-input && pytest --no-cov tests"
 
       - name: Stop containers
