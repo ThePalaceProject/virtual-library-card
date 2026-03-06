@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from io import FileIO
 from unittest.mock import MagicMock
 
 from pytest_django.asserts import assertFormError
@@ -14,11 +13,16 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
     MODEL = Library
     MODEL_ADMIN = LibraryAdmin
 
+    def _open_logo(self):
+        f = open("tests/files/logo.png", "rb")
+        self.addCleanup(f.close)
+        return f
+
     def _get_library_change_data(self, library, **changes):
         required_fields = {
             "identifier": "",
             "name": "",
-            "logo": FileIO("tests/files/logo.png"),
+            "logo": self._open_logo(),
             "privacy_url": "",
             "terms_conditions_url": "",
             "phone": "",
@@ -68,7 +72,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         data = dict(
             identifier="new",
             name="new",
-            logo=FileIO("tests/files/logo.png"),
+            logo=self._open_logo(),
             privacy_url="privacyurl",
             terms_conditions_url="termsurl",
             prefix="new",
@@ -132,7 +136,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         data.update(
             {
                 "identifier": "newWithPlace",
-                "logo": FileIO("tests/files/logo.png"),
+                "logo": self._open_logo(),
             }
         )
         data = self._add_library_states_data(data, ["NY", "AK"])
@@ -148,7 +152,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "identifier": "newid",
             "prefix": "newid",
             "name": "newid",
-            "logo": FileIO("tests/files/logo.png"),
+            "logo": self._open_logo(),
         }
         data = self._get_library_change_data(self._default_library, **changes)
         response = self.test_client.post(
