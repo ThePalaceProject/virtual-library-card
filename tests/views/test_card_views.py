@@ -278,6 +278,34 @@ class TestCardRequest(BaseUnitTest):
         )
         assert "Your account will not be activated until" in mail.outbox[0].body
 
+    def test_card_request_success_displays_barcode_and_signin_note(self):
+        """Confirmation screen shows barcode and note to use it for sign-in."""
+        c = Client()
+        self.do_library_card_signup_flow(c)
+
+        identifier = self._default_library.identifier
+        email = "barcode-test@example.com"
+        resp = c.post(
+            f"/account/library_card_request/?identifier={identifier}",
+            self._get_card_request_data(self._default_library, email),
+        )
+
+        self._assert_card_request_success(resp, email, self._default_library)
+
+        success_resp = c.get(resp.url)
+        assert success_resp.status_code == 200
+
+        content = success_resp.content.decode()
+        user = CustomUser.objects.get(email=email)
+        card = LibraryCard.objects.get(user=user, library=self._default_library)
+
+        assert card.number in content, "Barcode (card number) should be on success page"
+        assert (
+            self._default_library.barcode_text in content
+        ), "Library barcode label should be on success page"
+        assert "not your email address" in content, "Sign-in note should mention using number not email"
+        assert "sign in" in content.lower(), "Sign-in note should reference signing in"
+
     def test_card_request_bad_data(self):
         c = Client()
 

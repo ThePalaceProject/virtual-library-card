@@ -134,6 +134,18 @@ msgstr ""
 msgid "Date of born"
 msgstr ""
 
+#: templates/django/library_card/library_card_request_success.html:16
+msgid "Your library card number"
+msgstr "Your library card number"
+
+#: templates/django/library_card/library_card_request_success.html:23
+msgid "Important:"
+msgstr "Important:"
+
+#: templates/django/library_card/library_card_request_success.html:23
+msgid "You will need to use this number (not your email address) to sign in."
+msgstr "You will need to use this number (not your email address) to sign in."
+
 #: templates/django/accounts/includes/profile_library.html:2
 msgid "Your library card information"
 msgstr ""
