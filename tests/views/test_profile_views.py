@@ -153,9 +153,7 @@ class TestCustomLoginView(BaseUnitTest):
                 "Your account has not been activated yet. Please click the activation link in the verification email sent to your inbox before logging in."
             ],
         )
-        assert (
-            self.client.session["verification_email_address"] == user.email
-        )
+        assert self.client.session["verification_email_address"] == user.email
 
     def test_bad_login(self):
         password = "somepassword123"
