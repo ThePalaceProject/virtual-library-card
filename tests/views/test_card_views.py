@@ -303,7 +303,9 @@ class TestCardRequest(BaseUnitTest):
         assert (
             self._default_library.barcode_text in content
         ), "Library barcode label should be on success page"
-        assert "not your email address" in content, "Sign-in note should mention using number not email"
+        assert (
+            "not your email address" in content
+        ), "Sign-in note should mention using number not email"
         assert "sign in" in content.lower(), "Sign-in note should reference signing in"
 
     def test_card_request_bad_data(self):
