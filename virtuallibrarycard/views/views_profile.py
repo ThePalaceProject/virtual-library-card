@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView, TemplateView, UpdateView
 
 from virtual_library_card.user_session import UserSessionManager
@@ -18,6 +19,21 @@ class CustomLoginView(LoginView):
         identifier = str(url_parts.pop())
         UserSessionManager.set_session_identifier_info(self, identifier)
         return kwargs
+
+    def form_valid(self, form):
+        user = form.get_user()
+        if not user.email_verified:
+            self.request.session["verification_email_address"] = user.email
+            form.add_error(
+                None,
+                _(
+                    "Your account has not been activated yet. "
+                    "Please click the activation link in the verification "
+                    "email sent to your inbox before logging in."
+                ),
+            )
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):

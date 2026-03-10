@@ -41,6 +41,18 @@
                     <button class="form-btn" type="submit">Login</button>
                 </form>
 
+                {% if request.session.verification_email_address %}
+                <div class="resend-verification">
+                    <p>{% trans "Didn't receive the email or need a new link?" %}</p>
+                    <form method="post" action="{% url 'email_token_resend' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="form-btn">
+                            {% trans "Resend Verification Email" %}
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
                 <div class="forgot_password_label">
 						<span class="txt1">
 							{% trans forgot_password %}

@@ -128,10 +128,34 @@ class TestCustomLoginView(BaseUnitTest):
         user.save()
 
         response = self.client.post(
-            f"/accounts/login/", {"username": user.email, "password": password}
+            f"/accounts/login/{self._default_library.identifier}/",
+            {"username": user.email, "password": password},
         )
         assert response.status_code == 302
         assert response.url == "/accounts/profile/"
+
+    def test_unverified_login(self):
+        password = "somepassword123"
+        user = self.create_user(self._default_library, email="example@email.com")
+        user.set_password(password)
+        user.email_verified = False
+        user.save()
+
+        response = self.client.post(
+            f"/accounts/login/{self._default_library.identifier}/",
+            {"username": user.email, "password": password},
+        )
+        assert response.status_code == 200
+        assertFormError(
+            response.context["form"],
+            None,
+            errors=[
+                "Your account has not been activated yet. Please click the activation link in the verification email sent to your inbox before logging in."
+            ],
+        )
+        assert (
+            self.client.session["verification_email_address"] == user.email
+        )
 
     def test_bad_login(self):
         password = "somepassword123"
@@ -140,7 +164,8 @@ class TestCustomLoginView(BaseUnitTest):
         user.save()
 
         response = self.client.post(
-            f"/accounts/login/", {"username": user.email, "password": "badpassword"}
+            f"/accounts/login/{self._default_library.identifier}/",
+            {"username": user.email, "password": "badpassword"},
         )
         assert response.status_code == 200
         assertFormError(
