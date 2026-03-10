@@ -489,6 +489,10 @@ msgid ""
 "        details"
 msgstr ""
 
+#: templates/django/library_card/library_card_request_success.html:18
+msgid "If you don't see our email, check your spam or junk folder."
+msgstr "If you don't see our email, check your spam or junk folder."
+
 #: templates/django/library_card/upload_by_csv.html:12
 #, python-format
 msgid ""

@@ -28,5 +28,7 @@
     <h3>{% blocktrans with email=user.email %}Check your <strong>{{ email }}</strong> mailbox to see the card
         details{% endblocktrans %}</h3>
 
+    <p class="text-muted">{% trans "If you don't see our email, check your spam or junk folder." %}</p>
+
     {% include "accounts/includes/profile_info.html" %}
 {% endblock %}
