@@ -33,7 +33,7 @@
                             link{% endblocktrans %}
                             <a class="btn-primary btn-inline" aria-label="{% blocktrans %}My profile{% endblocktrans %}"
                                title="{% blocktrans %}My profile{% endblocktrans %}"
-                               href="/accounts/login/?identifier={{ request.session.identifier }}"><span>{% blocktrans %}
+                               href="/accounts/login/{{ request.session.identifier }}/"><span>{% blocktrans %}
                                 My
                                 profile{% endblocktrans %}</span></a>
                         </li>

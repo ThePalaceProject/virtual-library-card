@@ -15,8 +15,7 @@ class CustomLoginView(LoginView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        url_parts = self.request.path.split("/")[:-1]
-        identifier = str(url_parts.pop())
+        identifier = self.kwargs.get("identifier") or self.request.GET.get("identifier")
         UserSessionManager.set_session_identifier_info(self, identifier)
         return kwargs
 
