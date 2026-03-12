@@ -136,7 +136,9 @@ msgstr ""
 
 #: templates/django/library_card/library_card_request_success.html:16
 msgid "Your library card number"
-msgstr "Your library card number"
+msgid_plural "Your library card numbers"
+msgstr[0] ""
+msgstr[1] ""
 
 #: templates/django/library_card/library_card_request_success.html:23
 msgid "Important:"
