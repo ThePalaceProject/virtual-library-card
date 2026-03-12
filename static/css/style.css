@@ -1334,6 +1334,29 @@ div.required .select-wrapper + label:after {
     color: var(--text-color) !important;
 }
 
+.barcode-confirmation {
+    margin: 1.5em 0;
+}
+
+.barcode-confirmation h3 {
+    margin-top: 0;
+}
+
+.barcode-number {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+}
+
+.card-number {
+    letter-spacing: 0.05em;
+    font-family: monospace;
+}
+
+.barcode-confirmation .text-muted {
+    margin: 1em 0 0;
+    font-size: 0.95em;
+}
+
 div.required input:not([type]) + label:after,
 div.required input[type=text]:not(.browser-default) + label:after,
 div.required input[type=password]:not(.browser-default) + label:after,

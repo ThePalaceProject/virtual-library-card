@@ -12,14 +12,14 @@
         {% trans your_library_card %}</h1>
 
     {% if library_cards %}
-    <div class="barcode-confirmation well" style="margin: 1.5em 0; padding: 1.5em; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
-        <h3 style="margin-top: 0;">{% trans "Your library card number" %}</h3>
+    <div class="barcode-confirmation well">
+        <h3>{% trans "Your library card number" %}</h3>
         {% for card in library_cards %}
-        <p style="font-size: 1.5em; margin: 0.5em 0;">
-            {% if card.library %}{{ card.library.barcode_text }}: <strong style="letter-spacing: 0.05em; font-family: monospace;">{{ card.number }}</strong>{% if card.library.name %} ({{ card.library.name }}){% endif %}{% else %}<strong style="letter-spacing: 0.05em; font-family: monospace;">{{ card.number }}</strong>{% endif %}
+        <p class="barcode-number">
+            {% if card.library %}{{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong>{% if card.library.name %} ({{ card.library.name }}){% endif %}{% else %}<strong class="card-number">{{ card.number }}</strong>{% endif %}
         </p>
         {% endfor %}
-        <p class="text-muted" style="margin: 1em 0 0 0; font-size: 0.95em;">
+        <p class="text-muted">
             <strong>{% trans "Important:" %}</strong> {% trans "You will need to use this number (not your email address) to sign in." %}
         </p>
     </div>
