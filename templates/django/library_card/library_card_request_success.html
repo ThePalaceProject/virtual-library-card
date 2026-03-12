@@ -17,7 +17,11 @@
         <ul>
         {% for card in library_cards %}
             <li class="barcode-number">
-                {% if card.library %}{{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong> ({{ card.library.name }}){% else %}<strong class="card-number">{{ card.number }}</strong>{% endif %}
+            {% if card.library %}
+                {{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong> ({{ card.library.name }})
+            {% else %}
+                <strong class="card-number">{{ card.number }}</strong>
+            {% endif %}
             </li>
         {% endfor %}
         </ul>
