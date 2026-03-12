@@ -1342,12 +1342,12 @@ div.required .select-wrapper + label:after {
     margin-top: 0;
 }
 
-.barcode-number {
+.barcode-confirmation .barcode-number {
     font-size: 1.5em;
     margin: 0.5em 0;
 }
 
-.card-number {
+.barcode-confirmation .card-number {
     letter-spacing: 0.05em;
     font-family: monospace;
 }

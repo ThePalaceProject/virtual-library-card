@@ -14,11 +14,13 @@
     {% if library_cards %}
     <div class="barcode-confirmation well">
         <h3>{% trans "Your library card number" %}</h3>
+        <ul>
         {% for card in library_cards %}
-        <p class="barcode-number">
-            {% if card.library %}{{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong>{% if card.library.name %} ({{ card.library.name }}){% endif %}{% else %}<strong class="card-number">{{ card.number }}</strong>{% endif %}
-        </p>
+            <li class="barcode-number">
+                {% if card.library %}{{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong>{% if card.library.name %} ({{ card.library.name }}){% endif %}{% else %}<strong class="card-number">{{ card.number }}</strong>{% endif %}
+            </li>
         {% endfor %}
+        </ul>
         <p class="text-muted">
             <strong>{% trans "Important:" %}</strong> {% trans "You will need to use this number (not your email address) to sign in." %}
         </p>
