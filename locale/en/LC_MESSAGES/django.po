@@ -142,11 +142,11 @@ msgstr[1] ""
 
 #: templates/django/library_card/library_card_request_success.html:23
 msgid "Important:"
-msgstr "Important:"
+msgstr ""
 
 #: templates/django/library_card/library_card_request_success.html:23
 msgid "You will need to use this number (not your email address) to sign in."
-msgstr "You will need to use this number (not your email address) to sign in."
+msgstr ""
 
 #: templates/django/accounts/includes/profile_library.html:2
 msgid "Your library card information"
@@ -493,7 +493,7 @@ msgstr ""
 
 #: templates/django/library_card/library_card_request_success.html:18
 msgid "If you don't see our email, check your spam or junk folder."
-msgstr "If you don't see our email, check your spam or junk folder."
+msgstr ""
 
 #: templates/django/library_card/upload_by_csv.html:12
 #, python-format
