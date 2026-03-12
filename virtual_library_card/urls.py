@@ -69,6 +69,7 @@ if settings.HAS_WEBSITE:
         # ADMIN
         path("admin/", admin_site.urls),
         path("place/search", PlaceSearchAheadView.as_view(), name="place_typeahead"),
+        path("accounts/login/", CustomLoginView.as_view()),
         path("accounts/", include("django.contrib.auth.urls")),
         # APPLY FOR LIBRARY CARD
         path(
