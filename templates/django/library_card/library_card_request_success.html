@@ -11,8 +11,30 @@
         !{% endblocktrans %}
         {% trans your_library_card %}</h1>
 
+    {% if library_cards %}
+    <div class="barcode-confirmation well">
+        <h3>{% blocktrans count count=library_cards|length %}Your library card number{% plural %}Your library card numbers{% endblocktrans %}</h3>
+        <ul>
+        {% for card in library_cards %}
+            <li class="barcode-number">
+            {% if card.library %}
+                {{ card.library.barcode_text }}: <strong class="card-number">{{ card.number }}</strong> ({{ card.library.name }})
+            {% else %}
+                <strong class="card-number">{{ card.number }}</strong>
+            {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+        <p class="text-muted">
+            <strong>{% trans "Important:" %}</strong> {% trans "You will need to use this number (not your email address) to sign in." %}
+        </p>
+    </div>
+    {% endif %}
+
     <h3>{% blocktrans with email=user.email %}Check your <strong>{{ email }}</strong> mailbox to see the card
         details{% endblocktrans %}</h3>
+
+    <p class="text-muted">{% trans "If you don't see our email, check your spam or junk folder." %}</p>
 
     {% include "accounts/includes/profile_info.html" %}
 {% endblock %}
