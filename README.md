@@ -44,15 +44,21 @@ each time you work on the project.
 
 ### 1. Clone the repository
 
-    git clone git@github.com:ThePalaceProject/virtual-library-card.git
+```sh
+git clone git@github.com:ThePalaceProject/virtual-library-card.git
+```
 
 ### 2. Create and initialize a Python virtual env
 
-    uv sync
+```sh
+uv sync
+```
 
 This will create a virtual environment and install all dependencies. To activate it:
 
-    source .venv/bin/activate
+```sh
+source .venv/bin/activate
+```
 
 ### 3. Set up public MinIO bucket (or public AWS S3 bucket)
 
@@ -61,20 +67,24 @@ a Docker container. You can read more about MinIO [here](https://min.io/docs/min
 
 To run the MinIO in Docker container run:
 
-    docker run -d -p 9000:9000 -p 9001:9001 --name minio \
-      -e "MINIO_ROOT_USER=vlc-minio" -e "MINIO_ROOT_PASSWORD=123456789" \
-      quay.io/minio/minio server /data --console-address ":9001"
+```sh
+docker run -d -p 9000:9000 -p 9001:9001 --name minio \
+  -e "MINIO_ROOT_USER=vlc-minio" -e "MINIO_ROOT_PASSWORD=123456789" \
+  quay.io/minio/minio server /data --console-address ":9001"
+```
 
 After you have MinIO container running, you will need to create the public bucket to put the static files in.
 
-    # log into docker instance
-    docker exec -it minio bash
-    # create an alias
-    mc alias set minio http://localhost:9000 vlc-minio 123456789
-    # create vlc-test bucket
-    mc mb minio/vlc-test
-    # set public permissions on bucket.
-    mc anonymous set public  minio/vlc-test
+```sh
+# log into docker instance
+docker exec -it minio bash
+# create an alias
+mc alias set minio http://localhost:9000 vlc-minio 123456789
+# create vlc-test bucket
+mc mb minio/vlc-test
+# set public permissions on bucket.
+mc anonymous set public  minio/vlc-test
+```
 
 You can then log into `http://localhost:9001` with username `vlc-minio` and password `123456789`
 and see your files.  The name for the bucket can be changed inside the settings file by
@@ -84,7 +94,9 @@ means of the variable `AWS_STORAGE_BUCKET_NAME`.
 
 The static files must be "collected":
 
-    python ./manage.py collectstatic --settings=virtual_library_card.settings.dev
+```sh
+python ./manage.py collectstatic --settings=virtual_library_card.settings.dev
+```
 
 Our default configuration puts these files into a public s3 bucket.
 
@@ -95,39 +107,49 @@ See [django documentation](https://docs.djangoproject.com/en/2.2/howto/deploymen
 The database connection parameters for a development (resp. production) environment are located in the `settings/dev.py`
 (resp.`settings/prod.py`) files:
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'virtual_library_card',
-            'USER': '<db_user>',
-            'PASSWORD': '<db_password>',
-            'HOST': '<db_host>',
-            'PORT': '<db_port>',
-        }
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'virtual_library_card',
+        'USER': '<db_user>',
+        'PASSWORD': '<db_password>',
+        'HOST': '<db_host>',
+        'PORT': '<db_port>',
     }
+}
+```
 
 ### 6. Create / update the database schema
 
 The database schema must be initialized and updated with:
 
-    python3 manage.py migrate --settings=virtual_library_card.settings.dev
+```sh
+python3 manage.py migrate --settings=virtual_library_card.settings.dev
+```
 
 ### 7. Create the superuser
 
-    python manage.py createsuperuser --settings=virtual_library_card.settings.dev
+```sh
+python manage.py createsuperuser --settings=virtual_library_card.settings.dev
+```
 
 Notes:
 
 - This will also create the "default" library, which can be customized through a few settings in `settings/dev.py`:
 
-        DEFAULT_SUPERUSER_LIBRARY_NAME
-        DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER
-        DEFAULT_SUPERUSER_LIBRARY_PREFIX
-        DEFAULT_SUPERUSER_LIBRARY_STATE
+  ```text
+  DEFAULT_SUPERUSER_LIBRARY_NAME
+  DEFAULT_SUPERUSER_LIBRARY_IDENTIFIER
+  DEFAULT_SUPERUSER_LIBRARY_PREFIX
+  DEFAULT_SUPERUSER_LIBRARY_STATE
+  ```
 
 - The name of the superuser can be also configured in the settings files:
 
-        DEFAULT_SUPERUSER_FIRST_NAME
+  ```text
+  DEFAULT_SUPERUSER_FIRST_NAME
+  ```
 
 ### 8. Select what (website or/and API) will be deployed
 
@@ -141,13 +163,17 @@ You can adjust these values in the `settings/dev.py` file.
 
 For development, you can use the Django `runserver` command.
 
-    python manage.py runserver --settings=virtual_library_card.settings.dev
+```sh
+python manage.py runserver --settings=virtual_library_card.settings.dev
+```
 
 #### UWSGI
 
 For development or production use you can run the application under uwsgi.
 
-    uwsgi --wsgi-file virtual_library_card/wsgi.py --http :8000
+```sh
+uwsgi --wsgi-file virtual_library_card/wsgi.py --http :8000
+```
 
 ## Running the application with docker-compose
 
@@ -156,7 +182,9 @@ point for deploying the code to production, or as an easy way to run the applica
 development. It runs three containers: postgresql, minio and vlc. It takes care of setting
 up the environment variables to configure the containers to talk to one another.
 
-    docker-compose up -d
+```sh
+docker-compose up -d
+```
 
 Then you should be able to access the site at `http://localhost:8000` with the username (test@test.com)
 and password (test) defined in [`docker-compose.yml`](./docker-compose.yml).
@@ -168,13 +196,17 @@ and password (test) defined in [`docker-compose.yml`](./docker-compose.yml).
 After cloning the repository, this step builds the docker container.
 Eventually you will be able to pull the container from dockerhub.
 
-    docker build -t virtual_libary_card .
+```sh
+docker build -t virtual_libary_card .
+```
 
 ### 2. Create PostgreSQL Container (Only for testing)
 
 Either create a new database in the production PostgreSQL Database. Or use the docker PostgreSQL container for testing.
 
-    docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:16
+```sh
+docker run -d --name pg --rm -e POSTGRES_USER=vlc -e POSTGRES_PASSWORD=test -e POSTGRES_DB=virtual_library_card postgres:16
+```
 
 ### 3. Create settings file
 
@@ -183,8 +215,10 @@ is an example of this file, and in most cases can be used for basic testing.
 
 ### 4. Start container
 
-    docker run --name vlc --rm -p 8000:8000 -e SUPERUSER_EMAIL=test@test.com -e SUPERUSER_PASSWORD=test -e \
-      DJANGO_SETTINGS_MODULE=virtual_library_card.settings.dev --link pg virtual_library_card
+```sh
+docker run --name vlc --rm -p 8000:8000 -e SUPERUSER_EMAIL=test@test.com -e SUPERUSER_PASSWORD=test -e \
+  DJANGO_SETTINGS_MODULE=virtual_library_card.settings.dev --link pg virtual_library_card
+```
 
 ### 5. View site
 
@@ -207,17 +241,21 @@ All application logging occurs at this defined level.
 An S3 bucket should be created out-of-band to store uploaded files and static files.
 The following variables must be populated in the settings file.
 
-    `DEFAULT_FILE_STORAGE` = "virtual_library_card.storage.S3PublicStorage"
-    `STATICFILES_STORAGE` = "virtual_library_card.storage.S3StaticStorage"
-    `AWS_STORAGE_BUCKET_NAME` = "The name of the already created S3 bucket"
+```python
+DEFAULT_FILE_STORAGE = "virtual_library_card.storage.S3PublicStorage"
+STATICFILES_STORAGE = "virtual_library_card.storage.S3StaticStorage"
+AWS_STORAGE_BUCKET_NAME = "The name of the already created S3 bucket"
+```
 
 Optionally, the following settings can be set
 
-    # Either
-    `AWS_S3_SESSION_PROFILE` = "profile-name"
-    # Or
-    `AWS_S3_ACCESS_KEY_ID` = "The AWS access key"
-    `AWS_S3_SECRET_ACCESS_KEY` = "The AWS secret key"
+```python
+# Either
+AWS_S3_SESSION_PROFILE = "profile-name"
+# Or
+AWS_S3_ACCESS_KEY_ID = "The AWS access key"
+AWS_S3_SECRET_ACCESS_KEY = "The AWS secret key"
+```
 
 In case neither session profile or key-secret are provided, the boto3 "default" session will be used.
 
@@ -266,7 +304,9 @@ flag.
 
 Test Python 3.12
 
-    tox -e py312
+```sh
+tox -e py312
+```
 
 You need to have the Python versions you are testing against installed on your local system. `tox` searches the system
 for installed Python versions, but does not install new Python versions. If `tox` doesn't find the Python version its
@@ -274,7 +314,9 @@ looking for it will give an `InterpreterNotFound` error.
 
 uv can manage Python versions for you. To install additional Python versions:
 
-    uv python install 3.13
+```sh
+uv python install 3.13
+```
 
 #### Docker
 
@@ -289,7 +331,9 @@ with a particular factor you add it to the end of the environment.
 
 Test with Python 3.12 using docker containers for the services.
 
-    tox -e py312-docker
+```sh
+tox -e py312-docker
+```
 
 #### Pytest
 
