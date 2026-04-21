@@ -23,15 +23,7 @@ dev = [
 
 [project]
 authors = [{email = "info@thepalaceproject.org", name = "The Palace Project"}]
-description = "Virtual Library Card Creator"
-license = "Apache-2.0"
-name = "virtual-library-card"
-readme = "README.md"
-requires-python = ">=3.12,<4"
-version = "0"
 dependencies = [
-    "PyJWT>=2.6.0,<3",
-    "Pillow==12.2.0",
     "attrs>=26.1.0,<27",
     "better-profanity>=0.7.0,<0.8",
     "boto3>=1.26.90,<2",
@@ -58,12 +50,20 @@ dependencies = [
     "django<7.0",
     "djangorestframework>=3.16.0,<4",
     "jinja2==3.1.6",
+    "Pillow==12.2.0",
     "psycopg2-binary==2.9.12",
+    "PyJWT>=2.6.0,<3",
     "python-stdnum==2.2",
     "pyuwsgi>=2.0,<2.1",
     "requests>=2.31,<3",
     "setuptools>=82.0.0,<83",
 ]
+description = "Virtual Library Card Creator"
+license = "Apache-2.0"
+name = "virtual-library-card"
+readme = "README.md"
+requires-python = ">=3.12,<4"
+version = "0"
 
 [project.urls]
 Homepage = "https://thepalaceproject.org"
