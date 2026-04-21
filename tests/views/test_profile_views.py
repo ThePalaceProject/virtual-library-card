@@ -1,4 +1,5 @@
 from django.test import RequestFactory
+from django.urls import reverse
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
@@ -207,3 +208,31 @@ class TestCustomLoginView(BaseUnitTest):
                 "Please enter a correct Email address and password. Note that both fields may be case-sensitive."
             ],
         )
+
+
+class TestLogoutView(BaseUnitTest):
+    LOGOUT_URL = reverse("logout")
+
+    def _assert_login_and_logout(self, user):
+        self.client.force_login(user)
+        assert "_auth_user_id" in self.client.session
+
+        response = self.client.post(
+            self.LOGOUT_URL, {"next": "/accounts/login?next=/"}
+        )
+        assert response.status_code == 302
+        assert "_auth_user_id" not in self.client.session
+
+    def test_logout_ordinary_user(self):
+        user = self.create_user(self._default_library)
+        self._assert_login_and_logout(user)
+
+    def test_logout_staff_user(self):
+        user = self.create_user(self._default_library, is_staff=True)
+        self._assert_login_and_logout(user)
+
+    def test_logout_superuser(self):
+        user = CustomUser.objects.create_superuser(
+            f"{self._random_name()}@example.com", "password"
+        )
+        self._assert_login_and_logout(user)
