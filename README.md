@@ -8,7 +8,30 @@
 
 ## Prerequisites
 
-Python 3.12+ must be installed, and a SQL database must be available.
+A SQL database must be available.
+
+### uv
+
+This project uses [uv](https://docs.astral.sh/uv/) for Python version management, virtual
+environment management, and dependency management.
+
+uv can be installed using the command:
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+uv can install and manage Python versions for you. To install the version used by this project:
+
+```sh
+uv python install 3.12
+```
+
+### direnv (optional, recommended)
+
+[direnv](https://direnv.net/) automatically activates the project's virtual environment when you
+`cd` into the directory. This means you don't need to manually activate the virtual environment
+each time you work on the project.
 
 ## Notes
 
@@ -25,13 +48,11 @@ Python 3.12+ must be installed, and a SQL database must be available.
 
 ### 2. Create and initialize a Python virtual env
 
-    pip install --upgrade pip
-    pip install virtualenv
-    python3 -m venv venv
-    source venv/bin/activate
-    poetry install --only-root
+    uv sync
 
-Note: activate the virtual env before installing the requirements.
+This will create a virtual environment and install all dependencies. To activate it:
+
+    source .venv/bin/activate
 
 ### 3. Set up public MinIO bucket (or public AWS S3 bucket)
 
@@ -226,8 +247,8 @@ For more details about our code style, see the
 ### Testing
 
 Github Actions runs our unit tests against different Python versions automatically using
-[tox](https://tox.readthedocs.io/en/latest/). `tox` is included in our development dependencies, so it should be
-available once you run `poetry install`.
+[tox](https://tox.readthedocs.io/en/latest/). `tox` is included in our CI dependencies, so it should be
+available once you run `uv sync --only-group ci`.
 
 Tox has an environment for each python version and an optional `-docker` factor that will automatically use docker to
 deploy service container used for the tests. You can select the environment you would like to test with the tox `-e`
@@ -251,15 +272,17 @@ You need to have the Python versions you are testing against installed on your l
 for installed Python versions, but does not install new Python versions. If `tox` doesn't find the Python version its
 looking for it will give an `InterpreterNotFound` error.
 
-[Pyenv](https://github.com/pyenv/pyenv) is a useful tool to install multiple Python versions, if you need to install
-missing Python versions in your system for local testing.
+uv can manage Python versions for you. To install additional Python versions:
+
+    uv python install 3.13
 
 #### Docker
 
 If you install `tox-docker` tox will take care of setting up all the service containers necessary to run the unit tests
 and pass the correct environment variables to configure the tests to use these services. Using `tox-docker` is not
 required, but it is the recommended way to run the tests locally, since it runs the tests in the same way they are run
-on Github Actions. `tox-docker` is included in the project's development dependencies, so it should always be available.
+on Github Actions. `tox-docker` is included in the project's CI dependencies (`uv sync --only-group ci`), so it should
+always be available.
 
 The docker functionality is included in a `docker` factor that can be added to the environment. To run an environment
 with a particular factor you add it to the end of the environment.
