@@ -37,21 +37,16 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
         with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
           python-version: "3.12"
-
-      - name: Install Poetry
-        uses: ThePalaceProject/circulation/.github/actions/poetry@main
-        with:
-          version: "2.1.1"
+          activate-environment: true
 
       - name: Setup Dunamai
-        run: |
-          poetry install --only ci
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+        run: uv sync --frozen --only-group ci
 
       - name: Create version file
         run: |
@@ -171,7 +166,7 @@ jobs:
       - name: Run unit tests
         run: >
           docker compose run -v ${{ github.workspace }}/tests:/virtual_library_card/tests vlc
-          bash -c "poetry install --only dev --no-interaction && python manage.py migrate --no-input && pytest --no-cov tests"
+          bash -c "uv sync --frozen --only-group dev && python manage.py migrate --no-input && pytest --no-cov tests"
 
       - name: Stop containers
         if: always()

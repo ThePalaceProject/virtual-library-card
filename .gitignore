@@ -99,3 +99,6 @@ venv/
 
 # Dynamically generated version file, added by docker build
 virtual_library_card/_version.py
+
+# direnv
+.envrc

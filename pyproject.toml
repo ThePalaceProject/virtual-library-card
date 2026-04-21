@@ -1,6 +1,73 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0"]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[dependency-groups]
+ci = [
+    "dunamai>=1.16,<2",
+    "pre-commit>=4.2,<5",
+    "tox-docker>=5.0,<6",
+    "tox-gh-actions>=3.0,<4",
+    "tox-uv>=1.35.1,<2",
+    "tox>=4.5,<5",
+]
+dev = [
+    "django-stubs[compatible-mypy]>=6.0.0,<7",
+    "mypy>=1.7.0,<2",
+    "parameterized>=0.9,<0.10",
+    "pytest-cov>=7.0.0,<8",
+    "pytest-django>=4.11.1,<5",
+    "pytest>=9.0.0,<10",
+    "types-requests>=2.28.11,<3",
+]
+
+[project]
+authors = [{email = "info@thepalaceproject.org", name = "The Palace Project"}]
+description = "Virtual Library Card Creator"
+license = "Apache-2.0"
+name = "virtual-library-card"
+readme = "README.md"
+requires-python = ">=3.12,<4"
+version = "0"
+dependencies = [
+    "PyJWT>=2.6.0,<3",
+    "Pillow==12.2.0",
+    "attrs>=26.1.0,<27",
+    "better-profanity>=0.7.0,<0.8",
+    "boto3>=1.26.90,<2",
+    "certifi>=2026.1.4,<2027",
+    "chardet>=7.4.0,<8",
+    "crispy-bootstrap4>=2026.2,<2027",
+    "crispy-forms-materialize==0.2",
+    "datedelta==1.4",
+    "django-absoluteuri==2.0.0",
+    "django-appconf==1.2.0",
+    "django-autocomplete-light>=3.9.4,<4",
+    "django-bootstrap4>=26.1,<27",
+    "django-compressor-postcss==0.8.2",
+    "django-compressor>=4.4,<5",
+    "django-crispy-forms==2.6",
+    "django-htmlmin==0.11.0",
+    "django-localflavor-us==1.1",
+    "django-localflavor==5.0",
+    "django-material==1.12.0",
+    "django-materialize-css==0.0.1",
+    "django-recaptcha>=4.0.0,<5",
+    "django-render-block==0.11",
+    "django-storages>=1.13.2,<2",
+    "django<7.0",
+    "djangorestframework>=3.16.0,<4",
+    "jinja2==3.1.6",
+    "psycopg2-binary==2.9.12",
+    "python-stdnum==2.2",
+    "pyuwsgi>=2.0,<2.1",
+    "requests>=2.31,<3",
+    "setuptools>=82.0.0,<83",
+]
+
+[project.urls]
+Homepage = "https://thepalaceproject.org"
+Repository = "https://github.com/ThePalaceProject/virtual-library-card"
 
 [tool.coverage.report]
 exclude_also = [
@@ -17,6 +84,9 @@ source = ["virtual_library_card", "virtuallibrarycard"]
 
 [tool.django-stubs]
 django_settings_module = "virtual_library_card.settings.dev"
+
+[tool.hatch.build.targets.wheel]
+packages = ["virtual_library_card", "virtuallibrarycard"]
 
 [tool.isort]
 combine_as_imports = true
@@ -59,72 +129,6 @@ module = [
     # contains a couple version strings it can be safely ignored
     "virtual_library_card._version",
 ]
-
-[tool.poetry]
-authors = ["The Palace Project <info@thepalaceproject.org>"]
-description = "Virtual Library Card Creator"
-homepage = "https://thepalaceproject.org"
-license = "Apache-2.0"
-name = "Virtual Library Card"
-packages = [
-    {include = "virtual_library_card"},
-    {include = "virtuallibrarycard"},
-]
-readme = "README.md"
-repository = "https://github.com/ThePalaceProject/virtual-library-card"
-version = "0"  # Version number is managed with tags in git
-
-[tool.poetry.dependencies]
-attrs = "^26.1.0"
-better-profanity = "^0.7.0"
-boto3 = "^1.26.90"
-certifi = "^2026.1.4"
-chardet = "^7.4.0"
-crispy-bootstrap4 = "^2026.2"
-crispy-forms-materialize = "0.2"
-datedelta = "1.4"
-Django = "<7.0"
-django-absoluteuri = "2.0.0"
-django-appconf = "1.2.0"
-django-autocomplete-light = "^3.9.4"
-django-bootstrap4 = "^26.1"
-django-compressor = "^4.4"
-django-compressor-postcss = "0.8.2"
-django-crispy-forms = "2.6"
-django-htmlmin = "0.11.0"
-django-localflavor = "5.0"
-django-localflavor-us = "1.1"
-django-material = "1.12.0"
-django-materialize-css = "0.0.1"
-django-recaptcha = "^4.0.0"
-django-render-block = "0.11"
-django-storages = "^1.13.2"
-djangorestframework = "^3.16.0"
-jinja2 = "3.1.6"
-Pillow = "12.2.0"
-psycopg2-binary = "2.9.12"
-PyJWT = "^2.6.0"
-python = ">=3.12,<4"
-python-stdnum = "2.2"
-pyuwsgi = ">=2.0,<2.1"
-requests = "^2.31"
-setuptools = "^82.0.0"
-
-[tool.poetry.group.ci.dependencies]
-dunamai = "^1.16"
-pre-commit = "^4.2"
-tox = "^4.5"
-tox-docker = "^5.0"
-tox-gh-actions = "^3.0"
-
-[tool.poetry.group.dev.dependencies]
-django-stubs = {version = "^6.0.0", extras = ["compatible-mypy"]}
-mypy = "^1.7.0"
-parameterized = "^0.9"
-pytest = "^9.0.0"
-pytest-cov = "^7.0.0"
-pytest-django = "^4.11.1"
-types-requests = "^2.28.11"
 
 [tool.pytest.ini_options]
 addopts = [
