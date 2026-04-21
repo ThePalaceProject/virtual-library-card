@@ -217,9 +217,7 @@ class TestLogoutView(BaseUnitTest):
         self.client.force_login(user)
         assert "_auth_user_id" in self.client.session
 
-        response = self.client.post(
-            self.LOGOUT_URL, {"next": "/accounts/login?next=/"}
-        )
+        response = self.client.post(self.LOGOUT_URL, {"next": "/accounts/login?next=/"})
         assert response.status_code == 302
         assert "_auth_user_id" not in self.client.session
 
