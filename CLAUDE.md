@@ -83,7 +83,7 @@ by location, and expose a REST API compatible with Overdrive/Palace patron verif
 python manage.py runserver --settings=virtual_library_card.settings.dev
 ```
 
-Or with Docker Compose (includes PostgreSQL + MinIO, accessible at http://localhost:8000):
+Or with Docker Compose (includes PostgreSQL + MinIO, accessible at `http://localhost:8000`):
 
 ```bash
 docker-compose up -d
