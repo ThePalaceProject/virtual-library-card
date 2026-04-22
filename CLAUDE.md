@@ -20,14 +20,14 @@ by location, and expose a REST API compatible with Overdrive/Palace patron verif
 
 **Development & Testing:**
 - pytest, pytest-django, tox
-- Poetry (package management)
+- uv (package management)
 - pre-commit (linting/formatting)
 - mypy with django-stubs (type checking)
 
 ## Code Conventions
 
 - Pre-commit for linting/formatting code (black, isort, autoflake, pyupgrade)
-- Poetry for package management
+- uv for package management
 - `pyproject.toml` for project configuration
 - Type hint all code with mypy validation using the `mypy_django_plugin`
 - Use f-strings for string formatting
@@ -93,6 +93,9 @@ docker-compose up -d
 ### Running Tests
 
 ```bash
+# Install dev dependencies
+uv sync --frozen
+
 # Run all tests
 tox -e py312-docker -- --no-cov
 
