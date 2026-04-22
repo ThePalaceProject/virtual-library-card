@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 ENV APP_DIR=/virtual_library_card/ \
     DJANGO_SETTINGS_MODULE=virtual_library_card.settings.prod \
-    UV_SYSTEM_PYTHON=1
+    UV_PROJECT_ENVIRONMENT=/virtual_library_card/.venv
 
 ENV UWSGI_MASTER=1 \
     UWSGI_HTTP_AUTO_CHUNKED=1 \
@@ -52,7 +52,7 @@ RUN (curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o
 
 # Do final uv sync, when the layers are cached, this is the only step that will run
 COPY . $APP_DIR
-RUN uv sync --frozen --no-dev --no-install-project && \
+RUN uv sync --frozen --no-dev && \
     rm -Rf /root/.cache && \
     find /usr -type d -name "__pycache__" -exec rm -rf {} +
 

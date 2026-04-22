@@ -166,7 +166,7 @@ jobs:
       - name: Run unit tests
         run: >
           docker compose run -v ${{ github.workspace }}/tests:/virtual_library_card/tests vlc
-          bash -c "uv sync --frozen --no-group ci && python manage.py migrate --no-input && pytest --no-cov tests"
+          bash -c "uv sync --frozen --no-group ci && . .venv/bin/activate && python manage.py migrate --no-input && pytest --no-cov tests"
 
       - name: Stop containers
         if: always()

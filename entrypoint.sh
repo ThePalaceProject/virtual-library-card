@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /virtual_library_card/.venv/bin/activate
+
 # Create User
 groupadd -r -g $UWSGI_GID vlc
 useradd -r -s /bin/false -g vlc -u $UWSGI_UID vlc
