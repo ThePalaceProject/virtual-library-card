@@ -29,7 +29,7 @@ ENV PGSSLCERT=/tmp/postgresql.crt
 
 ARG REPO=ThePalaceProject/virtual-library-card
 
-COPY --from=ghcr.io/astral-sh/uv:0.6 /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.11 /uv /uvx /usr/local/bin/
 
 # Install system dependencies
 RUN apt-get update -y && \
