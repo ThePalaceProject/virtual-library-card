@@ -446,9 +446,10 @@ class TestUserConsent(BaseUnitTest):
         assert "BadEnum.method" in str(raised.value)
 
         # Consent type without a version available
-        with patch.object(UserConsent, "VERSIONS", new={}) as versions, pytest.raises(
-            ValueError
-        ) as raised:
+        with (
+            patch.object(UserConsent, "VERSIONS", new={}) as versions,
+            pytest.raises(ValueError) as raised,
+        ):
             UserConsent.record_consent(
                 user,
                 UserConsent.ConsentType.SURVEY,

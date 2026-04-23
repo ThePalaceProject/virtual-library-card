@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 ENV APP_DIR=/virtual_library_card/ \
     DJANGO_SETTINGS_MODULE=virtual_library_card.settings.prod \
-    POETRY_VIRTUALENVS_CREATE=false
+    UV_PROJECT_ENVIRONMENT=/virtual_library_card/.venv
 
 ENV UWSGI_MASTER=1 \
     UWSGI_HTTP_AUTO_CHUNKED=1 \
@@ -27,39 +27,35 @@ ENV UWSGI_MASTER=1 \
 # get a permissions error
 ENV PGSSLCERT=/tmp/postgresql.crt
 
-ARG POETRY_VERSION=2.1.1
 ARG REPO=ThePalaceProject/virtual-library-card
 
-# Install system
+COPY --from=ghcr.io/astral-sh/uv:0.11 /uv /uvx /usr/local/bin/
+
+# Install system dependencies
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
     curl media-types mailcap libexpat1 && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME="/opt/poetry" python3 - --yes --version "$POETRY_VERSION" && \
-    ln -s /opt/poetry/bin/poetry /bin/poetry && \
     apt-get autoremove -y && \
-    rm -Rf /var/lib/apt/lists/* && \
-    rm -Rf /root/.cache && \
-    find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
+    rm -Rf /var/lib/apt/lists/*
 
 WORKDIR $APP_DIR
 
 # Do basic python dependency install
-# We use curl here to grab our poetry.lock and pyproject.toml files from the repo
-# so that we can cache the docker layer for the poetry install step.
-# If these files change, the later poetry install will handle it.
-RUN curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o ${APP_DIR}pyproject.toml && \
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/main/poetry.lock -o ${APP_DIR}poetry.lock && \
-    poetry sync --only main --no-root --no-interaction && \
-    poetry cache clear -n --all pypi && \
-    rm -Rf /root/.cache && \
-    find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
+# We use curl here to grab our uv.lock and pyproject.toml files from the repo
+# so that we can cache the docker layer for the uv sync step.
+# If these files change, the later uv sync will handle it.
+RUN if curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o ${APP_DIR}pyproject.toml \
+       && curl -fsSL https://raw.githubusercontent.com/${REPO}/main/uv.lock -o ${APP_DIR}uv.lock; then \
+         uv sync --frozen --no-dev --no-install-project \
+         && rm -Rf /root/.cache \
+         && find /usr -type d -name "__pycache__" -exec rm -rf {} +; \
+    fi
 
-# Do final poetry install, when the layers are cached, this is the only step that will run
+# Do final uv sync, when the layers are cached, this is the only step that will run
 COPY . $APP_DIR
-RUN POETRY_VIRTUALENVS_CREATE=false poetry sync --only main --no-interaction && \
-    poetry cache clear -n --all pypi && \
+RUN uv sync --frozen --no-dev && \
     rm -Rf /root/.cache && \
-    find /opt /usr -type d -name "__pycache__" -exec rm -rf {} +
+    find /usr -type d -name "__pycache__" -exec rm -rf {} +
 
 EXPOSE 8000
 

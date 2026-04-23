@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /virtual_library_card/.venv/bin/activate
+
 # Create User
 groupadd -r -g $UWSGI_GID vlc
 useradd -r -s /bin/false -g vlc -u $UWSGI_UID vlc
@@ -22,4 +24,4 @@ if [[ -z "${SUPERUSER_PASSWORD}" ]]; then
 fi
 runuser -u vlc -- python manage.py createsuperusernoninteractive --email $SUPERUSER_EMAIL --password $SUPERUSER_PASSWORD
 
-exec uwsgi --show-config
+exec /virtual_library_card/.venv/bin/uwsgi --show-config
