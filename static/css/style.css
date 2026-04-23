@@ -395,13 +395,23 @@ h1, h2, h3, h4, h5, h6, figure {
     color: var(--header-color);
 }
 
-.main-nav ul li.btn-main-nav a {
+
+.main-nav ul li.btn-main-nav form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.main-nav ul li.btn-main-nav button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
     padding: 30px 0px !important;
     color: var(--header-nav-btn-color);
 }
 
-
-.main-nav ul li.btn-main-nav a span {
+.main-nav ul li.btn-main-nav button span {
     background: var(--header-nav-btn-bg);
     padding: 4px 10px;
     display: -moz-inline-stack;
@@ -418,7 +428,7 @@ h1, h2, h3, h4, h5, h6, figure {
     color: var(--header-nav-btn-color);
 }
 
-.main-nav ul li.btn-main-nav a:hover span {
+.main-nav ul li.btn-main-nav button:hover span {
     -webkit-box-shadow: 0px 14px 20px -9px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 14px 20px -9px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 14px 20px -9px rgba(0, 0, 0, 0.75);
@@ -1302,7 +1312,7 @@ form .help-block {
     border: solid 4px rgba(0, 0, 0, 0.3);
 }
 
-.main-nav ul li.btn-main-nav a:focus span {
+.main-nav ul li.btn-main-nav button:focus span {
     background-color: var(--header-link-color);
 }
 

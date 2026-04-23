@@ -90,8 +90,12 @@
                             </li>
                         {% endif %}
                         {% if user.is_authenticated %}
-                            <li class="btn-main-nav"><a title="{% trans logout %}" aria-label="{% trans logout %}"
-                                                        href="{% url 'logout' %}?next=/accounts/login?next=/"><span>{% trans logout %}</span></a>
+                            <li class="btn-main-nav">
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="/accounts/login?next=/">
+                                    <button type="submit" title="{% trans logout %}" aria-label="{% trans logout %}"><span>{% trans logout %}</span></button>
+                                </form>
                             </li>
                         {% endif %}
 
