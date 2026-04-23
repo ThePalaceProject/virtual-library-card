@@ -1620,7 +1620,7 @@ ci = [
     { name = "tox-uv", specifier = ">=1.35.1,<2" },
 ]
 dev = [
-    { name = "django-stubs", extras = ["compatible-mypy"], specifier = ">=6.0.0,<7" },
+    { name = "django-stubs", extras = ["compatible-mypy"], specifier = ">=6.0.3,<7" },
     { name = "mypy", specifier = ">=1.7.0,<2" },
     { name = "parameterized", specifier = ">=0.9,<0.10" },
     { name = "pytest", specifier = ">=9.0.0,<10" },
