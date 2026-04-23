@@ -51,7 +51,7 @@ git clone git@github.com:ThePalaceProject/virtual-library-card.git
 ### 2. Create and initialize a Python virtual env
 
 ```sh
-uv sync
+uv sync --frozen
 ```
 
 This will create a virtual environment and install all dependencies. To activate it:

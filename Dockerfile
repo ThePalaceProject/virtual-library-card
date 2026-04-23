@@ -44,11 +44,12 @@ WORKDIR $APP_DIR
 # We use curl here to grab our uv.lock and pyproject.toml files from the repo
 # so that we can cache the docker layer for the uv sync step.
 # If these files change, the later uv sync will handle it.
-RUN (curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o ${APP_DIR}pyproject.toml && \
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/main/uv.lock -o ${APP_DIR}uv.lock && \
-    uv sync --frozen --no-dev --no-install-project && \
-    rm -Rf /root/.cache && \
-    find /usr -type d -name "__pycache__" -exec rm -rf {} +) || true
+RUN if curl -fsSL https://raw.githubusercontent.com/${REPO}/main/pyproject.toml -o ${APP_DIR}pyproject.toml \
+       && curl -fsSL https://raw.githubusercontent.com/${REPO}/main/uv.lock -o ${APP_DIR}uv.lock; then \
+         uv sync --frozen --no-dev --no-install-project \
+         && rm -Rf /root/.cache \
+         && find /usr -type d -name "__pycache__" -exec rm -rf {} +; \
+    fi
 
 # Do final uv sync, when the layers are cached, this is the only step that will run
 COPY . $APP_DIR
