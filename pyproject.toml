@@ -34,7 +34,7 @@ dependencies = [
     "datedelta==1.4",
     "django-absoluteuri==2.0.0",
     "django-appconf==1.2.0",
-    "django-autocomplete-light>=3.9.4,<4",
+    "django-autocomplete-light>=4.0.0,<5",
     "django-bootstrap4>=26.1,<27",
     "django-compressor-postcss==0.8.2",
     "django-compressor>=4.4,<5",
