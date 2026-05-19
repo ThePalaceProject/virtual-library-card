@@ -55,7 +55,7 @@ dependencies = [
     "PyJWT>=2.6.0,<3",
     "python-stdnum==2.2",
     "pyuwsgi>=2.0,<2.1",
-    "requests>=2.31,<3",
+    "requests>=2.34.2,<3",
     "setuptools>=82.0.0,<83",
 ]
 description = "Virtual Library Card Creator"
