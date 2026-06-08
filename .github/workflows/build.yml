@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -128,7 +128,7 @@ jobs:
             runner: "ubuntu-24.04-arm"
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
 
@@ -189,7 +189,7 @@ jobs:
             runner: "ubuntu-24.04-arm"
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
 
