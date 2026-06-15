@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync release to Jira
-        uses: ThePalaceProject/github-actions/jira-release-sync@v1.3.0
+        uses: ThePalaceProject/github-actions/jira-release-sync@v1.5.0
         with:
           jira-base-url: ${{ secrets.JIRA_BASE_URL }}
           jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
