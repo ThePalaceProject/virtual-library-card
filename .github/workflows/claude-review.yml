@@ -5,6 +5,6 @@ on:
 
 jobs:
   review:
-    uses: ThePalaceProject/github-actions/.github/workflows/claude-review.yml@v1.3.0
+    uses: ThePalaceProject/github-actions/.github/workflows/claude-review.yml@v1.5.0
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
