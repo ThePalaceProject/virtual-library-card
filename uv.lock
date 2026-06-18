@@ -416,14 +416,14 @@ wheels = [
 
 [[package]]
 name = "django-autocomplete-light"
-version = "4.0.1"
+version = "4.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/b9/5b335b792519441785597ba511a467cf5359299a5f0fa050f01bfc033fb3/django_autocomplete_light-4.0.1.tar.gz", hash = "sha256:cdf7c7ae8596d4f1b2bb85e04cc25ef8438c70ad5eb9e7592b5afac2d3ec266c", size = 117611, upload-time = "2026-05-27T12:22:00.335Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/5d/0f1f1884cfa5665a20a89497c80fc10726f47d982905c8e36e9ef31cc7e6/django_autocomplete_light-4.0.3.tar.gz", hash = "sha256:1b0dc31aee64cc084358129df60954c05ab7132657873eebc0612e3160307057", size = 99685, upload-time = "2026-06-18T11:55:02.581Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/32/0aeb15dd3092dd2db9e7e991d35adcd41a567b76c7f29081c35ca66a72bb/django_autocomplete_light-4.0.1-py3-none-any.whl", hash = "sha256:870a8a850c036ee6aeffe73d72d2289d33e5d5115a04674de39189aeccd627c8", size = 134027, upload-time = "2026-05-27T12:21:58.053Z" },
+    { url = "https://files.pythonhosted.org/packages/22/fa/299a37e7a4baf7bec9c002e4bd1f46cc6e5db8565d8f9883407d471cf2df/django_autocomplete_light-4.0.3-py3-none-any.whl", hash = "sha256:e36a7c570f914cfd793568eea3eb2646da4b64f6d1cd3bea8878cc8b20a18f3f", size = 113477, upload-time = "2026-06-18T11:55:00.869Z" },
 ]
 
 [[package]]
@@ -1095,7 +1095,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "9.0.3"
+version = "9.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -1104,9 +1104,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz", hash = "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c", size = 1572165, upload-time = "2026-04-07T17:16:18.027Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/0e/b5858858d74958632c49b72cb25a3976ff9f632397626715be71c89d3971/pytest-9.1.0.tar.gz", hash = "sha256:41dd9148c08072446394cefd3d79701701335a9f4cae69ba92e39f6c7f5c061c", size = 1634181, upload-time = "2026-06-13T18:52:45.983Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl", hash = "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9", size = 375249, upload-time = "2026-04-07T17:16:16.13Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/5a/ba30a81239b909821b3153e303e7def45178bf353da4f72380e6c5e8793b/pytest-9.1.0-py3-none-any.whl", hash = "sha256:8ebb0e7888bdf2bdfc602ec51f8f62d50200af37356c74e503c79a94f5c81f32", size = 386453, upload-time = "2026-06-13T18:52:44.045Z" },
 ]
 
 [[package]]
@@ -1665,7 +1665,7 @@ dev = [
     { name = "django-stubs", extras = ["compatible-mypy"], specifier = ">=6.0.5,<7" },
     { name = "mypy", specifier = ">=2.1.0,<3" },
     { name = "parameterized", specifier = ">=0.9,<0.10" },
-    { name = "pytest", specifier = ">=9.0.0,<10" },
+    { name = "pytest", specifier = ">=9.1.0,<10" },
     { name = "pytest-cov", specifier = ">=7.0.0,<8" },
     { name = "pytest-django", specifier = ">=4.11.1,<5" },
     { name = "types-requests", specifier = ">=2.33.0.20260518,<3" },
