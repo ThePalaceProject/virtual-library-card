@@ -27,7 +27,7 @@ dependencies = [
     "attrs>=26.1.0,<27",
     "better-profanity>=0.7.0,<0.8",
     "boto3>=1.43.29,<2",
-    "certifi>=2026.5.20,<2027",
+    "certifi>=2026.6.17,<2027",
     "chardet>=7.4.0,<8",
     "crispy-bootstrap4>=2026.2,<2027",
     "crispy-forms-materialize==0.2",
