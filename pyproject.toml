@@ -56,7 +56,7 @@ dependencies = [
     "python-stdnum==2.2",
     "pyuwsgi>=2.0,<2.1",
     "requests>=2.34.2,<3",
-    "setuptools>=82.0.0,<83",
+    "setuptools>=83.0.0,<84",
 ]
 description = "Virtual Library Card Creator"
 license = "Apache-2.0"
