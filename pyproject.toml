@@ -41,7 +41,7 @@ dependencies = [
     "django-crispy-forms==2.7",
     "django-htmlmin==0.11.0",
     "django-localflavor-us==1.1",
-    "django-localflavor==5.0",
+    "django-localflavor==5.1",
     "django-material==1.12.0",
     "django-materialize-css==0.0.1",
     "django-recaptcha>=4.0.0,<5",
