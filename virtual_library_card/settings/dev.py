@@ -41,11 +41,18 @@ HTML_MINIFY = True
 # These are all dummy values for testing
 MAPQUEST_API_KEY = os.environ.get("VLC_DEV_MAPQUEST_API_KEY", "xxx")
 
-EMAIL_HOST = "xxx"
-EMAIL_PORT = "xxx"
-EMAIL_HOST_USER = "xxx"
-EMAIL_HOST_PASSWORD = "xxx"
-EMAIL_USE_TLS = True
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "xxx",
+            "port": 587,
+            "username": "xxx",
+            "password": "xxx",
+            "use_tls": True,
+        },
+    }
+}
 DEFAULT_FROM_EMAIL = "xxx"
 
 SECRET_KEY = "test-secret-key-for-development-only!"
