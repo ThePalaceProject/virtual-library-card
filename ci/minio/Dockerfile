@@ -1,4 +1,4 @@
-FROM minio/minio:latest
+FROM quay.io/minio/minio:latest
 
 ENV MINIO_ROOT_USER=vlc-minio
 ENV MINIO_ROOT_PASSWORD=123456789
