@@ -65,13 +65,23 @@ source .venv/bin/activate
 VLC puts static files into public AWS S3 bucket so to run the VLC locally the easiest will be to run the MinIO locally in
 a Docker container. You can read more about MinIO [here](https://min.io/docs/minio/container/index.html).
 
+The image comes from the Palace mirror rather than from MinIO directly, because MinIO has withdrawn
+anonymous public access to its own image from both Docker Hub and quay.io — `quay.io/minio/minio`
+now fails with a 401. The mirror is an unmodified MinIO build published from the
+[ci-scripts](https://github.com/ThePalaceProject/ci-scripts) repo.
+
 To run the MinIO in Docker container run:
 
 ```sh
 docker run -d -p 9000:9000 -p 9001:9001 --name minio \
   -e "MINIO_ROOT_USER=vlc-minio" -e "MINIO_ROOT_PASSWORD=123456789" \
-  quay.io/minio/minio server /data --console-address ":9001"
+  ghcr.io/thepalaceproject/palace-ci-minio:RELEASE.2025-09-07T16-13-09Z \
+  minio server /data --console-address ":9001"
 ```
+
+Note the explicit `minio` before `server`: the upstream image wrapped the binary in an entrypoint
+script that supplied it, and the mirror deliberately ships no entrypoint, so the command has to be
+given in full.
 
 After you have MinIO container running, you will need to create the public bucket to put the static files in.
 
