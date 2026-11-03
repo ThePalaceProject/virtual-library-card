@@ -11,7 +11,13 @@ from django_recaptcha.fields import ReCaptchaField
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard, UserConsent
+from virtuallibrarycard.models import (
+    ZIP_CODE_VALIDATOR,
+    CustomUser,
+    Library,
+    LibraryCard,
+    UserConsent,
+)
 
 
 class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
@@ -29,6 +35,7 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             "first_name",
             "last_name",
             "email",
+            "zip",
             "library",
             "over13",
         ]
@@ -62,6 +69,24 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             # Don't show this in case we don't need age verification
             self.fields["over13"].required = False
             self.fields["over13"].widget = forms.HiddenInput()
+
+        # The ZIP field is opt-in per library. When it is off the field is removed
+        # outright rather than hidden, so that a crafted POST cannot store a ZIP
+        # against a library that has not asked for one.
+        zip_collection = library.patron_zip_collection
+        if zip_collection == Library.PatronZipCollection.OFF:
+            del self.fields["zip"]
+        else:
+            zip_field = self.fields["zip"]
+            # Store a blank submission as NULL rather than "", so the column does
+            # not end up with a mix of both.
+            zip_field.empty_value = None
+            zip_field.required = zip_collection == Library.PatronZipCollection.REQUIRED
+            zip_field.help_text = _("Used for anonymous usage reporting.")
+            # Replace the inherited max_length check so that an over-long entry
+            # (ZIP+4, say) is told the expected format rather than a character
+            # count. The widget keeps its maxlength attribute either way.
+            zip_field.validators = [ZIP_CODE_VALIDATOR]
 
         # Focus on form field whenever error occurred
         error_list = list(self.errors)

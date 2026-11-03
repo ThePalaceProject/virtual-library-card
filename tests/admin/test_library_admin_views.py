@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from parameterized import parameterized
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseAdminUnitTest
@@ -34,6 +35,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "barcode_text": "barcode",
             "allow_bulk_card_uploads": False,
             "has_survey_consent": False,
+            "patron_zip_collection": Library.PatronZipCollection.OFF,
         }
 
         data = {}
@@ -82,12 +84,60 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             barcode_text="barcode",
             allow_bulk_card_uploads=False,
             has_survey_consent=False,
+            patron_zip_collection=Library.PatronZipCollection.OFF,
         )
         self._add_library_states_data(data)
 
         response = self.test_client.post(self.get_add_url(), data)
         assert response.status_code == 302
         assert Library.objects.filter(identifier="new").count() == 1
+
+    def _post_zip_collection(self, library, value):
+        return self.test_client.post(
+            self.get_change_url(library),
+            self._get_library_change_data(
+                library, logo=self._open_logo(), patron_zip_collection=value
+            ),
+        )
+
+    @parameterized.expand(
+        [
+            Library.PatronZipCollection.OPTIONAL,
+            Library.PatronZipCollection.REQUIRED,
+            Library.PatronZipCollection.OFF,
+        ]
+    )
+    def test_patron_zip_collection_setting(self, value):
+        library = self.create_library()
+        assert library.patron_zip_collection == Library.PatronZipCollection.OFF
+
+        response = self._post_zip_collection(library, value)
+        assert response.status_code == 302, self._response_errors(response)
+        library.refresh_from_db()
+        assert library.patron_zip_collection == value
+
+    def test_patron_zip_collection_rejects_unknown_value(self):
+        library = self.create_library()
+        response = self._post_zip_collection(library, "sometimes")
+
+        assert response.status_code == 200
+        assertFormError(
+            response.context["adminform"],
+            "patron_zip_collection",
+            ["Select a valid choice. sometimes is not one of the available choices."],
+        )
+
+    def test_export_as_csv_includes_patron_zip_collection(self):
+        """The generic exporter must still pick up the new library setting"""
+        library = self.create_library(
+            patron_zip_collection=Library.PatronZipCollection.REQUIRED
+        )
+        response = self.admin.export_as_csv(
+            MagicMock(), Library.objects.filter(id=library.id)
+        )
+        content = response.content.decode()
+        assert "patron_zip_collection" in content.splitlines()[0]
+        assert "required" in content.splitlines()[1]
 
     def test_create_library_required_fields(self):
         data = dict(

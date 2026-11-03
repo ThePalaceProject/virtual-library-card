@@ -88,6 +88,7 @@ class CustomUserAdmin(LoggingMixin, UserAdmin):
                     "first_name",
                     "last_name",
                     "email",
+                    "zip",
                     "over13",
                     "email_verified",
                 )
@@ -238,6 +239,7 @@ class LibraryAdmin(admin.ModelAdmin):
                     "identifier",
                     "name",
                     "age_verification_mandatory",
+                    "patron_zip_collection",
                     "logo",
                 )
             },

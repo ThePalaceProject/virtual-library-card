@@ -240,6 +240,59 @@ class TestCustomUserAdminView(BaseAdminUnitTest):
         form = CustomAdminUserChangeForm(instance=user)
         assert type(form.fields["over13"].widget) == forms.HiddenInput
 
+    def test_zip_on_change_form_only(self):
+        """ZIP is editable on the patron detail page, but is not a browsable column"""
+        user = self.create_user(self._default_library)
+        form = CustomAdminUserChangeForm(instance=user)
+        assert "zip" in form.fields
+
+        # Not offered when creating a user, and not a way to scan or filter patrons
+        assert "zip" not in self.admin.add_fieldsets[0][1]["fields"]
+        assert "zip" not in self.admin.list_display
+        assert "zip" not in self.admin.search_fields
+
+    def test_zip_saved_from_change_form(self):
+        user = self.create_user(
+            self._default_library, "zip@user.com", "anypass", first_name="first"
+        )
+        data = self._get_user_change_data(user)
+        data["zip"] = "02101"
+
+        response = self.test_client.post(self.get_change_url(user), data)
+        assert response.status_code == 302
+        user.refresh_from_db()
+        assert user.zip == "02101"
+
+    def test_zip_invalid_format_change_form(self):
+        user = self.create_user(
+            self._default_library, "badzip@user.com", "anypass", first_name="first"
+        )
+        data = self._get_user_change_data(user)
+        data["zip"] = "1234A"
+
+        response = self.test_client.post(self.get_change_url(user), data)
+        assert response.status_code == 200
+        assertFormError(
+            response.context["adminform"], "zip", ["Enter a 5-digit ZIP code."]
+        )
+
+    def test_export_as_csv_includes_zip(self):
+        """Patron ZIP is carried by the generic CSV exporter"""
+        user = self.create_user(
+            self._default_library, "export@user.com", "anypass", first_name="first"
+        )
+        user.zip = "02101"
+        user.save()
+
+        response = self.admin.export_as_csv(
+            self.mock_request, CustomUser.objects.filter(id=user.id)
+        )
+        assert response.status_code == 200
+        reader = csv.DictReader(response.content.decode().splitlines())
+        rows = list(reader)
+        assert len(rows) == 1
+        assert rows[0]["zip"] == "02101"
+
     def test_list_filter(self):
         self.mock_request.user = MagicMock()
         self.mock_request.user.is_superuser = True

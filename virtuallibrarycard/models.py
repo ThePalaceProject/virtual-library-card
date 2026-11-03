@@ -12,6 +12,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.validators import RegexValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -23,6 +24,12 @@ from virtual_library_card.card_number import CardNumber
 
 def boolean_choices():
     return ((True, _("Yes")), (False, _("No")))
+
+
+# Patron ZIP codes are US 5-digit only; ZIP+4 and non-US postal codes are rejected.
+ZIP_CODE_VALIDATOR = RegexValidator(
+    regex=r"^\d{5}$", message=_("Enter a 5-digit ZIP code.")
+)
 
 
 def value_to_link(_value, _display_label):
@@ -83,6 +90,11 @@ class Library(models.Model):
 
     BOOL_CHOICES = ((True, _("Descending")), (False, _("Ascending")))
 
+    class PatronZipCollection(models.TextChoices):
+        OFF = "off", _("Off")
+        OPTIONAL = "optional", _("Optional")
+        REQUIRED = "required", _("Required")
+
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)
 
@@ -109,6 +121,13 @@ class Library(models.Model):
         blank=False,
         default=True,
         verbose_name="Require Patron Age Verification",
+    )
+    patron_zip_collection = models.CharField(
+        max_length=16,
+        choices=PatronZipCollection.choices,
+        blank=False,
+        default=PatronZipCollection.OFF,
+        verbose_name="Patron ZIP Code Collection",
     )
     allow_bulk_card_uploads = models.BooleanField(
         choices=boolean_choices(),
@@ -354,6 +373,14 @@ class CustomUser(AbstractUser):
 
     # Default is true so that current and admin created users are not disabled
     email_verified = models.BooleanField(default=True)
+
+    zip = models.CharField(
+        _("ZIP code"),
+        max_length=5,
+        null=True,
+        blank=True,
+        validators=[ZIP_CODE_VALIDATOR],
+    )
 
     objects = CustomUserManager()
 
