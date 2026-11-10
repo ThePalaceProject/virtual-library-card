@@ -4,6 +4,7 @@ from django import forms
 from django.apps import apps
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxLengthValidator
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
 from django_recaptcha.fields import ReCaptchaField
@@ -83,10 +84,16 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             zip_field.empty_value = None
             zip_field.required = zip_collection == Library.PatronZipCollection.REQUIRED
             zip_field.help_text = _("Used for anonymous usage reporting.")
-            # Replace the inherited max_length check so that an over-long entry
-            # (ZIP+4, say) is told the expected format rather than a character
-            # count. The widget keeps its maxlength attribute either way.
-            zip_field.validators = [ZIP_CODE_VALIDATOR]
+            # Drop only the inherited max_length check, so that an over-long
+            # entry (ZIP+4, say) is told the expected format rather than a
+            # character count. Every other inherited validator is kept, so the
+            # field does not rely on the regex alone for safety. The widget
+            # keeps its maxlength attribute either way.
+            zip_field.validators = [
+                validator
+                for validator in zip_field.validators
+                if not isinstance(validator, MaxLengthValidator)
+            ] + [ZIP_CODE_VALIDATOR]
 
         # Focus on form field whenever error occurred
         error_list = list(self.errors)

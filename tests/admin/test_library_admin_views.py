@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from unittest.mock import MagicMock
 
 from parameterized import parameterized
@@ -133,11 +134,12 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             patron_zip_collection=Library.PatronZipCollection.REQUIRED
         )
         response = self.admin.export_as_csv(
-            MagicMock(), Library.objects.filter(id=library.id)
+            self.mock_request, Library.objects.filter(id=library.id)
         )
-        content = response.content.decode()
-        assert "patron_zip_collection" in content.splitlines()[0]
-        assert "required" in content.splitlines()[1]
+        reader = csv.DictReader(response.content.decode().splitlines())
+        rows = list(reader)
+        assert len(rows) == 1
+        assert rows[0]["patron_zip_collection"] == Library.PatronZipCollection.REQUIRED
 
     def test_create_library_required_fields(self):
         data = dict(

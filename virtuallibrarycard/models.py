@@ -27,8 +27,10 @@ def boolean_choices():
 
 
 # Patron ZIP codes are US 5-digit only; ZIP+4 and non-US postal codes are rejected.
+# Anchored with \Z rather than $, which in Python also matches before a trailing
+# newline and would let "12345\n" through.
 ZIP_CODE_VALIDATOR = RegexValidator(
-    regex=r"^\d{5}$", message=_("Enter a 5-digit ZIP code.")
+    regex=r"^\d{5}\Z", message=_("Enter a 5-digit ZIP code.")
 )
 
 
