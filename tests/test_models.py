@@ -143,7 +143,7 @@ class TestLibraryModel(BaseUnitTest):
 
 
 class TestCustomUserModel(BaseUnitTest):
-    def _zip_errors(self, zipcode):
+    def _zip_errors(self, zipcode: str | None) -> list[str]:
         """full_clean also reports unrelated blank fields, so isolate the zip ones"""
         user = self.create_user(self._default_library)
         user.zip = zipcode
@@ -153,7 +153,18 @@ class TestCustomUserModel(BaseUnitTest):
             return e.message_dict.get("zip", [])
         return []
 
-    @parameterized.expand(["1234", "123456", "12345-6789", "ABCDE", "1234A", " 1234"])
+    @parameterized.expand(
+        [
+            "1234",
+            "123456",
+            "12345-6789",
+            "ABCDE",
+            "1234A",
+            " 1234",
+            "１２３４５",
+            "٠٢١٠١",
+        ]
+    )
     def test_zip_validation_rejects(self, zipcode):
         # Over-length values also trip max_length, so assert on membership
         assert "Enter a 5-digit ZIP code." in self._zip_errors(zipcode)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 from unittest.mock import MagicMock
 
+from django.http.response import HttpResponseBase
 from parameterized import parameterized
 from pytest_django.asserts import assertFormError
 
@@ -93,7 +94,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
         assert response.status_code == 302
         assert Library.objects.filter(identifier="new").count() == 1
 
-    def _post_zip_collection(self, library, value):
+    def _post_zip_collection(self, library: Library, value: str) -> HttpResponseBase:
         return self.test_client.post(
             self.get_change_url(library),
             self._get_library_change_data(

@@ -5,6 +5,7 @@ import pytest
 from django import forms
 from django.apps import apps
 from django.core import mail
+from django.http.response import HttpResponseBase
 from django.test import Client, RequestFactory
 from parameterized import parameterized
 from pytest_django.asserts import assertFormError
@@ -448,7 +449,9 @@ class TestCardRequest(BaseUnitTest):
         user = CustomUser.objects.filter(email="user@example.org").first()
         assert user.over13 == False
 
-    def _zip_signup(self, collection, email, **data):
+    def _zip_signup(
+        self, collection: str, email: str, **data: str
+    ) -> tuple[Library, HttpResponseBase]:
         """Run the signup flow at a library with the given ZIP setting"""
         library = self.create_library(patron_zip_collection=collection)
         client = Client()
@@ -459,7 +462,7 @@ class TestCardRequest(BaseUnitTest):
         )
         return library, resp
 
-    def _zip_field(self, collection):
+    def _zip_field(self, collection: str) -> dict[str, forms.Field]:
         """Build a signup form for a fresh library with the given ZIP setting
 
         Returns the form's field dict, for asserting on the ZIP field's shape
@@ -535,7 +538,9 @@ class TestCardRequest(BaseUnitTest):
     # The format rule lives on the field validator and does not vary by setting,
     # so the exhaustive list of bad formats is covered once here rather than
     # repeated for OPTIONAL.
-    @parameterized.expand(["1234", "123456", "12345-6789", "ABCDE", "1234A", "0210 "])
+    @parameterized.expand(
+        ["1234", "123456", "12345-6789", "ABCDE", "1234A", "0210 ", "１２３４５"]
+    )
     def test_zip_rejected_for_bad_format_when_required(self, zipcode):
         _, resp = self._zip_signup(
             Library.PatronZipCollection.REQUIRED, "fmt@example.org", zip=zipcode

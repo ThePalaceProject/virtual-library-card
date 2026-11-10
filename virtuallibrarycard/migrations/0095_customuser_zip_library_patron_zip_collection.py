@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 null=True,
                 validators=[
                     django.core.validators.RegexValidator(
-                        message="Enter a 5-digit ZIP code.", regex="^\\d{5}\\Z"
+                        message="Enter a 5-digit ZIP code.", regex="^[0-9]{5}\\Z"
                     )
                 ],
             ),

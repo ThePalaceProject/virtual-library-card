@@ -79,11 +79,8 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             del self.fields["zip"]
         else:
             zip_field = self.fields["zip"]
-            # Store a blank submission as NULL rather than "", so the column does
-            # not end up with a mix of both.
-            zip_field.empty_value = None
             zip_field.required = zip_collection == Library.PatronZipCollection.REQUIRED
-            zip_field.help_text = _("Used for anonymous usage reporting.")
+            zip_field.help_text = _("Used to report library usage by area.")
             # Drop only the inherited max_length check, so that an over-long
             # entry (ZIP+4, say) is told the expected format rather than a
             # character count. Every other inherited validator is kept, so the
