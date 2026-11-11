@@ -71,11 +71,16 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             self.fields["over13"].required = False
             self.fields["over13"].widget = forms.HiddenInput()
 
-        # The ZIP field is opt-in per library. When it is off the field is removed
-        # outright rather than hidden, so that a crafted POST cannot store a ZIP
-        # against a library that has not asked for one.
+        # The ZIP field is opt-in per library. Anything other than an explicit
+        # opt-in removes the field outright rather than hiding it, so that a
+        # crafted POST cannot store a ZIP against a library that has not asked
+        # for one, and an unrecognised setting fails closed rather than quietly
+        # turning collection on.
         zip_collection = library.patron_zip_collection
-        if zip_collection == Library.PatronZipCollection.OFF:
+        if zip_collection not in (
+            Library.PatronZipCollection.OPTIONAL,
+            Library.PatronZipCollection.REQUIRED,
+        ):
             del self.fields["zip"]
         else:
             zip_field = self.fields["zip"]

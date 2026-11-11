@@ -35,4 +35,13 @@ class Migration(migrations.Migration):
             name="patron_zip_collection",
             field=models.CharField(default="off", max_length=16),
         ),
+        migrations.AddConstraint(
+            model_name="library",
+            constraint=models.CheckConstraint(
+                condition=models.Q(
+                    ("patron_zip_collection__in", ["off", "optional", "required"])
+                ),
+                name="virtuallibrarycard_valid_patron_zip_collection",
+            ),
+        ),
     ]

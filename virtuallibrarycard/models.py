@@ -65,10 +65,30 @@ def default_customization():
     return lc.id
 
 
+class PatronZipCollection(models.TextChoices):
+    """Whether a library collects a patron ZIP code during card signup"""
+
+    OFF = "off", _("Off")
+    OPTIONAL = "optional", _("Optional")
+    REQUIRED = "required", _("Required")
+
+
 class Library(models.Model):
     class Meta:
         verbose_name_plural = "libraries"
         ordering = ["name"]  # This will sort by name alphabetically
+        constraints = [
+            # Collecting a ZIP is opt-in, so an unrecognised value must not be
+            # able to reach the column at all. The signup form already treats
+            # anything other than OPTIONAL or REQUIRED as off; this stops a
+            # migration or a direct write from storing one in the first place.
+            models.CheckConstraint(
+                condition=models.Q(
+                    patron_zip_collection__in=PatronZipCollection.values
+                ),
+                name="%(app_label)s_valid_patron_zip_collection",
+            )
+        ]
 
     @staticmethod
     def create_default_library():
@@ -94,10 +114,9 @@ class Library(models.Model):
 
     BOOL_CHOICES = ((True, _("Descending")), (False, _("Ascending")))
 
-    class PatronZipCollection(models.TextChoices):
-        OFF = "off", _("Off")
-        OPTIONAL = "optional", _("Optional")
-        REQUIRED = "required", _("Required")
+    # Call sites use Library.PatronZipCollection; the enum itself lives at module
+    # level so that Meta.constraints can reach it.
+    PatronZipCollection = PatronZipCollection
 
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)

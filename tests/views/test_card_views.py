@@ -479,6 +479,18 @@ class TestCardRequest(BaseUnitTest):
     def test_zip_field_absent_when_off(self):
         assert "zip" not in self._zip_field(Library.PatronZipCollection.OFF)
 
+    def test_zip_field_absent_for_unrecognised_setting(self):
+        """An unrecognised setting must fail closed rather than collect
+
+        A database constraint keeps such a value out of the column, so this
+        assigns it in memory without saving, standing in for a value that
+        arrived by some route the form cannot see.
+        """
+        library = self.create_library()
+        library.patron_zip_collection = "maybe"
+        form = RequestLibraryCardForm(instance=self.create_user(library))
+        assert "zip" not in form.fields
+
     @parameterized.expand(
         [
             (Library.PatronZipCollection.OPTIONAL, False),

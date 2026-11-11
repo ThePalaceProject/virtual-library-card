@@ -33,6 +33,16 @@ class TestLibraryModel(BaseUnitTest):
         library = self.create_library()
         assert library.patron_zip_collection == Library.PatronZipCollection.OFF
 
+    def test_patron_zip_collection_rejects_unknown_value(self):
+        """The database refuses a value the signup form would not recognise"""
+        library = self.create_library()
+        library.patron_zip_collection = "maybe"
+        with (
+            pytest.raises(IntegrityError, match="valid_patron_zip_collection"),
+            django.db.transaction.atomic(),
+        ):
+            library.save()
+
     def test_create_default(self):
         library = Library.create_default_library()
         assert library.name == settings.DEFAULT_SUPERUSER_LIBRARY_NAME

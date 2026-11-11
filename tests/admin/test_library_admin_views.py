@@ -104,19 +104,29 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
 
     @parameterized.expand(
         [
-            Library.PatronZipCollection.OPTIONAL,
-            Library.PatronZipCollection.REQUIRED,
-            Library.PatronZipCollection.OFF,
+            (Library.PatronZipCollection.OFF, Library.PatronZipCollection.OPTIONAL),
+            (Library.PatronZipCollection.OFF, Library.PatronZipCollection.REQUIRED),
+            (Library.PatronZipCollection.REQUIRED, Library.PatronZipCollection.OFF),
+            (
+                Library.PatronZipCollection.OPTIONAL,
+                Library.PatronZipCollection.REQUIRED,
+            ),
         ]
     )
-    def test_patron_zip_collection_setting(self, value):
-        library = self.create_library()
-        assert library.patron_zip_collection == Library.PatronZipCollection.OFF
+    def test_patron_zip_collection_setting(self, initial, target):
+        """Each case must change the stored value, not merely re-post it
 
-        response = self._post_zip_collection(library, value)
+        Posting the value a library already holds would pass even if the admin
+        form dropped the field entirely, so initial and target always differ.
+        """
+        assert initial != target
+        library = self.create_library(patron_zip_collection=initial)
+        assert library.patron_zip_collection == initial
+
+        response = self._post_zip_collection(library, target)
         assert response.status_code == 302, self._response_errors(response)
         library.refresh_from_db()
-        assert library.patron_zip_collection == value
+        assert library.patron_zip_collection == target
 
     def test_patron_zip_collection_rejects_unknown_value(self):
         library = self.create_library()
