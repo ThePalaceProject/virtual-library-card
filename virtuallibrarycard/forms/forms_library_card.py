@@ -4,6 +4,7 @@ from django import forms
 from django.apps import apps
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxLengthValidator
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
 from django_recaptcha.fields import ReCaptchaField
@@ -11,7 +12,13 @@ from django_recaptcha.fields import ReCaptchaField
 from virtual_library_card.logging import LoggingMixin
 from virtual_library_card.sender import Sender
 from virtuallibrarycard.business_rules.library_card import LibraryCardRules
-from virtuallibrarycard.models import CustomUser, Library, LibraryCard, UserConsent
+from virtuallibrarycard.models import (
+    ZIP_CODE_VALIDATOR,
+    CustomUser,
+    Library,
+    LibraryCard,
+    UserConsent,
+)
 
 
 class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
@@ -29,6 +36,7 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             "first_name",
             "last_name",
             "email",
+            "zip",
             "library",
             "over13",
         ]
@@ -62,6 +70,32 @@ class RequestLibraryCardForm(LoggingMixin, UserCreationForm):
             # Don't show this in case we don't need age verification
             self.fields["over13"].required = False
             self.fields["over13"].widget = forms.HiddenInput()
+
+        # The ZIP field is opt-in per library. Anything other than an explicit
+        # opt-in removes the field outright rather than hiding it, so that a
+        # crafted POST cannot store a ZIP against a library that has not asked
+        # for one, and an unrecognised setting fails closed rather than quietly
+        # turning collection on.
+        zip_collection = library.patron_zip_collection
+        if zip_collection not in (
+            Library.PatronZipCollection.OPTIONAL,
+            Library.PatronZipCollection.REQUIRED,
+        ):
+            del self.fields["zip"]
+        else:
+            zip_field = self.fields["zip"]
+            zip_field.required = zip_collection == Library.PatronZipCollection.REQUIRED
+            zip_field.help_text = _("Used to report library usage by area.")
+            # Drop only the inherited max_length check, so that an over-long
+            # entry (ZIP+4, say) is told the expected format rather than a
+            # character count. Every other inherited validator is kept, so the
+            # field does not rely on the regex alone for safety. The widget
+            # keeps its maxlength attribute either way.
+            zip_field.validators = [
+                validator
+                for validator in zip_field.validators
+                if not isinstance(validator, MaxLengthValidator)
+            ] + [ZIP_CODE_VALIDATOR]
 
         # Focus on form field whenever error occurred
         error_list = list(self.errors)

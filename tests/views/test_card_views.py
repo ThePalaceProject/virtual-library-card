@@ -5,13 +5,16 @@ import pytest
 from django import forms
 from django.apps import apps
 from django.core import mail
+from django.http.response import HttpResponseBase
 from django.test import Client, RequestFactory
+from parameterized import parameterized
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseUnitTest
 from virtuallibrarycard.forms.forms_library_card import RequestLibraryCardForm
 from virtuallibrarycard.models import (
     CustomUser,
+    Library,
     LibraryAllowedEmailDomains,
     LibraryCard,
     LibraryPlace,
@@ -445,6 +448,130 @@ class TestCardRequest(BaseUnitTest):
         self._assert_card_request_success(resp, "user@example.org", library)
         user = CustomUser.objects.filter(email="user@example.org").first()
         assert user.over13 == False
+
+    def _zip_signup(
+        self, collection: str, email: str, **data: str
+    ) -> tuple[Library, HttpResponseBase]:
+        """Run the signup flow at a library with the given ZIP setting"""
+        library = self.create_library(patron_zip_collection=collection)
+        client = Client()
+        self.do_library_card_signup_flow(client, library)
+        resp = client.post(
+            f"/account/library_card_request/?identifier={library.identifier}",
+            self._get_card_request_data(library, email, **data),
+        )
+        return library, resp
+
+    def _zip_field(self, collection: str) -> dict[str, forms.Field]:
+        """Build a signup form for a fresh library with the given ZIP setting
+
+        Returns the form's field dict, for asserting on the ZIP field's shape
+        without going through the signup flow.
+        """
+        library = self.create_library(patron_zip_collection=collection)
+        return RequestLibraryCardForm(instance=self.create_user(library)).fields
+
+    def test_zip_field_absent_by_default(self):
+        """A library nobody has configured shows no ZIP field"""
+        form = RequestLibraryCardForm(instance=self.create_user(self.create_library()))
+        assert "zip" not in form.fields
+
+    def test_zip_field_absent_when_off(self):
+        assert "zip" not in self._zip_field(Library.PatronZipCollection.OFF)
+
+    def test_zip_field_absent_for_unrecognised_setting(self):
+        """An unrecognised setting must fail closed rather than collect
+
+        A database constraint keeps such a value out of the column, so this
+        assigns it in memory without saving, standing in for a value that
+        arrived by some route the form cannot see.
+        """
+        library = self.create_library()
+        library.patron_zip_collection = "maybe"
+        form = RequestLibraryCardForm(instance=self.create_user(library))
+        assert "zip" not in form.fields
+
+    @parameterized.expand(
+        [
+            (Library.PatronZipCollection.OPTIONAL, False),
+            (Library.PatronZipCollection.REQUIRED, True),
+        ]
+    )
+    def test_zip_field_required_flag_follows_collection(self, collection, required):
+        zip_field = self._zip_field(collection)["zip"]
+        assert zip_field.required is required
+        # Visible, not hidden: an off library drops the field instead
+        assert type(zip_field.widget) == forms.TextInput
+
+    def test_zip_not_stored_when_off(self):
+        """A ZIP supplied anyway must not be stored against an opted-out library"""
+        library, resp = self._zip_signup(
+            Library.PatronZipCollection.OFF, "off@example.org", zip="99999"
+        )
+        self._assert_card_request_success(resp, "off@example.org", library)
+        assert CustomUser.objects.get(email="off@example.org").zip is None
+
+    def test_zip_stored_as_null_when_optional_and_blank(self):
+        """An optional ZIP may be left blank, and is stored as NULL rather than empty"""
+        library, resp = self._zip_signup(
+            Library.PatronZipCollection.OPTIONAL, "blank@example.org", zip=""
+        )
+        self._assert_card_request_success(resp, "blank@example.org", library)
+        assert CustomUser.objects.get(email="blank@example.org").zip is None
+
+    @parameterized.expand(
+        [Library.PatronZipCollection.OPTIONAL, Library.PatronZipCollection.REQUIRED]
+    )
+    def test_zip_stored_when_valid(self, collection):
+        library, resp = self._zip_signup(collection, "ok@example.org", zip="02101")
+        self._assert_card_request_success(resp, "ok@example.org", library)
+        assert CustomUser.objects.get(email="ok@example.org").zip == "02101"
+
+    def test_zip_rejected_for_bad_format_when_optional(self):
+        """A supplied ZIP is format-checked even when the field is optional"""
+        _, resp = self._zip_signup(
+            Library.PatronZipCollection.OPTIONAL, "bad@example.org", zip="1234"
+        )
+        assert resp.status_code == 200
+        assertFormError(
+            resp.context["form"], "zip", errors=["Enter a 5-digit ZIP code."]
+        )
+        assert not CustomUser.objects.filter(email="bad@example.org").exists()
+
+    def test_zip_reports_required_when_blank(self):
+        """A blank ZIP reports as missing, not as a format error"""
+        _, resp = self._zip_signup(
+            Library.PatronZipCollection.REQUIRED, "req@example.org", zip=""
+        )
+        assert resp.status_code == 200
+        assertFormError(resp.context["form"], "zip", errors=["This field is required."])
+        assert not CustomUser.objects.filter(email="req@example.org").exists()
+
+    # The format rule lives on the field validator and does not vary by setting,
+    # so the exhaustive list of bad formats is covered once here rather than
+    # repeated for OPTIONAL.
+    @parameterized.expand(
+        ["1234", "123456", "12345-6789", "ABCDE", "1234A", "0210 ", "１２３４５"]
+    )
+    def test_zip_rejected_for_bad_format_when_required(self, zipcode):
+        _, resp = self._zip_signup(
+            Library.PatronZipCollection.REQUIRED, "fmt@example.org", zip=zipcode
+        )
+        assert resp.status_code == 200
+        assertFormError(
+            resp.context["form"], "zip", errors=["Enter a 5-digit ZIP code."]
+        )
+        assert not CustomUser.objects.filter(email="fmt@example.org").exists()
+
+    def test_zip_retained_when_collection_turned_off(self):
+        """Changing the setting affects new signups only; stored ZIPs are kept"""
+        library, _ = self._zip_signup(
+            Library.PatronZipCollection.REQUIRED, "keep@example.org", zip="02101"
+        )
+        library.patron_zip_collection = Library.PatronZipCollection.OFF
+        library.save()
+
+        assert CustomUser.objects.get(email="keep@example.org").zip == "02101"
 
     def test_survey_consent(self):
         library = self._default_library

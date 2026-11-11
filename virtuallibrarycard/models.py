@@ -12,6 +12,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.core.validators import RegexValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -23,6 +24,16 @@ from virtual_library_card.card_number import CardNumber
 
 def boolean_choices():
     return ((True, _("Yes")), (False, _("No")))
+
+
+# Patron ZIP codes are US 5-digit only; ZIP+4 and non-US postal codes are rejected.
+# [0-9] rather than \d, which also matches non-ASCII decimal digits such as
+# full-width "１２３４５" -- those pass max_length but would not group with ASCII
+# ZIPs when usage is reported. \Z rather than $, which in Python also matches
+# before a trailing newline and would let "12345\n" through.
+ZIP_CODE_VALIDATOR = RegexValidator(
+    regex=r"^[0-9]{5}\Z", message=_("Enter a 5-digit ZIP code.")
+)
 
 
 def value_to_link(_value, _display_label):
@@ -54,10 +65,30 @@ def default_customization():
     return lc.id
 
 
+class PatronZipCollection(models.TextChoices):
+    """Whether a library collects a patron ZIP code during card signup"""
+
+    OFF = "off", _("Off")
+    OPTIONAL = "optional", _("Optional")
+    REQUIRED = "required", _("Required")
+
+
 class Library(models.Model):
     class Meta:
         verbose_name_plural = "libraries"
         ordering = ["name"]  # This will sort by name alphabetically
+        constraints = [
+            # Collecting a ZIP is opt-in, so an unrecognised value must not be
+            # able to reach the column at all. The signup form already treats
+            # anything other than OPTIONAL or REQUIRED as off; this stops a
+            # migration or a direct write from storing one in the first place.
+            models.CheckConstraint(
+                condition=models.Q(
+                    patron_zip_collection__in=PatronZipCollection.values
+                ),
+                name="%(app_label)s_valid_patron_zip_collection",
+            )
+        ]
 
     @staticmethod
     def create_default_library():
@@ -82,6 +113,10 @@ class Library(models.Model):
         return f"library/logo_{self.identifier}{Path(filename).suffix}"
 
     BOOL_CHOICES = ((True, _("Descending")), (False, _("Ascending")))
+
+    # Call sites use Library.PatronZipCollection; the enum itself lives at module
+    # level so that Meta.constraints can reach it.
+    PatronZipCollection = PatronZipCollection
 
     name = models.CharField(max_length=255, null=True, blank=False)
     identifier = models.CharField(max_length=255, null=True, blank=False, unique=True)
@@ -109,6 +144,13 @@ class Library(models.Model):
         blank=False,
         default=True,
         verbose_name="Require Patron Age Verification",
+    )
+    patron_zip_collection = models.CharField(
+        max_length=16,
+        choices=PatronZipCollection.choices,
+        blank=False,
+        default=PatronZipCollection.OFF,
+        verbose_name="Patron ZIP Code Collection",
     )
     allow_bulk_card_uploads = models.BooleanField(
         choices=boolean_choices(),
@@ -354,6 +396,14 @@ class CustomUser(AbstractUser):
 
     # Default is true so that current and admin created users are not disabled
     email_verified = models.BooleanField(default=True)
+
+    zip = models.CharField(
+        _("ZIP code"),
+        max_length=5,
+        null=True,
+        blank=True,
+        validators=[ZIP_CODE_VALIDATOR],
+    )
 
     objects = CustomUserManager()
 

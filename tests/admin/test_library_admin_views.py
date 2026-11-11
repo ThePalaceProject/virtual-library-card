@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import csv
 from unittest.mock import MagicMock
 
+from django.http.response import HttpResponseBase
+from parameterized import parameterized
 from pytest_django.asserts import assertFormError
 
 from tests.base import BaseAdminUnitTest
@@ -34,6 +37,7 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             "barcode_text": "barcode",
             "allow_bulk_card_uploads": False,
             "has_survey_consent": False,
+            "patron_zip_collection": Library.PatronZipCollection.OFF,
         }
 
         data = {}
@@ -82,12 +86,71 @@ class TestLibraryAdminViews(BaseAdminUnitTest):
             barcode_text="barcode",
             allow_bulk_card_uploads=False,
             has_survey_consent=False,
+            patron_zip_collection=Library.PatronZipCollection.OFF,
         )
         self._add_library_states_data(data)
 
         response = self.test_client.post(self.get_add_url(), data)
         assert response.status_code == 302
         assert Library.objects.filter(identifier="new").count() == 1
+
+    def _post_zip_collection(self, library: Library, value: str) -> HttpResponseBase:
+        return self.test_client.post(
+            self.get_change_url(library),
+            self._get_library_change_data(
+                library, logo=self._open_logo(), patron_zip_collection=value
+            ),
+        )
+
+    @parameterized.expand(
+        [
+            (Library.PatronZipCollection.OFF, Library.PatronZipCollection.OPTIONAL),
+            (Library.PatronZipCollection.OFF, Library.PatronZipCollection.REQUIRED),
+            (Library.PatronZipCollection.REQUIRED, Library.PatronZipCollection.OFF),
+            (
+                Library.PatronZipCollection.OPTIONAL,
+                Library.PatronZipCollection.REQUIRED,
+            ),
+        ]
+    )
+    def test_patron_zip_collection_setting(self, initial, target):
+        """Each case must change the stored value, not merely re-post it
+
+        Posting the value a library already holds would pass even if the admin
+        form dropped the field entirely, so initial and target always differ.
+        """
+        assert initial != target
+        library = self.create_library(patron_zip_collection=initial)
+        assert library.patron_zip_collection == initial
+
+        response = self._post_zip_collection(library, target)
+        assert response.status_code == 302, self._response_errors(response)
+        library.refresh_from_db()
+        assert library.patron_zip_collection == target
+
+    def test_patron_zip_collection_rejects_unknown_value(self):
+        library = self.create_library()
+        response = self._post_zip_collection(library, "sometimes")
+
+        assert response.status_code == 200
+        assertFormError(
+            response.context["adminform"],
+            "patron_zip_collection",
+            ["Select a valid choice. sometimes is not one of the available choices."],
+        )
+
+    def test_export_as_csv_includes_patron_zip_collection(self):
+        """The generic exporter must still pick up the new library setting"""
+        library = self.create_library(
+            patron_zip_collection=Library.PatronZipCollection.REQUIRED
+        )
+        response = self.admin.export_as_csv(
+            self.mock_request, Library.objects.filter(id=library.id)
+        )
+        reader = csv.DictReader(response.content.decode().splitlines())
+        rows = list(reader)
+        assert len(rows) == 1
+        assert rows[0]["patron_zip_collection"] == Library.PatronZipCollection.REQUIRED
 
     def test_create_library_required_fields(self):
         data = dict(

@@ -199,6 +199,7 @@ class CustomAdminUserChangeForm(LoggingMixin, UserChangeForm):
             "first_name",
             "last_name",
             "email",
+            "zip",
             "over13",
             "library",
             "user_permissions",

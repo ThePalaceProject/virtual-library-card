@@ -13,6 +13,7 @@ from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError
 from django.templatetags.static import static
 from django.utils import timezone
+from parameterized import parameterized
 
 from tests.base import BaseUnitTest
 from virtuallibrarycard.models import (
@@ -27,6 +28,21 @@ from virtuallibrarycard.models import (
 
 
 class TestLibraryModel(BaseUnitTest):
+    def test_patron_zip_collection_default(self):
+        """ZIP collection is off unless a library opts in"""
+        library = self.create_library()
+        assert library.patron_zip_collection == Library.PatronZipCollection.OFF
+
+    def test_patron_zip_collection_rejects_unknown_value(self):
+        """The database refuses a value the signup form would not recognise"""
+        library = self.create_library()
+        library.patron_zip_collection = "maybe"
+        with (
+            pytest.raises(IntegrityError, match="valid_patron_zip_collection"),
+            django.db.transaction.atomic(),
+        ):
+            library.save()
+
     def test_create_default(self):
         library = Library.create_default_library()
         assert library.name == settings.DEFAULT_SUPERUSER_LIBRARY_NAME
@@ -137,6 +153,37 @@ class TestLibraryModel(BaseUnitTest):
 
 
 class TestCustomUserModel(BaseUnitTest):
+    def _zip_errors(self, zipcode: str | None) -> list[str]:
+        """full_clean also reports unrelated blank fields, so isolate the zip ones"""
+        user = self.create_user(self._default_library)
+        user.zip = zipcode
+        try:
+            user.full_clean()
+        except ValidationError as e:
+            return e.message_dict.get("zip", [])
+        return []
+
+    @parameterized.expand(
+        [
+            "1234",
+            "123456",
+            "12345-6789",
+            "ABCDE",
+            "1234A",
+            " 1234",
+            "１２３４５",
+            "٠٢١٠١",
+        ]
+    )
+    def test_zip_validation_rejects(self, zipcode):
+        # Over-length values also trip max_length, so assert on membership
+        assert "Enter a 5-digit ZIP code." in self._zip_errors(zipcode)
+
+    @parameterized.expand(["02101", "00000", "99999", None])
+    def test_zip_validation_accepts(self, zipcode):
+        """A blank ZIP stays valid: whether it is required is a per-library form rule"""
+        assert self._zip_errors(zipcode) == []
+
     def test_manager_create_user(self):
         user = CustomUser.objects.create_user(
             "email",
