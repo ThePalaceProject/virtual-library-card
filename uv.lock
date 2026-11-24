@@ -580,14 +580,14 @@ wheels = [
 
 [[package]]
 name = "django-render-block"
-version = "0.11"
+version = "0.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6b/2f/588cf58f7b37ab3b7994727d590381aed747173ef5670457c798518621dc/django_render_block-0.11.tar.gz", hash = "sha256:17886dd3bff222fe8a2f019509c6c53e0e4a38fe684e80d48e8697a879e1301b", size = 12432, upload-time = "2025-05-13T11:48:51.333Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5d/5d/367a2503a8f345a91476a589450a3634a06c7c47edda462979abe4288425/django_render_block-0.12.tar.gz", hash = "sha256:ca7546866ccb2235949b9b804d15cb1f63c1168dc9f23ae860454abc32ff36d1", size = 13014, upload-time = "2026-11-20T01:36:22.752Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/ef/f80dddb0e05887cda30b7c8140a2b0caa957d31d68fcfec84cb445d792ef/django_render_block-0.11-py3-none-any.whl", hash = "sha256:e6a7161393fb59ee803ab0a97ce96286897abafa42835215e019b47ebc442727", size = 9652, upload-time = "2025-05-13T11:48:50.247Z" },
+    { url = "https://files.pythonhosted.org/packages/d9/ce/4a73174f85a6829e2774301bac42a0d16f4c0d63ee512149b6aaad730fbb/django_render_block-0.12-py3-none-any.whl", hash = "sha256:6696c47515fbdaf8e0b708371f4c5182b60b8ac16c22254f7539c27cd7771f21", size = 9907, upload-time = "2026-11-20T01:36:21.928Z" },
 ]
 
 [[package]]
@@ -1737,7 +1737,7 @@ requires-dist = [
     { name = "django-material", specifier = "==1.12.0" },
     { name = "django-materialize-css", specifier = "==0.0.1" },
     { name = "django-recaptcha", specifier = ">=4.0.0,<5" },
-    { name = "django-render-block", specifier = "==0.11" },
+    { name = "django-render-block", specifier = "==0.12" },
     { name = "django-storages", specifier = ">=1.13.2,<2" },
     { name = "djangorestframework", specifier = ">=3.18.0,<4" },
     { name = "jinja2", specifier = "==3.1.6" },
